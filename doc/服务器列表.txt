@@ -1,4 +1,4 @@
 armarium-dev1 47.100.198.255 root
 
 
-Êý¾Ý¿â postgresql 47.100.198.255 armarium
+dbserver postgresql 47.100.198.255 armarium
