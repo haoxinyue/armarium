@@ -3,13 +3,24 @@
  */
 import React from 'react'
 import Loadable from 'react-loadable'
+import {authNeedInit} from '../components/AuthNeedComponent'
 import {baseInit} from '../components/BaseComponent'
 
 const loadComponent = (component) => {
-	return baseInit(Loadable({
-		loader: () => import(`../container/${component}/index.js`),
-		loading: () => null
-	}))
+
+	if(["Login","Test"].includes(component)){
+        return baseInit(Loadable({
+            loader: () => import(`../container/${component}/index.js`),
+            loading: () => null
+        }))
+	}else{
+        return authNeedInit(baseInit(Loadable({
+            loader: () => import(`../container/${component}/index.js`),
+            loading: () => null
+        })))
+	}
+
+
 }
 
 export  const routes = [
@@ -29,7 +40,10 @@ export  const routes = [
         header:{
             title: '首页',
             visible:true
-        }
+        },
+		footer:{
+			visible:true
+		}
 
 	},
 	{
@@ -67,6 +81,14 @@ export  const routes = [
             title: '设备编辑',
             left:"back"
         }
+	},{
+		path: '/deviceAdd',
+		exact: true,
+		component: loadComponent('DeviceEdit'),
+        header:{
+            title: '新增设备',
+            left:"back"
+        }
 	},
 	{
 		path: '/departments',
@@ -78,11 +100,19 @@ export  const routes = [
         }
 	},
 	{
-		path: '/calender',
+		path: '/contracts',
 		exact: true,
-		component: loadComponent('Calender'),
+		component: loadComponent('Contracts'),
         header:{
-            title: '日历',
+            title: '合同管理',
+            left:"back"
+        }
+	},{
+		path: '/purchases',
+		exact: true,
+		component: loadComponent('Purchases'),
+        header:{
+            title: '采购管理',
             left:"back"
         }
 	},

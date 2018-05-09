@@ -10,19 +10,6 @@ import * as ActionTypes from './actionTypes'
 
 
 
-//metaData
-export const saveMetaData = playLoad => ({
-	type: 'SAVE_META_DATA',
-	playLoad
-})
-
-//listData
-export const saveListData = playLoad => ({
-	type: 'SAVE_LIST_DATA',
-	playLoad
-})
-
-
 /**********************************************************/
 
 export const changeHeaderTitle = (title) => ({
@@ -40,6 +27,24 @@ export const changeHeaderLeft = (leftContent) => ({
 export const changeHeaderRight = (rightContent) => ({
     type: ActionTypes.CHANGE_HEADER_RIGHT_CONTENT,
     rightContent
+})
+
+/**********************************************************/
+
+export const changeFooterVisible = (visible) => ({
+    type: ActionTypes.CHANGE_FOOTER_VISIBLE,
+    visible
+})
+
+/**********************************************************/
+export const login = (username,token) => ({
+    type: ActionTypes.LOG_IN,
+    username,
+    token
+})
+
+export const logout = () => ({
+    type: ActionTypes.LOG_OUT,
 })
 
 /**********************************************************/

@@ -3,12 +3,20 @@
  */
 export default {
 	loginUrl: 'auth/login',
-	// prticipantpage: 'activityservice/contact/prticipantpage/',
-	// audit: 'activityservice/contact/audit',
-	// updateprticipant: 'activityservice/activitymicrosite/updateprticipant'
+	logoutUrl: 'auth/logout',
+
 	deviceAdd:'equip/addDevice',
 	deviceDel:'equip/delDevice',
 	deviceUpdate:'equip/updDevice',
 	deviceGet:'equip/getDevice',
-	deviceListGet:'equip/getDevice'
+	deviceListGet:'equip/getDeviceList',
+
+	depTreeGet:'dept/getDeptTree',
+	depGet:'dept/getDept',
+	depAdd:'dept/addDept',
+	depDel:'dept/delDept',
+	depUpdate:'dept/updDept',
+
+	areaGet:'area/getAreaInfo'
+
 }

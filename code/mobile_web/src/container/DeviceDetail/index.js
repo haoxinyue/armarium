@@ -74,48 +74,6 @@ class DeviceDetail extends Component {
                 >
                     <div >
                         <ul className="block-list">
-                            {/*{this.state.showData.map((item, index) => (
-                                <li>
-                                    <div className="detail-block">
-
-                                        <div className="block-title">
-                                            <h6>基本信息</h6>
-                                        </div>
-
-                                        <div className="block-content">
-
-                                            <div>
-                                                <span className="key">资产名称</span>：
-                                                <span className="value">靶控注射泵</span>
-                                            </div>
-                                            <div>
-                                                <span className="key">资产型号</span>：
-                                                <span className="value">CP-600TCI</span>
-                                            </div>
-                                            <div>
-                                                <span className="key">资产编号</span>：
-                                                <span className="value">20180808271182</span>
-                                            </div>
-                                            <div>
-                                                <span className="key">所在院区</span>：
-                                                <span className="value"></span>
-                                            </div>
-                                            <div>
-                                                <span className="key">所属科室</span>：
-                                                <span className="value">麻醉科</span>
-                                            </div>
-
-                                            <div>
-                                                <span className="key">序列号</span>：
-                                                <span className="value">907006</span>
-                                            </div>
-
-
-                                        </div>
-                                    </div>
-
-                                </li>
-                            ))}*/}
                             <li>
                                 <div className="detail-block">
 
@@ -139,7 +97,7 @@ class DeviceDetail extends Component {
                                         </div>
                                         <div className="content-line">
                                             <span className="key">所在院区</span>
-                                            <span className="value"></span>
+                                            <span className="value">南山医院</span>
                                         </div>
                                         <div className="content-line">
                                             <span className="key">所属科室</span>
@@ -160,7 +118,7 @@ class DeviceDetail extends Component {
                                 <div className="detail-block">
 
                                     <div className="block-title">
-                                        <span>基本信息</span>
+                                        <span>其他信息</span>
                                     </div>
 
                                     <div className="block-content">
@@ -170,27 +128,9 @@ class DeviceDetail extends Component {
                                             <span className="value">靶控注射泵</span>
                                         </div>
                                         <div className="content-line">
-                                            <span className="key">资产型号</span>
-                                            <span className="value">CP-600TCI</span>
+                                            <span className="key">备注</span>
+                                            <span className="value">无</span>
                                         </div>
-                                        <div className="content-line">
-                                            <span className="key">资产编号</span>
-                                            <span className="value">20180808271182</span>
-                                        </div>
-                                        <div className="content-line">
-                                            <span className="key">所在院区</span>
-                                            <span className="value"></span>
-                                        </div>
-                                        <div className="content-line">
-                                            <span className="key">所属科室</span>
-                                            <span className="value">麻醉科</span>
-                                        </div>
-
-                                        <div className="content-line">
-                                            <span className="key">序列号</span>
-                                            <span className="value">907006</span>
-                                        </div>
-
 
                                     </div>
                                 </div>

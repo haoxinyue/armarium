@@ -82,6 +82,21 @@ class Customer extends Component {
     onRefresh = () => {
         this.setState({refreshing: true, isLoading: true});
         // simulate initial Ajax
+        axios.http.post(api.deviceListGet,{pageIndex:1}).then((res)=>{
+            // Toast.info("success")
+            // setTimeout(()=>{
+            //     Toast.fail(JSON.stringify(res))
+            // },1000)
+            Toast.hide()
+        },(res)=>{
+            // Toast.fail("failed")
+            // setTimeout(()=>{
+            //     Toast.fail(JSON.stringify(res))
+            // },1000)
+            Toast.hide()
+
+        })
+
         setTimeout(() => {
             this.rData = [{
                 DeviceId: "1",
@@ -142,6 +157,7 @@ class Customer extends Component {
         }
         // console.log('reach end', event);
         this.setState({isLoading: true});
+
         setTimeout(() => {
 
             this.rData = [...this.rData, ...[{

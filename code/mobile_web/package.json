@@ -7,6 +7,7 @@
     "axios": "^0.16.2",
     "better-scroll": "^0.4.0",
     "classnames": "^2.2.5",
+    "pinyin": "^2.8.3",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-loadable": "^4.0.4",
@@ -17,6 +18,7 @@
     "redux": "^3.7.2"
   },
   "devDependencies": {
+    "antd-mobile-demo-data": "^0.2.0",
     "autoprefixer": "7.1.0",
     "babel-core": "6.24.1",
     "babel-eslint": "^7.2.3",

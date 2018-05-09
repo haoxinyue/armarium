@@ -5,9 +5,13 @@
 import { combineReducers } from 'redux'
 import app from './app'
 import header from './header'
+import footer from './footer'
+import auth from './auth'
 
 const rootReducer = combineReducers({
 	app,
+    auth,
+    footer,
     header
 })
 

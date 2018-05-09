@@ -16,37 +16,37 @@ class Departments extends Component {
             {
                 DeptId: "1",
                 DeptName: "科室1",
-                DeptOwner: "xxxx",
+                DeptOwner: "李主任",
                 ParentDeptId: "2",
                 HospitalId: "2",
-                DeptPath: "DisplayName1",
+                DeptPath: "",
                 Remark: "Remark",
 
             },{
                 DeptId: "2",
                 DeptName: "科室2",
-                DeptOwner: "xxxx",
+                DeptOwner: "李主任",
                 ParentDeptId: "2",
                 HospitalId: "2",
-                DeptPath: "DisplayName1",
+                DeptPath: "",
                 Remark: "Remark",
 
             },{
                 DeptId: "3",
                 DeptName: "科室3",
-                DeptOwner: "xxxx",
+                DeptOwner: "李主任",
                 ParentDeptId: "2",
                 HospitalId: "2",
-                DeptPath: "DisplayName1",
+                DeptPath: "",
                 Remark: "Remark",
 
             },{
                 DeptId: "4",
                 DeptName: "科室4",
-                DeptOwner: "xxxx",
+                DeptOwner: "刘主任",
                 ParentDeptId: "2",
                 HospitalId: "2",
-                DeptPath: "DisplayName1",
+                DeptPath: "",
                 Remark: "Remark",
 
             },{

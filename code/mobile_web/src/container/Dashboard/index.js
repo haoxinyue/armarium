@@ -8,6 +8,11 @@ import {addRippleEffect} from '../../utils'
 class Dashboard extends Component {
 
 
+    // cordovaHTTP
+    componentDidMount() {
+
+    }
+
     render() {
 
         const blocks =[
@@ -30,9 +35,17 @@ class Dashboard extends Component {
                         link:"/departments"
                     },
                     {
-                        image:require("../../assets/img/hospital/if_12_hospital_2774743.png"),
+                        image:require("../../assets/img/hospital/if_11_hospital_2774742.png"),
+                        desc:"合同管理",
+                        link:"/contracts"
+                    },{
+                        image:require("../../assets/img/hospital/if_7_hospital_2774753.png"),
+                        desc:"采购管理",
+                        link:"/purchases"
+                    },{
+                        image:require("../../assets/img/hospital/if_10_hospital_2774741.png"),
                         desc:"更多"
-                    },
+                    }
                 ]
             },
             {
@@ -40,7 +53,8 @@ class Dashboard extends Component {
                 items:[
                     {
                         image:require("../../assets/img/hospital/if_13_hospital_2774744.png"),
-                        desc:"添加设备"
+                        desc:"添加设备",
+                        link:"/deviceAdd"
                     },
                 ]
             },

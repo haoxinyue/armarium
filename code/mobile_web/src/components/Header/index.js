@@ -58,7 +58,6 @@ class Header extends Component {
                 {display:visible?"":"none"}
             }>
                 <NavBar key="0" leftContent={headerLeft}
-                        iconName={false}
                         mode="dark"
                         rightContent={headerRight}
                 >{title}</NavBar>

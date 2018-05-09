@@ -2,11 +2,12 @@
  * Created by Administrator on 2017/8/7.
  */
 import axios from 'axios'
+import cordovaHttp from './cordovaHttp'
 import createHashHistory from 'history/createHashHistory'
 import { Toast } from 'antd-mobile'
 const history = createHashHistory()
 
-axios.defaults.baseURL = 'http://mk.yonyou.com:8080/'
+axios.defaults.baseURL = 'http://47.100.198.255:8080/'
 
 // http request 拦截器
 axios.interceptors.request.use(config => {
@@ -48,4 +49,19 @@ axios.interceptors.response.use(response =>{
 	return Promise.reject(err.response.data)
 })
 
-export default axios
+let http = {
+	get http(){
+        if (window.cordovaHTTP){
+            return cordovaHttp
+        }else{
+        	return axios
+		}
+	}
+}
+
+// if (window.cordovaHTTP){
+//     http = cordovaHttp
+// }
+
+
+export default http

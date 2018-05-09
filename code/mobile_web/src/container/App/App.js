@@ -4,7 +4,9 @@ import {RouteWithSubRoutes} from '../../utils'
 import {routes} from '../../router'
 
 import Header from '../../components/Header'
-import { TabBar } from 'antd-mobile';
+import Footer from '../../components/Footer'
+
+
 import './app.less'
 
 class App extends Component {
@@ -22,11 +24,12 @@ class App extends Component {
                         ))}
 
                         <Redirect from="" push={true} to="/dashboard"/>
+                        {/*<Redirect from="" push={true} to="/test"/>*/}
 
                     </Switch>
                 </div>
 
-
+                <Footer {...this.props} />
 
             </div>
         )

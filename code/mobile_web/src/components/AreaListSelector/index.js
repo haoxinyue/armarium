@@ -3,7 +3,7 @@
  */
 
 import React, {Component} from 'react'
-import './departmentSelector.less'
+import './areaSelector.less'
 import {SearchBar, Toast} from 'antd-mobile';
 import {addRippleEffect} from '../../utils'
 
@@ -91,7 +91,7 @@ for (let k in mData) {
 
 }
 
-class DepartmentSelector extends Component {
+class AreaListSelector extends Component {
 
     state = {
         inputValue: '',
@@ -166,7 +166,10 @@ class DepartmentSelector extends Component {
     }
 
     selectItem(item) {
-        Toast.info("选择了:" + item.name, 0.5)
+        //Toast.info("选择了:" + item.name, 0.5)
+        const {onSelected} = this.props
+
+        onSelected && onSelected(item)
     }
 
     render() {
@@ -176,7 +179,7 @@ class DepartmentSelector extends Component {
 
         // const {name, defaultValue, data} = this.props
         return (
-            <div className="department-selector">
+            <div className="area-list-selector" >
                 <SearchBar
                     value={this.state.inputValue}
                     placeholder="搜索"
@@ -192,7 +195,7 @@ class DepartmentSelector extends Component {
                     <section className="listsection">
                         {dataSource.map((item, i) => <dl key={item.key}>
                             <dt id={"ds_" + item.key}>{item.name}</dt>
-                            {item.items.map((sItem,i) => <dd key={i} data-link={"ds_" + item.key} onClick={
+                            {item.items.map((sItem) => <dd data-link={"ds_" + item.key} onClick={
                                 (e) => {
                                     addRippleEffect(e.target, e.pageX, e.pageY);
                                     this.selectItem.bind(this)(sItem)
@@ -227,4 +230,4 @@ class DepartmentSelector extends Component {
     }
 }
 
-export default DepartmentSelector
+export default AreaListSelector

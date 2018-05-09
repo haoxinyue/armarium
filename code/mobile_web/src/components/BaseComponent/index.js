@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import {connect} from 'react-redux';
-import {changeHeaderTitle, changeHeaderLeft, changeHeaderRight, changeHeaderVisible} from '../../redux/actions'
+import {changeHeaderTitle, changeHeaderLeft, changeHeaderRight, changeHeaderVisible,changeFooterVisible} from '../../redux/actions'
 
 export function baseInit(Component) {
 
@@ -34,6 +34,9 @@ export function baseInit(Component) {
 
             let right = (route && route.header && route.header.right) || [];
             dispatch(changeHeaderRight(right));
+
+            let fvisible = !!(route && route.footer && route.footer.visible);
+            dispatch(changeFooterVisible(fvisible));
         }
 
         render() {

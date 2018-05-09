@@ -1,0 +1,50 @@
+@charset "UTF-8";
+@import "../../assets/css/variable";
+
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  .content{
+    display: flex;
+    border-top: 1px solid #f1f1f1;
+
+    .item{
+      width: 50%;
+      //height: 120px;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 26px;
+      overflow: hidden;
+      background-color: #fefefe;
+      position: relative;
+
+      transition: all ease 400ms;
+
+      color:#333;
+
+      &:first-child{
+        border-right: 1px solid #f1f1f1;
+      }
+
+      .item-icon{
+        font-size: 50px;
+        margin-bottom: 5px;
+      }
+
+      .item-text{
+
+      }
+
+      &.active{
+        color:#108ee9;
+      }
+
+    }
+
+  }
+
+
+}
