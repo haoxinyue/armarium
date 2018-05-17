@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabo.medical.mapper.UserMapper">  
+    <resultMap type="com.jiabo.medical.entity.User" id="userMap">
+        <!-- 用id属性来映射主键字段 -->
+        <id property="userId" column="user_id" javaType="java.lang.Integer"/>
+        <!-- 用result属性来映射非主键字段 -->
+        <result property="loginName" column="login_name"/>
+        <result property="loginPassword" column="login_password"/>
+        <result property="mobile" column="mobile"/>
+        <result property="email" column="email"/>
+        <result property="displayName" column="display_name"/>
+    </resultMap>
+    
+   <select id="checkUserInfo" resultType="java.lang.Integer" parameterType="java.lang.String">  
+    select count(1)  from tb_user
+        where login_name = #{loginName,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="findUserInfo" resultMap="userMap" parameterType="com.jiabo.medical.entity.User">  
+    select user_id,login_name,login_password,mobile,email,display_name  from tb_user
+        where  login_name = #{loginName,jdbcType=VARCHAR} and login_password = #{loginPassword,jdbcType=VARCHAR} 
+  </select>
+  
+  <insert id="addUserInfo" parameterType="com.jiabo.medical.entity.User">  
+    insert into tb_user 
+        (
+            login_name,
+            login_password,
+            mobile,
+            email,
+            display_name,
+            create_time, 
+            creater, 
+            modify_time, 
+            modifier
+        )
+        values  
+         (
+             #{loginName,jdbcType=VARCHAR},
+             #{loginPassword,jdbcType=VARCHAR},
+             #{mobile,jdbcType=VARCHAR},
+             #{email,jdbcType=VARCHAR},
+             #{displayName,jdbcType=VARCHAR},
+             #{createTime,jdbcType=TIMESTAMP},
+             #{creater,jdbcType=INTEGER},
+             #{modifyTime,jdbcType=TIMESTAMP},
+             #{modifier,jdbcType=INTEGER}
+             )
+             
+  </insert>
+  
+  <update id="updUserInfo" parameterType="com.jiabo.medical.entity.User">
+    update tb_user 
+        <set>
+            <if test="loginName != null and loginName != ''">
+                login_name = #{loginName},
+            </if>
+            <if test="loginPassword != null and loginPassword != ''">
+                login_password = #{loginPassword},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="displayName != null and displayName != ''">
+                display_name = #{displayName},
+            </if>
+	            modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+	            modifier = #{modifier}
+        </set>
+        where user_id = #{userId,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="delUserInfo" parameterType="java.lang.Integer">  
+   delete from tb_user where user_id = #{userId,jdbcType=INTEGER}  
+  </delete>
+
+</mapper>

@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabo.medical.mapper.EquipmentMapper">  
+    <resultMap type="com.jiabo.medical.entity.Equipment" id="equipMap">
+        <!-- 用id属性来映射主键字段 -->
+        <id property="deviceId" column="device_id" javaType="java.lang.Integer"/>
+        <!-- 用result属性来映射非主键字段 -->
+        <result property="deviceCode" column="device_code"/>
+        <result property="deviceName" column="device_name"/>
+        <result property="hospitalId" column="hospital_id" javaType="java.lang.Integer"/>
+        <result property="hospital" column="hospital_name"/>
+        <result property="departmentId" column="dept_id" javaType="java.lang.Integer"/>
+        <result property="department" column="dept_name"/>
+        <result property="picture1" column="picture1"/>
+        <result property="picture2" column="picture2"/>
+        <result property="picture3" column="picture3"/>
+        <result property="picture4" column="picture4"/>
+        <result property="picture5" column="picture5"/>
+        <result property="assetNo" column="asset_no"/>
+        <result property="deviceModel" column="device_model"/>
+        <result property="deviceDesc" column="device_desc"/>
+        <result property="deviceState" column="device_state" javaType="java.lang.Integer"/>
+        <result property="deviceType" column="device_type" javaType="java.lang.Integer"/>
+        <result property="serialNumber" column="serial_number"/>
+        <result property="usageState" column="usage_state" javaType="java.lang.Integer"/>
+        <result property="qrCode" column="qr_code"/>
+        <result property="manufacturer" column="manufacturer"/>
+        <result property="producingPlace" column="producing_place"/>
+        <result property="setupDate" column="setup_date" javaType="java.lang.String"/>
+        <result property="acceptDate" column="accept_date" javaType="java.lang.String"/>
+        
+        <result property="accessory" column="accessory"/>
+        <result property="acceptRemark" column="accept_remark"/>
+        <result property="acceptFile" column="accept_file"/>
+        <result property="useDate" column="use_date" javaType="java.lang.String"/>
+        <result property="deviceOwner" column="device_owner"/>
+        <result property="storageDate" column="storage_date" javaType="java.lang.String"/>
+        <result property="purchaseAmount" column="purchase_amount" javaType="java.lang.Integer"/>
+        <result property="maintenanceEndDate" column="maintenance_end_date" javaType="java.lang.String"/>
+        <result property="warrantyBeginDate" column="warranty_begin_date" javaType="java.lang.String"/>
+        <result property="warrantyEndDate" column="warranty_end_date" javaType="java.lang.String"/>
+        <result property="warrantyAmount" column="warranty_amount" javaType="java.lang.Integer"/>
+        <result property="warrantyContent" column="warranty_content"/>
+        <result property="salesSupplier" column="sales_supplier"/>
+        <result property="salesSupplierContact" column="sales_supplier_contact"/>
+        <result property="salesSupplierPhone" column="sales_supplier_phone"/>
+        <result property="salesSupplierDesc" column="sales_supplier_desc"/>
+        <result property="afterSaleProvider" column="after_sale_provider"/>
+        <result property="afterSaleProviderEngineer" column="after_sale_provider_engineer"/>
+        <result property="afterSaleProviderPhone" column="after_sale_provider_phone"/>
+        <result property="afterSaleProviderDesc" column="after_sale_provider_desc"/>
+        <result property="contractId" column="contract_id" javaType="java.lang.Integer"/>
+        <result property="createTime" column="create_time" javaType="java.sql.Timestamp"/>
+        <result property="creater" column="creater" javaType="java.lang.Integer"/>
+        <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp"/>
+        <result property="modifier" column="modifier" javaType="java.lang.Integer"/>
+    </resultMap>
+    
+    <select id="getEquipRecCount" resultType="java.lang.Integer" parameterType="com.jiabo.medical.entity.Equipment">  
+    select count(1)
+        from tb_device dv
+        inner join tb_hospital hs on dv.hospital_id = hs.hospital_id
+        inner join tb_department dm on dv.dept_id = dm.dept_id
+        
+        <where>
+            <if test="deviceId != null and deviceId != ''">
+                dv.device_id = #{deviceId}
+            </if>
+            <if test="deviceCode != null and deviceCode != ''">
+                and dv.device_code like #{deviceCode}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                and dv.device_name like #{deviceName}
+            </if>
+            <if test="hospital != null and hospital != ''">
+                and hs.hospital_name like #{hospital}
+            </if>
+            <if test="department != null and department != ''">
+                and dm.dept_name like #{department}
+            </if>
+            <if test="assetNo != null and assetNo != ''">
+                and dv.asset_no like #{assetNo}
+            </if>
+            <if test="deviceModel != null and deviceModel != ''">
+                and dv.device_model like #{deviceModel}
+            </if>
+            <if test="deviceState != null and deviceState != ''">
+                and dv.device_state = #{deviceState}
+            </if>
+            <if test="deviceType != null and deviceType != ''">
+                and dv.device_type = #{deviceType}
+            </if>
+            <if test="usageState != null and usageState != ''">
+                and dv.usage_state = #{usageState}
+            </if>
+            <if test="manufacturer != null and manufacturer != ''">
+                and dv.manufacturer like #{manufacturer}
+            </if>
+            <if test="producingPlace != null and producingPlace != ''">
+                and dv.producing_place like #{producingPlace}
+            </if>
+            <if test="deviceOwner != null and deviceOwner != ''">
+                and dv.device_owner like #{deviceOwner}
+            </if>
+        </where>
+        
+  </select>     
+   
+  <select id="getEquipmentList" resultMap="equipMap" parameterType="com.jiabo.medical.entity.Equipment">  
+    select dv.device_id,
+        dv.device_code,
+        dv.device_name,
+        dv.hospital_id,
+        hs.hospital_name,
+        dv.dept_id,
+        dm.dept_name,
+        dv.picture1,
+        dv.picture2,
+        dv.picture3,
+        dv.picture4,
+        dv.picture5,
+        dv.device_model,
+        dv.device_state,
+        dv.device_type,
+        dv.serial_number,
+        dv.usage_state,
+        dv.qr_code,
+        dv.manufacturer,
+        dv.producing_place,
+        dv.setup_date,
+        dv.accept_date,
+        dv.accessory,
+        dv.accept_remark,
+        dv.accept_file,
+        dv.use_date,
+        dv.device_owner,
+        dv.storage_date,
+        dv.purchase_amount,
+        dv.maintenance_end_date,
+        dv.warranty_begin_date,
+        dv.warranty_end_date,
+        dv.warranty_amount,
+        dv.warranty_content,
+        dv.sales_supplier,
+        dv.sales_supplier_contact,
+        dv.sales_supplier_phone,
+        dv.sales_supplier_desc,
+        dv.after_sale_provider,
+        dv.after_sale_provider_engineer,
+        dv.after_sale_provider_phone,
+        dv.after_sale_provider_desc,
+        dv.contract_id,
+        dv.create_time,
+        dv.creater,
+        dv.modify_time,
+        dv.modifier
+        
+        from tb_device dv
+        inner join tb_hospital hs on dv.hospital_id = hs.hospital_id
+        inner join tb_department dm on dv.dept_id = dm.dept_id
+        
+        <where>
+            <if test="deviceId != null and deviceId != ''">
+                dv.device_id = #{deviceId}
+            </if>
+            <if test="deviceCode != null and deviceCode != ''">
+                and dv.device_code like #{deviceCode}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                and dv.device_name like #{deviceName}
+            </if>
+            <if test="hospital != null and hospital != ''">
+                and hs.hospital_name like #{hospital}
+            </if>
+            <if test="department != null and department != ''">
+                and dm.dept_name like #{department}
+            </if>
+            <if test="assetNo != null and assetNo != ''">
+                and dv.asset_no like #{assetNo}
+            </if>
+            <if test="deviceModel != null and deviceModel != ''">
+                and dv.device_model like #{deviceModel}
+            </if>
+            <if test="deviceState != null and deviceState != ''">
+                and dv.device_state = #{deviceState}
+            </if>
+            <if test="deviceType != null and deviceType != ''">
+                and dv.device_type = #{deviceType}
+            </if>
+            <if test="usageState != null and usageState != ''">
+                and dv.usage_state = #{usageState}
+            </if>
+            <if test="manufacturer != null and manufacturer != ''">
+                and dv.manufacturer like #{manufacturer}
+            </if>
+            <if test="producingPlace != null and producingPlace != ''">
+                and dv.producing_place like #{producingPlace}
+            </if>
+            <if test="deviceOwner != null and deviceOwner != ''">
+                and dv.device_owner like #{deviceOwner}
+            </if>
+        </where>
+        order by dv.hospital_id
+        limit 10 offset #{pageIndex,jdbcType=INTEGER}
+  </select>
+  
+  <select id="getEquipmentInfo" resultMap="equipMap" parameterType="java.lang.Integer">  
+    select dv.device_id,
+        dv.device_code,
+        dv.device_name,
+        dv.hospital_id,
+        hs.hospital_name,
+        dv.dept_id,
+        dm.dept_name,
+        dv.picture1,
+        dv.picture2,
+        dv.picture3,
+        dv.picture4,
+        dv.picture5,
+        dv.device_model,
+        dv.device_state,
+        dv.device_type,
+        dv.serial_number,
+        dv.usage_state,
+        dv.qr_code,
+        dv.manufacturer,
+        dv.producing_place,
+        dv.setup_date,
+        dv.accept_date,
+        dv.accessory,
+        dv.accept_remark,
+        dv.accept_file,
+        dv.use_date,
+        dv.device_owner,
+        dv.storage_date,
+        dv.purchase_amount,
+        dv.maintenance_end_date,
+        dv.warranty_begin_date,
+        dv.warranty_end_date,
+        dv.warranty_amount,
+        dv.warranty_content,
+        dv.sales_supplier,
+        dv.sales_supplier_contact,
+        dv.sales_supplier_phone,
+        dv.sales_supplier_desc,
+        dv.after_sale_provider,
+        dv.after_sale_provider_engineer,
+        dv.after_sale_provider_phone,
+        dv.after_sale_provider_desc,
+        dv.contract_id,
+        dv.create_time,
+        dv.creater,
+        dv.modify_time,
+        dv.modifier
+        
+        from tb_device dv
+        inner join tb_hospital hs on dv.hospital_id = hs.hospital_id
+        inner join tb_department dm on dv.dept_id = dm.dept_id
+        
+        where
+            dv.device_id = #{deviceId}
+        
+  </select>
+  
+  <select id="getSequenceNo" resultType="java.lang.Integer" >
+     SELECT last_value from tb_device_device_id_seq
+  </select>
+  
+  <insert id="addEquipmentInfo" parameterType="com.jiabo.medical.entity.Equipment">  
+    insert into tb_device 
+        (
+        device_code, device_name, hospital_id, dept_id, picture1, picture2, picture3, picture4, picture5, asset_no, device_model, device_desc, device_state, device_type, serial_number, usage_state, qr_code, manufacturer, producing_place, setup_date, accessory, accept_date, accept_remark, accept_file, use_date, device_owner, storage_date, purchase_amount, maintenance_end_date, warranty_begin_date, warranty_end_date, warranty_amount, warranty_content, sales_supplier, sales_supplier_contact, sales_supplier_phone, sales_supplier_desc, after_sale_provider, after_sale_provider_engineer, after_sale_provider_phone, after_sale_provider_desc, contract_id, create_time, creater, modify_time, modifier
+        )
+	    values 
+	    (
+	    #{deviceCode},
+	    #{deviceName}, 
+	    #{hospitalId,jdbcType=INTEGER},
+	    #{departmentId,jdbcType=INTEGER},
+	    #{picture1}, 
+	    #{picture2},
+	    #{picture3}, 
+        #{picture4},
+        #{picture5}, 
+        #{assetNo},
+        #{deviceModel}, 
+        #{deviceDesc},
+        #{deviceState,jdbcType=INTEGER}, 
+        #{deviceType, jdbcType=INTEGER},
+        #{serialNumber},
+        #{usageState,jdbcType=INTEGER}, 
+        #{qrCode},
+        #{manufacturer}, 
+        #{producingPlace},
+        to_timestamp(#{setupDate},'YYYY-MM-DD HH24:MI:SS'),
+        #{accessory},
+        to_timestamp(#{acceptDate},'YYYY-MM-DD HH24:MI:SS'),
+        #{acceptRemark},
+        #{acceptFile}, 
+        to_timestamp(#{useDate},'YYYY-MM-DD HH24:MI:SS'),
+        #{deviceOwner}, 
+        to_timestamp(#{storageDate},'YYYY-MM-DD HH24:MI:SS'),
+        #{purchaseAmount,jdbcType=INTEGER}, 
+        to_timestamp(#{maintenanceEndDate},'YYYY-MM-DD HH24:MI:SS'),
+        to_timestamp(#{warrantyBeginDate},'YYYY-MM-DD HH24:MI:SS'),
+        to_timestamp(#{warrantyEndDate},'YYYY-MM-DD HH24:MI:SS'),
+        #{warrantyAmount,jdbcType=INTEGER},
+        #{warrantyContent}, 
+        #{salesSupplier}, 
+        #{salesSupplierContact}, 
+        #{salesSupplierPhone},
+        #{salesSupplierDesc}, 
+        #{afterSaleProvider}, 
+        #{afterSaleProviderEngineer}, 
+        #{afterSaleProviderPhone},
+        #{afterSaleProviderDesc},
+        #{contractId,jdbcType=INTEGER},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{creater,jdbcType=INTEGER},
+        #{modifyTime,jdbcType=TIMESTAMP},
+        #{modifier,jdbcType=INTEGER}
+	      )
+  </insert>
+  
+  <update id="updEquipmentInfo" parameterType="com.jiabo.medical.entity.Equipment">
+    update tb_device 
+        <set>
+            <if test="deviceCode != null and deviceCode != ''">
+                device_code = #{deviceCode},
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                device_name = #{deviceName},
+            </if>
+            <if test="hospitalId != null and hospitalId != ''">
+                hospital_Id = #{hospitalId},
+            </if>
+            <if test="departmentId != null and departmentId != ''">
+                dept_id = #{departmentId},
+            </if>
+            <if test="assetNo != null and assetNo != ''">
+                asset_no = #{assetNo},
+            </if>
+            <if test="deviceModel != null and deviceModel != ''">
+                device_model = #{deviceModel},
+            </if>
+            <if test="deviceDesc != null and deviceDesc != ''">
+                device_desc = #{deviceDesc},
+            </if>
+            <if test="deviceState != null and deviceState != ''">
+                device_state = #{deviceState},
+            </if>
+            <if test="deviceType != null and deviceType != ''">
+                device_type = #{deviceType},
+            </if>
+            <if test="usageState != null and usageState != ''">
+                usage_state = #{usageState},
+            </if>
+            <if test="qrCode != null and qrCode != ''">
+                qr_code  = #{qrCode},
+            </if>
+            <if test="manufacturer != null and manufacturer != ''">
+                manufacturer  = #{manufacturer},
+            </if>
+            <if test="producingPlace != null and producingPlace != ''">
+                producing_place  = #{producingPlace},
+            </if>
+            <if test="accessory != null and accessory != ''">
+                accessory  = #{accessory},
+            </if>
+            <if test="setupDate != null and setupDate != ''">
+                setup_date  = to_timestamp(#{setupDate},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="acceptDate != null and acceptDate != ''">
+                accept_date  = to_timestamp(#{acceptDate},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="acceptRemark != null and acceptRemark != ''">
+                accept_remark  = #{acceptRemark},
+            </if>
+            <if test="useDate != null and useDate != ''">
+                use_date  = to_timestamp(#{useDate},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="deviceOwner != null and deviceOwner != ''">
+                device_owner  = #{deviceOwner},
+            </if>
+            <if test="storageDate != null and storageDate != ''">
+                storage_date  = to_timestamp(#{storageDate},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="purchaseAmount != null and purchaseAmount != ''">
+                purchase_amount  = #{purchaseAmount},
+            </if>
+            <if test="maintenanceEndDate != null and maintenanceEndDate != ''">
+                maintenance_end_date  = to_timestamp(#{maintenanceEndDate},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="warrantyBeginDate != null and warrantyBeginDate != ''">
+                warranty_begin_date  = to_timestamp(#{warrantyBeginDate},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="warrantyEndDate != null and warrantyEndDate != ''">
+                warranty_end_date  = to_timestamp(#{warrantyEndDate},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="warrantyAmount != null and warrantyAmount != ''">
+                warranty_amount  = #{warrantyAmount},
+            </if>
+            <if test="warrantyContent != null and warrantyContent != ''">
+                warranty_content  = #{warrantyContent},
+            </if>
+            
+            <if test="salesSupplier != null and salesSupplier != ''">
+                sales_supplier  = #{salesSupplier},
+            </if>
+            <if test="salesSupplierContact != null and salesSupplierContact != ''">
+                sales_supplier_contact  = #{salesSupplierContact},
+            </if>
+            <if test="salesSupplierPhone != null and salesSupplierPhone != ''">
+                sales_supplier_phone  = #{salesSupplierPhone},
+            </if>
+            <if test="salesSupplierDesc != null and salesSupplierDesc != ''">
+                sales_supplier_desc  = #{salesSupplierDesc},
+            </if>
+            <if test="afterSaleProvider != null and afterSaleProvider != ''">
+                after_sale_provider  = #{afterSaleProvider},
+            </if>
+            <if test="afterSaleProviderEngineer != null and afterSaleProviderEngineer != ''">
+                after_sale_provider_engineer  = #{afterSaleProviderEngineer},
+            </if>
+            <if test="afterSaleProviderPhone != null and afterSaleProviderPhone != ''">
+                after_sale_provider_phone  = #{afterSaleProviderPhone},
+            </if>
+            <if test="afterSaleProviderDesc != null and afterSaleProviderDesc != ''">
+                after_sale_provider_desc  = #{afterSaleProviderDesc},
+            </if>
+            <if test="contractId != null and contractId != ''">
+                contract_id  = #{contractId},
+            </if>
+	            modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+	            modifier = #{modifier}
+        </set>
+            
+        where device_id = #{deviceId,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="delEquipmentInfo" parameterType="java.lang.Integer">  
+   delete from tb_device 
+        <where>
+            <if test="deviceId != null and deviceId != ''">
+                device_id = #{deviceId}
+            </if>
+        </where>    
+  </delete>
+
+</mapper>
