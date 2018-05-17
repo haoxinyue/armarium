@@ -428,3 +428,178 @@ COMMENT ON COLUMN public.tb_device_accessory.paper_file_content
 
 
 
+
+
+
+
+
+
+
+CREATE TABLE public.tb_role
+(
+    role_id serial NOT NULL,
+    role_name character varying(50),
+
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    modify_time timestamp without time zone NOT NULL,
+    modifier integer NOT NULL,
+
+
+    PRIMARY KEY (role_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_role
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_role
+    IS '角色表';
+
+COMMENT ON COLUMN public.tb_role.role_name
+    IS '角色名称';
+
+
+
+CREATE TABLE public.tr_user_role
+(
+    rel_id serial NOT NULL,
+    user_id integer NOT NULL,
+    role_id integer NOT NULL,
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    PRIMARY KEY (rel_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tr_user_role
+    OWNER to armarium;
+COMMENT ON TABLE public.tr_user_role
+    IS '用户角色关系表';
+
+
+
+
+
+CREATE TABLE public.tb_mt_case_history
+(
+    his_id serial NOT NULL,
+    case_id integer NOT NULL,
+    case_state smallint NOT NULL,
+    his_remark character varying(500),
+    assignee_user_id integer,
+    
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+
+    PRIMARY KEY (his_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_mt_case_history
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_mt_case_history
+    IS '维修工单表';
+
+COMMENT ON COLUMN public.tb_mt_case_history.case_id
+    IS '工单ID';
+
+COMMENT ON COLUMN public.tb_mt_case_history.his_remark
+    IS '历史备注';
+COMMENT ON COLUMN public.tb_mt_case_history.assignee_user_id
+    IS '当前指派人用户ID';
+COMMENT ON COLUMN public.tb_mt_case_history.case_state
+    IS '见维修工单表的case state';
+
+
+CREATE TABLE public.tb_mt_case
+(
+    case_id serial NOT NULL,
+    case_subject character varying(50),
+    case_remark character varying(500),
+    case_state smallint NOT NULL,
+    reporter_weixin character varying(50),
+    reporter_user_id integer,
+    assignee_user_id integer,
+    device_id integer NOT NULL,
+    response_interval integer,
+    solve_interval integer,
+    feedback_score smallint, 
+    feedback_content character varying(500),
+    cost integer,  
+    case_file_path character varying(100),
+
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    modify_time timestamp without time zone NOT NULL,
+    modifier integer NOT NULL,
+
+    PRIMARY KEY (case_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_mt_case
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_mt_case
+    IS '维修工单表';
+
+COMMENT ON COLUMN public.tb_mt_case.case_id
+    IS '工单ID';
+
+COMMENT ON COLUMN public.tb_mt_case.case_subject
+    IS '工单主题';
+
+COMMENT ON COLUMN public.tb_mt_case.case_remark
+    IS '工单描述';
+COMMENT ON COLUMN public.tb_mt_case.case_state
+    IS '工单状态：10，报修中，20，已取消，30，维修中，50，已关闭';
+
+COMMENT ON COLUMN public.tb_mt_case.reporter_weixin
+    IS '创建工单用户微信';
+
+COMMENT ON COLUMN public.tb_mt_case.reporter_user_id
+    IS '创建工单用户ID';
+
+COMMENT ON COLUMN public.tb_mt_case.assignee_user_id
+    IS '当前指派人用户ID';
+
+COMMENT ON COLUMN public.tb_mt_case.device_id
+    IS '设备ID';
+
+COMMENT ON COLUMN public.tb_mt_case.response_interval
+    IS '响应时长，单位分钟';
+
+COMMENT ON COLUMN public.tb_mt_case.solve_interval
+    IS '处理时长，单位分钟';
+
+COMMENT ON COLUMN public.tb_mt_case.feedback_score
+    IS '反馈打分，1-5分';
+
+COMMENT ON COLUMN public.tb_mt_case.feedback_content
+    IS '反馈内容';
+
+COMMENT ON COLUMN public.tb_mt_case.cost
+    IS '工单成本，单位，分';
+
+COMMENT ON COLUMN public.tb_mt_case.case_file_path
+    IS '工单上传的地址';
+
+
+
+
+
+
+
+
+
