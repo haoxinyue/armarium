@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabo.medical.mapper.DepartmentMapper">  
+    <resultMap type="com.jiabo.medical.entity.Department" id="deptMap">
+        <!-- 用id属性来映射主键字段 -->
+        <id property="deptId" column="dept_id" javaType="java.lang.Integer"/>
+        <!-- 用result属性来映射非主键字段 -->
+        <result property="deptName" column="dept_name"/>
+        <result property="deptOwner" column="dept_owner"/>
+        <result property="parentDeptId" column="parent_id"/>
+        <result property="hospitalId" column="hospital_id"/>
+        <result property="hospital" column="hospital_name"/>
+        <result property="deptPath" column="dept_path"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    
+  
+  <select id="getDeptTree" parameterType="java.lang.Integer" resultMap="deptMap">
+    select td.dept_id,td.dept_name,td.dept_owner,td.parent_id,td.hospital_id,th.hospital_name,td.dept_path, td.remark  
+        from tb_department as td
+            inner join tr_user_hospital as tuh
+                on td.hospital_id = tuh.hospital_id
+            inner join tb_hospital as th
+                on td.hospital_id = th.hospital_id
+        where  tuh.user_id = #{userId,jdbcType=INTEGER} 
+            order by td.parent_id, td.dept_name
+  </select>
+  
+  <select id="getDeptInfo" parameterType="com.jiabo.medical.entity.Department" resultMap="deptMap">
+        select td.dept_id,td.dept_name,td.dept_owner,td.parent_id,td.hospital_id,th.hospital_name,td.dept_path, td.remark  
+        from tb_department as td
+            inner join tb_hospital as th
+                on td.hospital_id = th.hospital_id
+        <where>
+            <if test="deptId != null and deptId != ''">
+                td.dept_id = #{deptId}
+            </if>
+            <if test="deptName != null and deptName != ''">
+                and td.dept_name = #{deptName}
+            </if>
+            <if test="deptOwner != null and deptOwner != ''">
+                and td.dept_owner = #{deptOwner}
+            </if>
+            <if test="parentDeptId != null and parentDeptId != ''">
+                and td.parent_id = #{parentDeptId}
+            </if>
+            
+            <if test="hospitalId != null and hospitalId != ''">
+                and td.hospital_id = #{hospitalId}
+            </if>
+            
+            <if test="deptPath != null and deptPath != ''">
+                and td.dept_path = #{deptPath}
+            </if>
+        </where>    
+  </select>
+  
+  <insert id="addDeptInfo" parameterType="com.jiabo.medical.entity.Department">  
+    insert into tb_department
+        (
+            dept_name,
+            dept_owner, 
+            dept_path, 
+            parent_id, 
+            hospital_id, 
+            remark, 
+            create_time, 
+            creater, 
+            modify_time, 
+            modifier
+        )
+        values  
+        (
+             #{deptName,jdbcType=VARCHAR}, 
+             #{deptOwner,jdbcType=VARCHAR},
+             #{deptPath,jdbcType=VARCHAR},
+             #{parentDeptId,jdbcType=INTEGER},
+             #{hospitalId,jdbcType=INTEGER},
+             #{remark,jdbcType=VARCHAR},
+             #{createTime,jdbcType=TIMESTAMP},
+             #{creater,jdbcType=INTEGER},
+             #{modifyTime,jdbcType=TIMESTAMP},
+             #{modifier,jdbcType=INTEGER}
+         )
+             
+  </insert>
+  
+  <select id="getSequenceNo" resultType="java.lang.Integer" >
+     SELECT last_value from tb_department_dept_id_seq
+  </select>
+  
+  <update id="updDeptInfo" parameterType="com.jiabo.medical.entity.Department">
+    update tb_department 
+        <set>
+            <if test="deptName != null and deptName != ''">
+                dept_name = #{deptName},
+            </if>
+            <if test="deptOwner != null and deptOwner != ''">
+                dept_owner = #{deptOwner},
+            </if>
+            <if test="deptPath != null and deptPath != ''">
+                dept_path = #{deptPath},
+            </if>
+            <if test="parentDeptId != null and parentDeptId != ''">
+                parent_id = #{parentDeptId},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+	           modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+	           modifier = #{modifier}
+        </set>
+           
+        where dept_id = #{deptId,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="delDeptInfo" parameterType="java.lang.Integer">  
+    delete from tb_department where dept_id = #{deptId,jdbcType=INTEGER}  
+  </delete>
+
+</mapper>

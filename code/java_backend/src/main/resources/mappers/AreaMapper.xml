@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabo.medical.mapper.AreaMapper">  
+    <resultMap type="com.jiabo.medical.entity.Area" id="areaMap">
+        <!-- 用id属性来映射主键字段 -->
+        <id property="areaId" column="area_id" javaType="java.lang.Integer"/>
+        <!-- 用result属性来映射非主键字段 -->
+        <result property="areaName" column="area_name"/>
+        <result property="areaType" column="area_type"/>
+        <result property="areaDepth" column="area_depth"/>
+        <result property="areaPath" column="area_path"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="adminCode" column="admin_code"/>
+        <result property="weatherCode" column="weather_code"/>
+        <result property="zipCode" column="zipcode"/>
+        <result property="countryCode" column="country_code"/>
+        <result property="districtCode" column="district_code"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+    
+  
+  <select id="getAreaInfo"  resultMap="areaMap">
+    select area_id,area_name,area_type,area_depth,area_path,parent_id,admin_code, 
+        weather_code, zipcode,country_code,district_code
+        from tb_area 
+        order by parent_id, area_id
+  </select>
+
+</mapper>
