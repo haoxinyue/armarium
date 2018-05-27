@@ -1,12 +1,16 @@
 import mockjs from 'mockjs';
 import { getRule, postRule } from './mock/rule';
-import { getDevice, postDevice } from './mock/device';
+
 import { getActivities, getNotice, getFakeList } from './mock/api';
 import { getFakeChartData } from './mock/chart';
 import { getProfileBasicData } from './mock/profile';
 import { getProfileAdvancedData } from './mock/profile';
 import { getNotices } from './mock/notices';
 import { format, delay } from 'roadhog-api-doc';
+
+import { getDevice, postDevice } from './mock/device';
+import { getUsers, postUser } from './mock/users';
+
 
 // 是否禁用代理
 const noProxy = process.env.NO_PROXY === 'true';
@@ -59,6 +63,7 @@ const proxy = {
   'GET /api/activities': getActivities,
   'GET /api/rule': getRule,
   'GET /api/device': getDevice,
+  'GET /api/userlist': getUsers,
   'POST /api/rule': {
     $params: {
       pageSize: {
@@ -67,6 +72,15 @@ const proxy = {
       },
     },
     $body: postRule,
+  },
+  'POST /api/userlist': {
+    $params: {
+      pageSize: {
+        desc: '分页',
+        exp: 2,
+      },
+    },
+    $body: postUser,
   },
   'POST /api/device': {
     $params: {

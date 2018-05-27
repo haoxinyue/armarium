@@ -1,6 +1,59 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
+
+export async function queryDevice(params) {
+  return request(`/api/device?${stringify(params)}`);
+}
+
+export async function removeDevice(params) {
+  return request('/api/device', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'delete',
+    },
+  });
+}
+
+export async function addDevice(params) {
+  return request('/api/device', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'post',
+    },
+  });
+}
+
+export async function queryUsers(params) {
+  return request(`/api/userlist?${stringify(params)}`);
+}
+
+export async function removeUser(params) {
+  return request('/api/userlist', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'delete',
+    },
+  });
+}
+
+export async function addUser(params) {
+  return request('/api/userlist', {
+    method: 'POST',
+    body: {
+      ...params,
+      method: 'post',
+    },
+  });
+}
+
+
+/* =============================================================== */
+
+
 export async function queryProjectNotice() {
   return request('/api/project/notice');
 }
@@ -32,33 +85,6 @@ export async function addRule(params) {
     },
   });
 }
-
-
-export async function queryDevice(params) {
-  return request(`/api/device?${stringify(params)}`);
-}
-
-export async function removeDevice(params) {
-  return request('/api/device', {
-    method: 'POST',
-    body: {
-      ...params,
-      method: 'delete',
-    },
-  });
-}
-
-export async function addDevice(params) {
-  return request('/api/device', {
-    method: 'POST',
-    body: {
-      ...params,
-      method: 'post',
-    },
-  });
-}
-
-
 
 export async function fakeSubmitForm(params) {
   return request('/api/forms', {

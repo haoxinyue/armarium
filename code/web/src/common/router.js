@@ -75,6 +75,15 @@ export const getRouterData = app => {
     '/dashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
     },
+
+    '/device/device-list':{
+      component: dynamicWrapper(app, ['device'], () => import('../routes/Device/DeviceList')),
+    },
+
+     '/users/user-list':{
+      component: dynamicWrapper(app, ['userlist'], () => import('../routes/User/UserList')),
+    },
+
     '/dashboard/monitor': {
       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Dashboard/Monitor')),
     },
@@ -108,9 +117,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
     },
 
-    '/device/device-list':{
-      component: dynamicWrapper(app, ['device'], () => import('../routes/Device/DeviceList')),
-    },
+
 
     '/list/table-list': {
       component: dynamicWrapper(app, ['rule'], () => import('../routes/List/TableList')),

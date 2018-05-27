@@ -30,10 +30,6 @@ const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
-const statusMap = ['','1', '2'];
-const status = ['','正常', '故障'];
-const usageStatusMap = ['0','1'];
-const usageStatus = ['停用','使用'];
 
 const CreateForm = Form.create()(props => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
@@ -51,87 +47,43 @@ const CreateForm = Form.create()(props => {
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备编号">
-        {form.getFieldDecorator('DeviceCode', {
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="登录名">
+        {form.getFieldDecorator('LoginName', {
           rules: [{ required: true, message: '请输入设备编号...' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="名称">
-        {form.getFieldDecorator('DeviceName', {
-          rules: [{ required: true, message: '请输入设备名称...' }],
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="密码">
+        {form.getFieldDecorator('LoginPassword', {
+          rules: [{ required: true, message: '请输入密码...' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="编号">
-        {form.getFieldDecorator('AssetNo', {
-          rules: [{ required: true, message: '请输入资产编号...' }],
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="手机号">
+        {form.getFieldDecorator('Mobile', {
+          rules: [{ required: true, message: '请输入手机号...' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="型号">
-        {form.getFieldDecorator('DeviceModel', {
-          rules: [{ required: true, message: '请输入设备型号...' }],
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="电子邮箱">
+        {form.getFieldDecorator('Email', {
+          rules: [{ required: true, message: '请输入电子邮箱...' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="描述">
-        {form.getFieldDecorator('DeviceDesc', {
-          rules: [{ required: true, message: '请输入设备描述...' }],
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="显示名称">
+        {form.getFieldDecorator('DisplayName', {
+          rules: [{ required: true, message: '请输入显示名称...' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="序列号">
-        {form.getFieldDecorator('SerialNumber', {
-          rules: [{ required: true, message: '请输入设备序列号...' }],
-        })(<Input placeholder="请输入" />)}
-      </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="二维码号">
-        {form.getFieldDecorator('QRCode', {
-          rules: [{ required: true, message: '请输入设备二维码号...' }],
-        })(<Input placeholder="请输入" />)}
-      </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="厂商">
-        {form.getFieldDecorator('Manufacturer', {
-          rules: [{ required: true, message: '请输入设备厂商...' }],
-        })(<Input placeholder="请输入" />)}
-      </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="产地">
-        {form.getFieldDecorator('ProducingPlace', {
-          rules: [{ required: true, message: '请输入设备产地...' }],
-        })(<Input placeholder="请输入" />)}
-      </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备状态">
-        {form.getFieldDecorator('DeviceState', {
-          rules: [{ required: true, message: '请输入设置状态...' }],
-        })(<Select placeholder="请选择"  initialValue="1">
-          <Option value="1">正常</Option>
-          <Option value="2">故障</Option>
-        </Select>)}
-      </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="使用状态">
-        {form.getFieldDecorator('DeviceState', {
-          rules: [{ required: true, message: '请输入设置状态...' }],
-        })(<Select placeholder="请选择"  initialValue="1">
-          <Option value="1">使用</Option>
-          <Option value="0">停用</Option>
-        </Select>)}
-      </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备类型">
-        {form.getFieldDecorator('DeviceState', {
-          rules: [{ required: true, message: '请输入设置状态...' }],
-        })(<Select placeholder="请选择"  initialValue="1">
-          <Option value="1">B超</Option>
-          <Option value="2">眼检仪</Option>
-          <Option value="0">其他</Option>
-        </Select>)}
-      </FormItem>
+
 
     </Modal>
   );
 });
 
-@connect(({ device, loading }) => ({
-  device,
-  loading: loading.models.device,
+@connect(({ userlist, loading }) => ({
+  userlist,
+  loading: loading.models.userlist,
 }))
 @Form.create()
-export default class DeviceList extends PureComponent {
+export default class UserList extends PureComponent {
   state = {
     modalVisible: false,
     expandForm: false,
@@ -142,7 +94,7 @@ export default class DeviceList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'device/fetch',
+      type: 'userlist/fetch',
     });
   }
 
@@ -167,7 +119,7 @@ export default class DeviceList extends PureComponent {
     }
 
     dispatch({
-      type: 'device/fetch',
+      type: 'userlist/fetch',
       payload: params,
     });
   };
@@ -179,7 +131,7 @@ export default class DeviceList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'device/fetch',
+      type: 'userlist/fetch',
       payload: {},
     });
   };
@@ -199,7 +151,7 @@ export default class DeviceList extends PureComponent {
     switch (e.key) {
       case 'remove':
         dispatch({
-          type: 'device/remove',
+          type: 'userlist/remove',
           payload: {
             no: selectedRows.map(row => row.no).join(','),
           },
@@ -238,7 +190,7 @@ export default class DeviceList extends PureComponent {
       });
 
       dispatch({
-        type: 'device/fetch',
+        type: 'userlist/fetch',
         payload: values,
       });
     });
@@ -252,7 +204,7 @@ export default class DeviceList extends PureComponent {
 
   handleAdd = fields => {
     this.props.dispatch({
-      type: 'device/add',
+      type: 'userlist/add',
       payload: {
         description: fields.desc,
       },
@@ -270,25 +222,11 @@ export default class DeviceList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="设备编号">
-              {getFieldDecorator('DeviceCode')(<Input placeholder="请输入" />)}
+            <FormItem label="用户名称">
+              {getFieldDecorator('DisplayName')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="设备名称">
-              {getFieldDecorator('DeviceName')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          {/*<Col md={8} sm={24}>
-            <FormItem label="设备状态">
-              {getFieldDecorator('DeviceState')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="1">{status[1]}</Option>
-                  <Option value="2">{status[2]}</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>*/}
+
           <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">
@@ -297,9 +235,7 @@ export default class DeviceList extends PureComponent {
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
-              {/*<a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                展开 <Icon type="down" />
-              </a>*/}
+
             </span>
           </Col>
         </Row>
@@ -307,143 +243,32 @@ export default class DeviceList extends PureComponent {
     );
   }
 
-  renderAdvancedForm() {
-    const { getFieldDecorator } = this.props.form;
-    return (
-      <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="规则编号">
-              {getFieldDecorator('no')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="调用次数">
-              {getFieldDecorator('number')(<InputNumber style={{ width: '100%' }} />)}
-            </FormItem>
-          </Col>
-        </Row>
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="更新日期">
-              {getFieldDecorator('date')(
-                <DatePicker style={{ width: '100%' }} placeholder="请输入更新日期" />
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status3')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="1">关闭</Option>
-                  <Option value="2">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="使用状态">
-              {getFieldDecorator('status4')(
-                <Select placeholder="请选择" style={{ width: '100%' }}>
-                  <Option value="0">关闭</Option>
-                  <Option value="1">运行中</Option>
-                </Select>
-              )}
-            </FormItem>
-          </Col>
-        </Row>
-        <div style={{ overflow: 'hidden' }}>
-          <span style={{ float: 'right', marginBottom: 24 }}>
-            <Button type="primary" htmlType="submit">
-              查询
-            </Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
-              重置
-            </Button>
-            <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-              收起 <Icon type="up" />
-            </a>
-          </span>
-        </div>
-      </Form>
-    );
-  }
 
   renderForm() {
-    // return this.state.expandForm ? this.renderAdvancedForm() : this.renderSimpleForm();
     return this.renderSimpleForm();
   }
 
   render() {
-    const { device: { data }, loading } = this.props;
+    const { userlist: { data }, loading } = this.props;
     const { selectedRows, modalVisible } = this.state;
 
     const columns = [
       {
-        title: '设备ID',
-        dataIndex: 'DeviceId',
+        title: '登录名',
+        dataIndex: 'LoginName',
       },
       {
-        title: '设备编号',
-        dataIndex: 'DeviceCode',
+        title: '显示名',
+        dataIndex: 'DisplayName',
       },
       {
-        title: '设备名称',
-        dataIndex: 'DeviceName',
+        title: '手机号',
+        dataIndex: 'Mobile',
       },
       {
-        title: '设备状态',
-        dataIndex: 'DeviceState',
-        filters: [
-          {
-            text: status[1],
-            value: '1',
-          },
-          {
-            text: status[2],
-            value: '2',
-
-          }
-        ],
-        onFilter: (value, record) => record.DeviceState === value,
-        render(val) {
-          return <Badge status={statusMap[val]} text={status[val]} />;
-        },
+        title: '电子邮箱',
+        dataIndex: 'Email',
       },
-      {
-        title: '使用状态',
-        dataIndex: 'UsageState',
-        filters: [
-          {
-            text: usageStatus[0],
-            value: '0',
-          },
-          {
-            text: usageStatus[1],
-            value: '1',
-          }
-        ],
-        onFilter: (value, record) => record.UsageState.toString() === value,
-        render(val) {
-          return <Badge status={usageStatusMap[val]} text={usageStatus[val]} />;
-        },
-      },
-      // {
-      //   title: '更新时间',
-      //   dataIndex: 'updatedAt',
-      //   sorter: true,
-      //   render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-      // },
       {
         title: '操作',
         render: (val) => (
@@ -457,7 +282,6 @@ export default class DeviceList extends PureComponent {
     const menu = (
       <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
         <Menu.Item key="remove">删除</Menu.Item>
-        // <Menu.Item key="approval">批量审批</Menu.Item>
       </Menu>
     );
 

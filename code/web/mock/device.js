@@ -110,12 +110,12 @@ export function postDevice(req, res, u, b) {
   }
 
   const body = (b && b.body) || req.body;
-  const {method, no, description} = body;
+  const {method, DeviceId, description} = body;
 
   switch (method) {
     /* eslint no-case-declarations:0 */
     case 'delete':
-      tableListDataSource = tableListDataSource.filter(item => no.indexOf(item.no) === -1);
+      tableListDataSource = tableListDataSource.filter(item => DeviceId !==(item.DeviceId));
       break;
     case 'post':
       const i = Math.ceil(Math.random() * 10000);

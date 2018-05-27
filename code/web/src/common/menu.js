@@ -1,6 +1,6 @@
 import { isUrl } from '../utils/utils';
 
-const menuData1 = [
+const menuData = [
   {
     name: '工作台',
     icon: 'dashboard',
@@ -26,7 +26,7 @@ const menuData1 = [
   {
     name: '用户',
     icon: 'team',
-    path: 'user',
+    path: 'users',
     children: [
       {
         name: '用户列表',
@@ -51,12 +51,12 @@ const menuData1 = [
         name: '采购列表',
         path: 'purchase-list',
       }
-      
+
     ]
   }
 ]
 
-const menuData = [
+const menuData1 = [
   {
     name: 'dashboard',
     icon: 'dashboard',
