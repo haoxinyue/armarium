@@ -20,6 +20,16 @@ const menuData = [
       {
         name: '设备列表',
         path: 'device-list',
+      },
+      {
+        name: '设备详情',
+        path: 'device-detail',
+        authority:"invisible"
+      },
+      {
+        name: '设备编辑',
+        path: 'device-edit',
+        authority:"invisible"
       }
     ]
   },
@@ -33,9 +43,19 @@ const menuData = [
         path: 'user-list',
       }
     ]
+  },{
+    name: '部门信息',
+    icon: 'team',
+    path: 'department',
+    children: [
+      {
+        name: '部门树',
+        path: 'department-tree',
+      }
+    ]
   },
   {
-    name: '部门信息',
+    name: '列表信息',
     icon: 'table',
     path: 'list',
     children: [

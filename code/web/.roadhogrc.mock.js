@@ -21,7 +21,6 @@ const remoteProxy ={
 
 // 代码中会兼容本地 service mock 以及部署站点的静态数据
 const proxy = {
-  'GET /test/*': 'http://www.sougou.com/',
   // 支持值为 Object 和 Array
   'GET /api/currentUser': {
     $desc: '获取当前用户接口',
@@ -82,7 +81,7 @@ const proxy = {
     },
     $body: postUser,
   },
-  'POST /api/device': {
+  'POST /api/equip/getDeviceList': {
     $params: {
       pageSize: {
         desc: '分页',
@@ -90,6 +89,32 @@ const proxy = {
       },
     },
     $body: postDevice,
+  },
+  'POST /api/equip/getDevice': (req, res)=>{
+    res.send({
+      deviceId: 1,
+      deviceCode: "code_" + 1,
+      deviceName: "设备" + 1,
+      hospitalId: 1,
+      departmentId: 2,
+      assetNo: "an_" + 1,
+      deviceModel: "设备型号xxx",
+      deviceDesc: "设备描述xxx",
+      deviceState: Math.random() > 0.5 ? 1 : 2,
+      deviceType: Math.floor(Math.random() * 10) % 3,
+      serialNumber: "序列号xxx",
+      usageState: Math.random() > 0.5 ? 1 : 0,
+      qRCode: "qr_" + 1,
+      manufacturer: "设备厂1",
+      producingPlace: "无锡",
+
+
+      picture1: "http://img002.hc360.cn/m1/M02/AE/CD/wKhQb1RDGDmEPkttAAAAABsXxns014.jpg",
+      picture2: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
+      picture3: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
+      picture4: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
+      picture5: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
+    })
   },
   'POST /api/forms': (req, res) => {
     res.send({ message: 'Ok' });

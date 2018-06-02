@@ -20,34 +20,19 @@ for (let i = 0; i < 46; i += 1) {
     // updatedAt: new Date(`2017-07-${Math.floor(i / 2) + 1}`),
     // createdAt: new Date(`2017-07-${Math.floor(i / 2) + 1}`),
     // progress: Math.ceil(Math.random() * 100),
-    deviceId: i,
-    deviceCode: "code_" + i,
-    deviceName: "设备" + i,
-    hospitalId: 1,
-    departmentId: 2,
-    assetNo: "an_" + i,
-    deviceModel: "设备型号xxx",
-    deviceDesc: "设备描述xxx",
-    deviceState: Math.random() > 0.5 ? 1 : 2,
-    deviceType: Math.floor(Math.random() * 10) % 3,
-    serialNumber: "序列号xxx",
-    usageState: Math.random() > 0.5 ? 1 : 0,
-    qRCode: "qr_" + i,
-    manufacturer: "设备厂1",
-    producingPlace: "无锡",
-
-
-    picture1: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
-    picture2: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
-    picture3: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
-    picture4: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
-    picture5: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
+    UserId:i,
+    LoginName:"user_"+i,
+    //LoginPassword:"123",
+    Mobile:"1380000000"+i,
+    Email:"test_"+i+"@163.com",
+    DisplayName:"nick_"+i,
+    CreateTime:""
 
 
   });
 }
 
-export function getDevice(req, res, u) {
+export function getUsers(req, res, u) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
@@ -103,19 +88,19 @@ export function getDevice(req, res, u) {
   }
 }
 
-export function postDevice(req, res, u, b) {
+export function postUser(req, res, u, b) {
   let url = u;
   if (!url || Object.prototype.toString.call(url) !== '[object String]') {
     url = req.url; // eslint-disable-line
   }
 
   const body = (b && b.body) || req.body;
-  const {method, DeviceId, description} = body;
+  const {method, UserId} = body;
 
   switch (method) {
     /* eslint no-case-declarations:0 */
     case 'delete':
-      tableListDataSource = tableListDataSource.filter(item => DeviceId !==(item.DeviceId));
+      tableListDataSource = tableListDataSource.filter(item => UserId !== item.UserId);
       break;
     case 'post':
       const i = Math.ceil(Math.random() * 10000);
@@ -136,28 +121,13 @@ export function postDevice(req, res, u, b) {
           //   createdAt: new Date(),
           //   progress: Math.ceil(Math.random() * 100),
           // }
-          DeviceId: i,
-          DeviceCode: "code_" + i,
-          DeviceName: "设备" + i,
-          HospitalId: 1,
-          DepartmentId: 2,
-          AssetNo: "an_" + i,
-          DeviceModel: "设备型号xxx",
-          DeviceDesc: "设备描述xxx",
-          DeviceState: Math.random() > 0.5 ? 1 : 2,
-          DeviceType: Math.floor(Math.random() * 10) % 3,
-          SerialNumber: "序列号xxx",
-          UsageState: Math.random() > 0.5 ? 1 : 0,
-          QRCode: "qr_" + i,
-          Manufacturer: "设备厂1",
-          ProducingPlace: "无锡",
-
-
-          Picture1: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
-          Picture2: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
-          Picture3: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
-          Picture4: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
-          Picture5: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
+        UserId:i,
+        LoginName:"user_"+i,
+        //LoginPassword:"123",
+        Mobile:"1380000000"+i,
+        Email:"test_"+i+"@163.com",
+        DisplayName:"nick_"+i,
+        CreateTime:""
 
 
         }
@@ -168,9 +138,10 @@ export function postDevice(req, res, u, b) {
   }
 
   const result = {
-    code:0,
-    data: tableListDataSource,
-    recordCount:tableListDataSource.length,
+    list: tableListDataSource,
+    pagination: {
+      total: tableListDataSource.length,
+    },
   };
 
   if (res && res.json) {
@@ -181,6 +152,6 @@ export function postDevice(req, res, u, b) {
 }
 
 export default {
-  getDevice,
-  postDevice,
+  getUsers,
+  postUser,
 };

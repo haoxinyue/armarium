@@ -79,10 +79,37 @@ export const getRouterData = app => {
     '/device/device-list':{
       component: dynamicWrapper(app, ['device'], () => import('../routes/Device/DeviceList')),
     },
+    '/device/device-detail/:deviceId':{
+      component: dynamicWrapper(app, ['device'], () => import('../routes/Device/DeviceDetail')),
+    },
+    '/device/device-edit/:deviceId':{
+      component: dynamicWrapper(app, ['device'], () => import('../routes/Device/DeviceEdit')),
+    },
+    '/device/device-add/':{
+      component: dynamicWrapper(app, ['device'], () => import('../routes/Device/DeviceEdit')),
+    },
 
      '/users/user-list':{
       component: dynamicWrapper(app, ['userlist'], () => import('../routes/User/UserList')),
     },
+
+     '/users/user-detail/:userId':{
+      component: dynamicWrapper(app, ['userlist'], () => import('../routes/User/UserDetail')),
+    },
+
+     '/users/user-edit/:userId':{
+      component: dynamicWrapper(app, ['userlist'], () => import('../routes/User/UserList')),
+    },
+
+
+     '/department/department-tree':{
+      component: dynamicWrapper(app, ['department'], () => import('../routes/Department/DepartmentTree')),
+    },
+
+
+
+
+    /* ============================================================================================ */
 
     '/dashboard/monitor': {
       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Dashboard/Monitor')),

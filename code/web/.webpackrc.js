@@ -21,4 +21,11 @@ export default {
   disableDynamicImport: true,
   publicPath: '/',
   hash: true,
+  proxy:{
+    "/API": {
+      "target": "http://47.100.198.255:8080/",
+      "changeOrigin": true,
+      "pathRewrite": { "^/API" : "" }
+    }
+  }
 };
