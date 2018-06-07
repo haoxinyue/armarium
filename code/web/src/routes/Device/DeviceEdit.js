@@ -16,7 +16,8 @@ import {
   Icon,
   Tooltip,
   Upload,
-  Modal
+  Modal,
+  message
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DepartmentSelect from '../../components/biz/DepartmentSelect'
@@ -27,8 +28,9 @@ const {Option} = Select;
 const {RangePicker} = DatePicker;
 const {TextArea} = Input;
 
-@connect(({device,loading}) => ({
+@connect(({device,hospital,loading}) => ({
   device,
+  hospital,
   submitting: loading.effects['form/submitRegularForm'],
 }))
 @Form.create()
@@ -49,7 +51,16 @@ export default class DeviceEdit extends Component {
     });
   }
 
-  handleChange = ({ fileList }) => this.setState({ fileList })
+  handleChange = ({ fileList }) =>{
+    const {setFieldsValue} = this.props.form;
+    this.setState({ fileList });
+    let files={}
+    console.log(fileList);
+    fileList.forEach((f,i)=>{
+         files['picture'+(i+1)]=f.url;
+    });
+    // setFieldsValue(files)
+  }
 
 
   handleSubmit = e => {
@@ -70,7 +81,13 @@ export default class DeviceEdit extends Component {
           type: isEditMode?'device/updateDetail':'device/add',
           payload: fData,
           callback(v){
-            dispatch(routerRedux.push(`/device/device-detail/${v.deviceId}`))
+            if(v.success){
+              message.success("保存成功")
+              dispatch(routerRedux.push(`/device/device-detail/${v.deviceId}`))
+            }else{
+              message.error("保存失败")
+            }
+
           }
         });
       }
@@ -95,12 +112,16 @@ export default class DeviceEdit extends Component {
             if(d[k]!=null){
               data[k] = d[k]
             }
+
+            if (k ==="maintenanceEndDate"){
+              data[k] = moment(data[k])
+            }
           }
           setFieldsValue(data)
         }
       })
     }else{
-      let i = 14;
+      let i = 18;
       setFieldsInitialValue({
         deviceId: i,
         deviceCode: "code_" + i,
@@ -134,22 +155,38 @@ export default class DeviceEdit extends Component {
 
   // shouldComponentUpdate(nextProps, nextState){
   //   const {dispatch,form} = this.props
-  //   const {match:{params:{deviceId}},device} = nextProps;
-  //   if(deviceId){
+  //   const {match:{params:{deviceId:preDeviceId}},device} = this.props;
+  //   const {match:{params:{deviceId}}} = nextProps;
+  //   console.log("preDeviceId "+preDeviceId)
+  //   console.log("deviceId "+deviceId)
+  //   if(deviceId && preDeviceId!=deviceId){
   //     if (device.byIds[deviceId]){
-  //       form.setFieldsValue(device.byIds[deviceId]);
+  //
+  //       setTimeout(()=>{
+  //         let values =Object.assign({}, device.byIds[deviceId] )
+  //         for(let key in values){
+  //           if (values[key] == null){
+  //             delete values[key];
+  //           }
+  //         }
+  //         form.setFieldsValue(values);
+  //       },1500)
+  //
   //       return true;
   //     }else{
-  //
+  //       return false
   //     }
   //
   //   }
-  //   return false
+  //   return true
   //
   // }
 
+
+
+
   render() {
-    const {submitting,match:{params}} = this.props;
+    const {submitting,match:{params},hospital} = this.props;
     const {getFieldDecorator, getFieldValue} = this.props.form;
 
     const formItemLayout = {
@@ -181,6 +218,9 @@ export default class DeviceEdit extends Component {
         <div className="ant-upload-text">Upload</div>
       </div>
     );
+
+
+
 
     function getDateFieldNode(fieldName, title, isRequired) {
       const dateFormat = 'YYYY/MM/DD';
@@ -217,7 +257,12 @@ export default class DeviceEdit extends Component {
           )}
         </FormItem>
       }else{
-        return <FormItem {...formItemLayout} label={(isRequired ? "*" : "") + title}>
+        let style ={}
+        if (meta&&meta.hidden){
+          style.display='none'
+        }
+
+        return <FormItem  {...formItemLayout} style={style} label={(isRequired ? "*" : "") + title}>
           {getFieldDecorator(fieldName, {
             initialValue:getFieldValue(fieldName),
             rules: [
@@ -287,16 +332,11 @@ export default class DeviceEdit extends Component {
             {getInputFieldNode("deviceCode", "设备编号", true)}
             {getInputFieldNode("deviceName", "设备名称", true)}
 
-            <FormItem {...formItemLayout} label="*所属医院">
-              {getFieldDecorator('hospitalId', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择所属医院',
-                  },
-                ],
-              })(<DepartmentSelect placeholder="请选择所属医院"/>)}
-            </FormItem>
+
+            {getSelectFieldNode("hospitalId", "所属医院", true,hospital.list.map((hid)=>{
+              let h = hospital.byIds[hid];
+              return {value:h.hospitalId,text:h.hospitalName}
+            }))}
 
             <FormItem {...formItemLayout} label="*所属部门">
               {getFieldDecorator('departmentId', {
@@ -380,6 +420,14 @@ export default class DeviceEdit extends Component {
               </Modal>
             </div>
             </FormItem>
+
+            {getInputFieldNode("deviceId",'设备编号',false,{hidden:true})}
+
+            {getInputFieldNode("picture1",'',false,{hidden:true})}
+            {getInputFieldNode("picture2",'',false,{hidden:true})}
+            {getInputFieldNode("picture3",'',false,{hidden:true})}
+            {getInputFieldNode("picture4",'',false,{hidden:true})}
+            {getInputFieldNode("picture5",'',false,{hidden:true})}
 
 
             {/* ================================== */}

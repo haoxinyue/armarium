@@ -1,4 +1,4 @@
-import { queryDevices,queryDeviceDetail, removeDevice, addDevice,updateDevice } from '../services/api';
+import { queryDevices,queryDeviceDetail, removeDevice, addDevice,updateDevice } from '../services/device';
 
 export default {
   namespace: 'device',
@@ -32,29 +32,52 @@ export default {
     },
     *add({ payload, callback }, { call, put }) {
       const response = yield call(addDevice, payload)||{};
-      yield put({
-        type: 'saveCurrent',
-        payload: response.data,
+      let  success = response.code == 0
+      if (success) {
+        yield put({
+          type: 'saveCurrent',
+          payload: response.data,
+        });
+      }
+      if (callback) callback({
+        deviceId:response.data.deviceId,
+        success,
+        message:response.message
       });
-      if (callback) callback(response.data);
     },
     *remove({ payload, callback }, { call, put }) {
-      const response = yield call(removeDevice, payload);
-      yield put({
-        type: 'removeCurrent',
-        payload: {
-          deviceId:payload.deviceId
-        },
+      const response = yield call(removeDevice, {
+        deviceId:Number(payload.deviceId)
       });
-      if (callback) callback(response);
+      let  success = response.code == 0
+      if (success){
+        yield put({
+          type: 'removeCurrent',
+          payload: {
+            deviceId:payload.deviceId
+          },
+        });
+      }
+      if (callback) callback({
+        deviceId:payload.deviceId,
+        success,
+        message:response.message
+      });
     },
     *updateDetail({ payload, callback }, { call, put }) {
       const response = yield call(updateDevice, payload);
-      yield put({
-        type: 'saveCurrent',
-        payload: response.data,
+      let  success = response.code == 0
+      if (success){
+        yield put({
+          type: 'saveCurrent',
+          payload: response.data,
+        });
+      }
+      if (callback) callback({
+        deviceId:payload.deviceId,
+        success,
+        message:response.message
       });
-      if (callback) callback(response);
     },
   },
 

@@ -5,12 +5,12 @@ const USE_FAKE= false;
 
 const IS_DEBUG = true;
 
-const httpDomain = IS_DEBUG ? "/API":"http://47.100.198.255:8080";
-const httpDomain_TEST =  "/api";
+export const httpDomain = IS_DEBUG ? "/API":"http://47.100.198.255:8080";
+export const httpDomain_TEST =  "/api";
 
 export const uploadUrl = `${httpDomain}/accessory/fileUpload`
 
-function getFormData(params) {
+export function getFormData(params) {
   let data = new FormData();
   for (let key in params){
     data.append(key,params[key])
@@ -18,55 +18,6 @@ function getFormData(params) {
   return data;
 }
 
-/* device */
-export async function queryDevices(params) {
-  // return request(`${httpDomain_TEST}/device?${stringify(params)}`);
-
-    return request(`${httpDomain}/equip/getDeviceList`,{
-      method:'POST',
-      body:getFormData(params)
-    });
-    // return request(`${httpDomain_TEST}/equip/getDeviceList`,{
-    //   method:'POST',
-    //   body:getFormData(params)
-    // });
-}
-
-export async function removeDevice(params) {
-  return request(`${httpDomain_TEST}/device`, {
-    method: 'POST',
-    body: getFormData({
-      ...params,
-      method: 'delete',
-    }),
-  });
-}
-
-export async function addDevice(params) {
-  return request(`${httpDomain}/equip/addDevice`, {
-    method: 'POST',
-    body: getFormData({
-      ...params
-    })
-  });
-}
-export async function updateDevice(params) {
-
-  return request(`${httpDomain}/equip/updDevice`, {
-    method: 'POST',
-    body: getFormData({
-      ...params
-    }),
-  });
-}
-
-export async function queryDeviceDetail(params) {
-  return request(`${httpDomain}/equip/getDevice`,{
-    method:"POST",
-    body:getFormData(params)
-  });
-
-}
 
 
 /* user */

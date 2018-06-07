@@ -31,9 +31,9 @@ const proxy = {
       },
     },
     $body: {
-      name: 'Serati Ma',
+      name: 'admin',
       avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
-      userid: '00000001',
+      userid: 100002,
       notifyCount: 12,
     },
   },
@@ -63,6 +63,20 @@ const proxy = {
   'GET /api/rule': getRule,
   'GET /api/device': getDevice,
   'GET /api/userlist': getUsers,
+  'POST /api/hospital/getHospitalList': {
+    code:0,
+    recordCount:2,
+    data:[
+      {
+        hospitalId:1000001,
+        hospitalName:"第一人民医院"
+      },{
+        hospitalId:1000002,
+        hospitalName:"第二人民医院"
+      }
+    ]
+  },
+
   'POST /api/rule': {
     $params: {
       pageSize: {

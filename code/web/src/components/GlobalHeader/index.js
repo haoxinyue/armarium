@@ -106,7 +106,7 @@ export default class GlobalHeader extends PureComponent {
               console.log('enter', value); // eslint-disable-line
             }}
           />
-          <Tooltip title="使用文档">
+          {/*<Tooltip title="使用文档">
             <a
               target="_blank"
               href="http://pro.ant.design/docs/getting-started"
@@ -115,7 +115,7 @@ export default class GlobalHeader extends PureComponent {
             >
               <Icon type="question-circle-o" />
             </a>
-          </Tooltip>
+          </Tooltip>*/}
           <NoticeIcon
             className={styles.action}
             count={currentUser.notifyCount}

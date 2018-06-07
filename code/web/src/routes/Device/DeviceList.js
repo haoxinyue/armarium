@@ -1,6 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
+import { routerRedux } from 'dva/router';
 import {
   Row,
   Col,
@@ -189,6 +190,34 @@ export default class DeviceList extends PureComponent {
     });
   };
 
+  deleteDevice(device){
+    const {dispatch} = this.props
+    Modal.confirm({
+      title: `确认`,
+      content: `确认删除 【${device.deviceName}(${device.deviceId})】?`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        dispatch({
+          type:'device/remove',
+          payload:device,
+          callback(res){
+            if(res.success){
+              message.success("删除成功")
+            }else{
+              message.error("删除失败")
+            }
+          }
+        })
+      },
+      onCancel() {
+
+      },
+    })
+
+
+  }
+
   handleMenuClick = e => {
     const { dispatch } = this.props;
     const { selectedRows } = this.state;
@@ -244,9 +273,11 @@ export default class DeviceList extends PureComponent {
   };
 
   handleModalVisible = flag => {
-    this.setState({
-      modalVisible: !!flag,
-    });
+    const {dispatch} = this.props
+    dispatch(routerRedux.push('/device/device-add'))
+    // this.setState({
+    //   modalVisible: !!flag,
+    // });
   };
 
   handleAdd = fields => {
@@ -375,6 +406,8 @@ export default class DeviceList extends PureComponent {
         render: (val) => (
           <Fragment>
             <Link to={"/device/device-detail/"+val.deviceId} >详情</Link>
+            &nbsp;
+            <a onClick={this.deleteDevice.bind(this,val)}>删除</a>
             {/*<a href="`/device/detail?id=${val.id}`" >详情</a>*/}
           </Fragment>
         ),

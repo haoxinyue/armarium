@@ -26,6 +26,8 @@ const dynamicWrapper = (app, models, component) => {
       if (!routerDataCache) {
         routerDataCache = getRouterData(app);
       }
+
+
       return createElement(component().default, {
         ...props,
         routerData: routerDataCache,
@@ -80,13 +82,13 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['device'], () => import('../routes/Device/DeviceList')),
     },
     '/device/device-detail/:deviceId':{
-      component: dynamicWrapper(app, ['device'], () => import('../routes/Device/DeviceDetail')),
+      component: dynamicWrapper(app, ['device','hospital'], () => import('../routes/Device/DeviceDetail')),
     },
     '/device/device-edit/:deviceId':{
-      component: dynamicWrapper(app, ['device'], () => import('../routes/Device/DeviceEdit')),
+      component: dynamicWrapper(app, ['device','hospital'], () => import('../routes/Device/DeviceEdit')),
     },
     '/device/device-add/':{
-      component: dynamicWrapper(app, ['device'], () => import('../routes/Device/DeviceEdit')),
+      component: dynamicWrapper(app, ['device','hospital'], () => import('../routes/Device/DeviceEdit')),
     },
 
      '/users/user-list':{
@@ -104,6 +106,13 @@ export const getRouterData = app => {
 
      '/department/department-tree':{
       component: dynamicWrapper(app, ['department'], () => import('../routes/Department/DepartmentTree')),
+    },
+
+    // '/repair/repair-list':{
+    //   component: dynamicWrapper(app, ['repair'], () => import('../routes/Repair/RepairList')),
+    // },
+    '/repair/repair-detail/:repairId':{
+      component: dynamicWrapper(app, ['repair'], () => import('../routes/Repair/RepairDetail')),
     },
 
 

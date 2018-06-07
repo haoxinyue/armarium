@@ -34,6 +34,27 @@ const menuData = [
     ]
   },
   {
+    name: '部门信息',
+    icon: 'bars',
+    path: 'department',
+    children: [
+      {
+        name: '部门树',
+        path: 'department-tree',
+      }
+    ]
+  },{
+    name: '报修信息',
+    icon: 'tool',
+    path: 'repair',
+    children: [
+      {
+        name: '报修详情',
+        path: 'repair-detail/1',
+      }
+    ]
+  },
+  {
     name: '用户',
     icon: 'team',
     path: 'users',
@@ -41,16 +62,6 @@ const menuData = [
       {
         name: '用户列表',
         path: 'user-list',
-      }
-    ]
-  },{
-    name: '部门信息',
-    icon: 'team',
-    path: 'department',
-    children: [
-      {
-        name: '部门树',
-        path: 'department-tree',
       }
     ]
   },

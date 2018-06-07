@@ -79,18 +79,31 @@ export default {
     },
     * add({payload, callback}, {call, put}) {
       const response = yield call(addDepartment, payload);
-      yield put({
-        type: 'save',
-        payload: response,
+      const success = response.code == 0
+      if (success){
+        yield put({
+          type: 'saveCurrent',
+          payload: {
+            ...response
+          }
+        });
+      }
+
+      // yield call(callback,{
+      //   success
+      // })
+
+      if (callback) callback({
+        success
       });
-      if (callback) callback();
+
     },
     * remove({payload, callback}, {call, put}) {
       const response = yield call(removeDepartment, payload);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
+      // yield put({
+      //   type: 'save',
+      //   payload: response,
+      // });
       if (callback) callback();
     },
     * update({payload, callback}, {call, put}) {

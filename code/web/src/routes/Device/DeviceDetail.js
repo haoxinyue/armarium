@@ -87,6 +87,8 @@ export default class DeviceDetail extends Component {
 
     }
 
+    let hasImage = (currentDetail.picture1||currentDetail.picture2||currentDetail.picture3||currentDetail.picture4||currentDetail.picture5)
+
     return (
       <PageHeaderLayout title="">
 
@@ -104,9 +106,12 @@ export default class DeviceDetail extends Component {
 
           <Divider style={{marginBottom: 32}}/>
           <DescriptionList size="large" title="图片" style={{marginBottom: 32}}>
-            {currentDetail.Picture1 && <img style={imgStyle} src={currentDetail.picture1}
+
+            {!hasImage && <span>暂无</span>}
+
+            {currentDetail.picture1 && <img style={imgStyle} src={currentDetail.picture1}
                                             onClick={this.showImage.bind(this, currentDetail.picture1)} alt=""/>}
-            {currentDetail.Picture2 && <img style={imgStyle} src={currentDetail.picture2}
+            {currentDetail.picture2 && <img style={imgStyle} src={currentDetail.picture2}
                                             onClick={this.showImage.bind(this, currentDetail.picture2)} alt=""/>}
             {currentDetail.picture3 && <img style={imgStyle} src={currentDetail.picture3}
                                             onClick={this.showImage.bind(this, currentDetail.picture3)} alt=""/>}
@@ -129,8 +134,8 @@ export default class DeviceDetail extends Component {
           </DescriptionList>
           <Divider style={{marginBottom: 32}}/>
           <DescriptionList size="large" title="部门信息" style={{marginBottom: 32}}>
-            <Description term="所属医院">{currentDetail.hospitalId}</Description>
-            <Description term="所属部门">{currentDetail.departmentId}</Description>
+            <Description term="所属医院">{currentDetail.hospital}</Description>
+            <Description term="所属部门">{currentDetail.department}</Description>
           </DescriptionList>
           <Divider style={{marginBottom: 32}}/>
 
