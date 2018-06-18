@@ -31,7 +31,7 @@ const getValue = obj =>
     .map(key => obj[key])
     .join(',');
 const statusMap = ['','1', '2'];
-const status = ['','正常', '故障'];
+const status = ['未知','正常', '故障'];
 const usageStatusMap = ['0','1'];
 const usageStatus = ['停用','使用'];
 
@@ -265,9 +265,17 @@ export default class DeviceList extends PureComponent {
         formValues: values,
       });
 
+      let payload ={}
+
+      for (let k in values){
+        if (values[k] !== undefined){
+          payload[k] = values[k]
+        }
+      }
+
       dispatch({
         type: 'device/fetch',
-        payload: values,
+        payload
       });
     });
   };
@@ -364,15 +372,15 @@ export default class DeviceList extends PureComponent {
         filters: [
           {
             text: status[1],
-            value: '1',
+            value: 1,
           },
           {
             text: status[2],
-            value: '2',
+            value: 2,
 
           }
         ],
-        onFilter: (value, record) => record.deviceState === value,
+        onFilter: (value, record) => record.deviceState == value,
         render(val) {
           return <Badge status={statusMap[val]} text={status[val]} />;
         },

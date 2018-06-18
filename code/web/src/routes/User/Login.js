@@ -62,8 +62,8 @@ export default class LoginPage extends Component {
           login.type === 'account' &&
           !login.submitting &&
           this.renderMessage('账户或密码错误（tangwei/111）')}
-          <UserName name="loginName" placeholder="admin/user" />
-          <Password name="password" placeholder="888888/123456" />
+          <UserName name="loginName" placeholder="tangwei/zhangsan/lisi" />
+          <Password name="password" placeholder="111" />
           {/*<Tab key="mobile" tab="手机号登录">*/}
             {/*{login.status === 'error' &&*/}
               {/*login.type === 'mobile' &&*/}

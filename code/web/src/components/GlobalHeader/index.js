@@ -3,7 +3,7 @@ import { Menu, Icon, Spin, Tag, Dropdown, Avatar, Divider, Tooltip } from 'antd'
 import moment from 'moment';
 import groupBy from 'lodash/groupBy';
 import Debounce from 'lodash-decorators/debounce';
-import { Link } from 'dva/router';
+import { Link ,routerRedux} from 'dva/router';
 import NoticeIcon from '../NoticeIcon';
 import HeaderSearch from '../HeaderSearch';
 import styles from './index.less';
@@ -55,6 +55,13 @@ export default class GlobalHeader extends PureComponent {
     event.initEvent('resize', true, false);
     window.dispatchEvent(event);
   }
+
+  onNoticeItemClick(item){
+    if (item.link){
+      this.props.dispatch(routerRedux.push(item.link));
+    }
+  }
+
   render() {
     const {
       currentUser = {},
@@ -65,15 +72,17 @@ export default class GlobalHeader extends PureComponent {
       onNoticeVisibleChange,
       onMenuClick,
       onNoticeClear,
+      notices = []
     } = this.props;
+    const defaultAvatar = "https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png";
     const menu = (
       <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-        <Menu.Item >
-          <Icon type="user" />个人中心
-        </Menu.Item>
-        <Menu.Item >
-          <Icon type="setting" />设置
-        </Menu.Item>
+        {/*<Menu.Item >*/}
+          {/*<Icon type="user" />个人中心*/}
+        {/*</Menu.Item>*/}
+        {/*<Menu.Item >*/}
+          {/*<Icon type="setting" />设置*/}
+        {/*</Menu.Item>*/}
         <Menu.Divider />
         <Menu.Item key="logout">
           <Icon type="logout" />退出登录
@@ -95,17 +104,17 @@ export default class GlobalHeader extends PureComponent {
           onClick={this.toggle}
         />
         <div className={styles.right}>
-          <HeaderSearch
+         {/* <HeaderSearch
             className={`${styles.action} ${styles.search}`}
             placeholder="搜索"
-            dataSource={[]/*['搜索提示一', '搜索提示二', '搜索提示三']*/}
+            dataSource={[]/*['搜索提示一', '搜索提示二', '搜索提示三']*!/
             onSearch={value => {
               console.log('input', value); // eslint-disable-line
             }}
             onPressEnter={value => {
               console.log('enter', value); // eslint-disable-line
             }}
-          />
+          />*/}
           {/*<Tooltip title="使用文档">
             <a
               target="_blank"
@@ -118,9 +127,11 @@ export default class GlobalHeader extends PureComponent {
           </Tooltip>*/}
           <NoticeIcon
             className={styles.action}
-            count={currentUser.notifyCount}
+            count={notices.length}
             onItemClick={(item, tabProps) => {
-              console.log(item, tabProps); // eslint-disable-line
+              //console.log(item, tabProps); // eslint-disable-line
+              this.onNoticeItemClick.bind(this)(item)
+
             }}
             onClear={onNoticeClear}
             onPopupVisibleChange={onNoticeVisibleChange}
@@ -128,29 +139,29 @@ export default class GlobalHeader extends PureComponent {
             popupAlign={{ offset: [20, -16] }}
           >
             <NoticeIcon.Tab
-              list={noticeData['通知']}
+              list={noticeData['tongzhi']}
               title="通知"
-              emptyText="你已查看所有通知"
+              emptyText="暂无新通知"
               emptyImage="https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg"
             />
             <NoticeIcon.Tab
-              list={noticeData['消息']}
+              list={noticeData['xiaoxi']}
               title="消息"
-              emptyText="您已读完所有消息"
+              emptyText="暂无新消息"
               emptyImage="https://gw.alipayobjects.com/zos/rmsportal/sAuJeJzSKbUmHfBQRzmZ.svg"
             />
             <NoticeIcon.Tab
-              list={noticeData['待办']}
+              list={noticeData['daiban']}
               title="待办"
-              emptyText="你已完成所有待办"
+              emptyText="暂无待办事项"
               emptyImage="https://gw.alipayobjects.com/zos/rmsportal/HsIsxMZiWKrNUavQUXqx.svg"
             />
           </NoticeIcon>
-          {currentUser.name ? (
+          {currentUser.displayName ? (
             <Dropdown overlay={menu}>
               <span className={`${styles.action} ${styles.account}`}>
-                <Avatar size="small" className={styles.avatar} src={currentUser.avatar} />
-                <span className={styles.name}>{currentUser.name}</span>
+                <Avatar size="small" className={styles.avatar} src={currentUser.avatar||defaultAvatar} />
+                <span className={styles.name}>{currentUser.displayName}({currentUser.roleName})</span>
               </span>
             </Dropdown>
           ) : (

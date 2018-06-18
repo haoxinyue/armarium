@@ -49,8 +49,8 @@ const menuData = [
     path: 'repair',
     children: [
       {
-        name: '报修详情',
-        path: 'repair-detail/1',
+        name: '报修列表',
+        path: 'repair-list',
       }
     ]
   },
@@ -64,7 +64,7 @@ const menuData = [
         path: 'user-list',
       }
     ]
-  },
+  }/*,
   {
     name: '列表信息',
     icon: 'table',
@@ -84,7 +84,7 @@ const menuData = [
       }
 
     ]
-  }
+  }*/
 ]
 
 const menuData1 = [

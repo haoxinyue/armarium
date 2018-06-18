@@ -99,6 +99,7 @@ export default class DeviceDetail extends Component {
 
           <DescriptionList size="large" title="基本信息" style={{marginBottom: 32}}>
             <Description term="设备ID">{currentDetail.deviceId}</Description>
+            <Description term="设备编号">{currentDetail.deviceCode}</Description>
             <Description term="设备名称">{currentDetail.deviceName}</Description>
             <Description term="设备类型">{currentDetail.deviceModel}</Description>
             <Description term="设备描述">{currentDetail.deviceDesc}</Description>

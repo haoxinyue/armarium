@@ -108,11 +108,12 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['department'], () => import('../routes/Department/DepartmentTree')),
     },
 
-    // '/repair/repair-list':{
-    //   component: dynamicWrapper(app, ['repair'], () => import('../routes/Repair/RepairList')),
-    // },
-    '/repair/repair-detail/:repairId':{
+
+    '/repair/repair-detail/:caseId':{
       component: dynamicWrapper(app, ['repair'], () => import('../routes/Repair/RepairDetail')),
+    },
+    '/repair/repair-list':{
+      component: dynamicWrapper(app, ['repair'], () => import('../routes/Repair/RepairList')),
     },
 
 

@@ -24,19 +24,24 @@ export function getFormData(params) {
 
 export async function fakeAccountLogin(params) {
 
-  return request(`${httpDomain_TEST}/login/account`,{
-    method: 'POST',
-    body: {
-      userName:params.loginName,
-      password:params.password,
-      type:'account'
-    },
-  })
+  // return request(`${httpDomain_TEST}/login/account`,{
+  //   method: 'POST',
+  //   body: {
+  //     userName:params.loginName,
+  //     password:params.password,
+  //     type:'account'
+  //   },
+  // })
 
-  /*return request(`${httpDomain}/auth/login`, {
+
+  return request(`${httpDomain}/auth/login`, {
     method: 'POST',
-    body: getFormData(params),
-  });*/
+    body: getFormData({
+      loginName:params.loginName,
+      loginPassword:params.password
+    }),
+  });
+
 }
 
 export async function queryUserDetail(params) {

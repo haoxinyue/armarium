@@ -7,7 +7,12 @@ export default {
     list: [],
     pagination: {},
     byIds:{},
-    currentDetail:null
+    selectData:{
+      list: [],
+      byIds:{},
+      pagination: {},
+    }
+
   },
 
   effects: {
@@ -79,16 +84,52 @@ export default {
         message:response.message
       });
     },
+
+
+    *fetchSelectList({ payload }, { call, put }) {
+      const response = yield call(queryDevices, payload);
+      yield put({
+        type: 'saveSelectData',
+        payload: response,
+      });
+    },
   },
 
   reducers: {
+    saveSelectData(state, action) {
+      let byIds = {},list =[];
+      if (action.payload.data){
+        action.payload.data.forEach((item)=>{
+          if (item && item.deviceId !=null){
+            byIds[item.deviceId] = item
+            if (list.indexOf(item.deviceId)===-1){
+              list.push(item.deviceId)
+            }
+          }
+        });
+      }
+
+      return {
+        ...state,
+        selectData:{
+          list,
+          pagination:{
+            total:action.payload.recordCount
+          },
+          byIds
+        }
+      };
+    },
+
     save(state, action) {
       let byIds = {},list =[];
       if (action.payload.data){
         action.payload.data.forEach((item)=>{
           if (item && item.deviceId !=null){
             byIds[item.deviceId] = item
-            list.push(item.deviceId)
+            if (list.indexOf(item.deviceId)===-1){
+              list.push(item.deviceId)
+            }
           }
         });
       }

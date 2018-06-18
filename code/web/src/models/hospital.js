@@ -64,7 +64,10 @@ export default {
         action.payload.data.forEach((item)=>{
           if (item && item.hospitalId !=null){
             byIds[item.hospitalId] = item
-            list.push(item.hospitalId)
+
+            if (list.indexOf(item.hospitalId)===-1){
+              list.push(item.hospitalId)
+            }
           }
         });
       }

@@ -108,9 +108,24 @@ class BasicLayout extends React.PureComponent {
     this.props.dispatch({
       type: 'user/fetchCurrent',
     });
+
+    this.initNoticeTimer.bind(this)()
   }
+
+  initNoticeTimer(){
+    clearInterval(this.noticeTimer)
+    this.noticeTimer = setInterval(()=>{
+      this.props. dispatch({
+        type: 'global/fetchNotices'
+      });
+    },60000)
+  }
+
   componentWillUnmount() {
     unenquireScreen(this.enquireHandler);
+
+    clearInterval(this.noticeTimer)
+
   }
   getPageTitle() {
     const { routerData, location } = this.props;
@@ -188,6 +203,7 @@ class BasicLayout extends React.PureComponent {
       routerData,
       match,
       location,
+      dispatch
     } = this.props;
     const bashRedirect = this.getBashRedirect();
     const layout = (
@@ -207,6 +223,7 @@ class BasicLayout extends React.PureComponent {
         <Layout>
           <Header style={{ padding: 0 }}>
             <GlobalHeader
+              dispatch={dispatch}
               logo={logo}
               currentUser={currentUser}
               fetchingNotices={fetchingNotices}
@@ -282,8 +299,10 @@ class BasicLayout extends React.PureComponent {
 }
 
 export default connect(({ user, global, loading }) => ({
-  currentUser: user.currentUser,
+
+  currentUser: user.currentUser||{},
   collapsed: global && global.collapsed,
   fetchingNotices: loading.effects['global/fetchNotices'],
   notices:  global && global.notices,
+
 }))(BasicLayout);

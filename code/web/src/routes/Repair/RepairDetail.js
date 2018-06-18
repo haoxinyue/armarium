@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'dva';
 import { routerRedux } from 'dva/router';
+import moment from "moment";
 import {Card, Timeline, Divider, Modal,Button} from 'antd';
 import DescriptionList from 'components/DescriptionList';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -8,103 +9,116 @@ import styles from '../Profile/BasicProfile.less';
 
 const {Description} = DescriptionList;
 
-
 @connect(({repair, loading}) => ({
   repair,
   loading: loading.effects['repair/fetchDetail'],
 }))
 export default class RepairDetail extends Component {
 
-  constructor(p) {
-    super(p)
-    this.state = {
-      imageVisible: false,
-      imageSrc: null
-    }
-  }
+
 
   componentDidMount() {
     const {dispatch,match} = this.props;
-    // dispatch({
-    //   type: 'repair/fetchDetail',
-    //   payload:{
-    //     repairId:match.params.repairId
-    //   }
-    // });
+    dispatch({
+      type: 'repair/fetchDetail',
+      payload:{
+        caseId:match.params.caseId
+      }
+    });
   }
 
 
 
   shouldComponentUpdate(nextProps, nextState){
-    const {dispatch,match:{params:{repairId}}} = this.props;
-    const {match:{params:{repairId:NextRepairId}}} = nextProps;
-    if (NextRepairId && NextRepairId!==repairId){
-      // dispatch({
-      //   type: 'repair/fetchDetail',
-      //   payload:{repairId:NextRepairId}
-      // });
+    const {dispatch,match:{params:{caseId}}} = this.props;
+    const {match:{params:{caseId:NextCaseId}}} = nextProps;
+    if (NextCaseId && NextCaseId!==caseId){
+      dispatch({
+        type: 'repair/fetchDetail',
+        payload:{caseId:NextCaseId}
+      });
       return true
     }
     return true
 
   }
 
-  showImage(image) {
-    this.setState({
-      imageVisible: true,
-      imageSrc: image
-    })
-  }
 
-  hideImage() {
-    this.setState({
-      imageVisible: false
-    })
-  }
 
 
 
   render() {
 
     const {repair, loading,match} = this.props;
-    const { repairId} = match.params;
+    const { caseId} = match.params;
+    const info = repair.byIds[caseId]||{};
+    const timeShaft = info.timeShaft||[];
 
+    function getTimeLineItem(data) {
+
+      let statusStr ="";
+      switch (data.caseState){
+        case 10:
+          statusStr ="创建报修";
+          break;
+        case 20:
+          statusStr ="取消报修";
+          break;
+        case 30:
+          statusStr ="开始维修";
+          break;
+        case 50:
+          statusStr ="关闭工单";
+          break;
+
+      }
+
+      let timeStr = moment(data.createTime).format("YYYY/MM/DD");
+
+      return <Timeline.Item>{statusStr} - {timeStr} </Timeline.Item>
+    }
+    let pending = "";
+    switch (info.caseState ){
+      case 10:
+        pending="等待分配中...";
+        break;
+      case 20:
+        pending=false;
+        break;
+      case 30:
+        pending="维修处理中...";
+        break;
+      case 50:
+        pending=false;
+        break;
+      default:
+        pending=false;
+        break;
+    }
 
     return (
       <PageHeaderLayout title="">
 
         <Card bordered={false} style={{position:"relative"}}>
-          <Timeline>
-            <Timeline.Item>创建报修 2015-09-01</Timeline.Item>
-            <Timeline.Item>初步排除异常 2015-09-01</Timeline.Item>
-            <Timeline.Item>技术测试异常 2015-09-01</Timeline.Item>
-            <Timeline.Item>异常正在修复 2015-09-01</Timeline.Item>
-            <Timeline.Item>修复完成 2015-09-02</Timeline.Item>
-          </Timeline>
-
+          <DescriptionList size="large" title="报修信息" style={{ marginBottom: 32 }}>
+            <Description term="报修人">{info.reporterWeixin||info.reporterUserId}</Description>
+            <Description term="设备名称">{info.deviceName}</Description>
+            <Description term="所属医院">{info.hospital}</Description>
+            <Description term="所属部门">{info.deptName}</Description>
+            <Description term="备注">{info.caseRemark}</Description>
+          </DescriptionList>
         </Card>
 
-        <Modal
-          title=""
-          visible={this.state.imageVisible}
-          onCancel={this.hideImage.bind(this)}
-          footer={null}
-          width={500}
-          bodyStyle={{
-            background: 'none',
-            padding: 0,
-            textAlign: 'center'
-          }}
-          style={{
-            background: 'none',
-          }}
-        >
-          <img style={
+        <Card bordered={false} style={{position:"relative"}}>
+          <DescriptionList size="large" title="进度信息" style={{ marginBottom: 32 }}>
+          </DescriptionList>
+          <Timeline pending={pending}>
             {
-              width: "80%"
+              timeShaft.map((d)=>getTimeLineItem(d))
             }
-          } src={this.state.imageSrc} onClick={this.hideImage.bind(this)} alt=""/>
-        </Modal>
+          </Timeline>
+        </Card>
+
       </PageHeaderLayout>
     );
   }

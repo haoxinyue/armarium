@@ -64,7 +64,9 @@ export default {
         action.payload.data.forEach((item)=>{
           if (item && item.accessoryId !=null){
             byIds[item.accessoryId] = item
-            list.push(item.accessoryId)
+            if (list.indexOf(item.accessoryId)===-1){
+              list.push(item.accessoryId)
+            }
           }
         });
       }

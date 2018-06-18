@@ -1,4 +1,12 @@
-import { queryHospitals,queryHospitalDetail, removeHospital, addHospital,updateHospital } from '../services/hospital';
+import {
+  queryMtCaseCount,
+  queryMtCaseDetail,
+  queryMtCaseList,
+  updateMtCase,
+  addMtCase,
+  removeMtCase,
+  queryMtCaseTimeShaft
+} from '../services/repair';
 
 export default {
   namespace: 'repair',
@@ -6,50 +14,77 @@ export default {
   state: {
     list: [],
     pagination: {},
-    byIds:{},
-    currentDetail:null
+    byIds: {},
+    currentDetail: null
   },
 
   effects: {
-    *fetch({ payload }, { call, put }) {
-      const response = yield call(queryHospitals, payload);
+    * fetchCount({payload}, {call, put}) {
+      const response = yield call(queryMtCaseCount, payload);
       yield put({
         type: 'save',
         payload: response,
       });
     },
-    *fetchDetail({ payload,callback }, { call, put }) {
-      const response = yield call(queryHospitalDetail, {
-        hospitalId:Number(payload.hospitalId)
+    * fetch({payload}, {call, put}) {
+      const response = yield call(queryMtCaseList, payload);
+      yield put({
+        type: 'save',
+        payload: response,
       });
+    },
+    * fetchDetail({payload, callback}, {call, put}) {
+      const response = yield call(queryMtCaseDetail, {
+        caseId: Number(payload.caseId)
+      });
+      const timeResponse = yield call(queryMtCaseTimeShaft, {
+        caseId: Number(payload.caseId)
+      });
+      const data = {
+        ...response.data,
+        timeShaft: (timeResponse && timeResponse.data) || []
+      };
       yield put({
         type: 'saveCurrent',
         payload: {
-          ...response.data
+          ...data
         },
       });
       if (callback) callback(response.data);
     },
-    *add({ payload, callback }, { call, put }) {
-      const response = yield call(addHospital, payload)||{};
+    * add({payload, callback}, {call, put}) {
+      const response = yield call(addMtCase, payload) || {};
       yield put({
         type: 'saveCurrent',
         payload: response.data,
       });
-      if (callback) callback(response.data);
+      if (callback) callback(response.code === 0);
     },
-    *remove({ payload, callback }, { call, put }) {
-      const response = yield call(removeHospital, payload);
+    * remove({payload, callback}, {call, put}) {
+      const response = yield call(removeMtCase, payload);
       yield put({
         type: 'removeCurrent',
         payload: {
-          hospitalId:payload.hospitalId
+          caseId: payload.caseId
         },
       });
       if (callback) callback(response);
     },
-    *updateDetail({ payload, callback }, { call, put }) {
-      const response = yield call(updateHospital, payload);
+    * changeState({payload, callback}, {call, put}) {
+      const response = yield call(updateMtCase, {
+        ...payload
+      }) || {};
+      let success = response.code === 0;
+      if (success) {
+        yield put({
+          type: 'saveCurrent',
+          payload: response.data,
+        });
+      }
+      if (callback) callback(success);
+    },
+    * updateDetail({payload, callback}, {call, put}) {
+      const response = yield call(updateMtCase, payload);
       yield put({
         type: 'saveCurrent',
         payload: response.data,
@@ -60,44 +95,46 @@ export default {
 
   reducers: {
     save(state, action) {
-      let byIds = {},list =[];
-      if (action.payload.data){
-        action.payload.data.forEach((item)=>{
-          if (item && item.hospitalId !=null){
-            byIds[item.hospitalId] = item
-            list.push(item.hospitalId)
+      let byIds = {}, list = [];
+      if (action.payload.data) {
+        action.payload.data.forEach((item) => {
+          if (item && item.caseId != null) {
+            byIds[item.caseId] = item
+            if (list.indexOf(item.caseId) === -1) {
+              list.push(item.caseId)
+            }
+
           }
         });
       }
 
-
       return {
         ...state,
         list,
-        pagination:{
-          total:action.payload.recordCount
+        pagination: {
+          total: action.payload.recordCount
         },
         byIds
       };
     },
-    saveCurrent(state,action){
-      if (!action.payload){
+    saveCurrent(state, action) {
+      if (!action.payload) {
         return {
           ...state
         }
       }
-      let byIds = Object.assign({},state.byIds);
-      byIds[action.payload.hospitalId] = action.payload
+      let byIds = Object.assign({}, state.byIds);
+      byIds[action.payload.caseId] = action.payload
 
       return {
         ...state,
         byIds
       }
     },
-    removeCurrent(state,action){
-      let id = action.hospitalId
-      let idx = state.list.indexOf(id)
-      state.list.splice(idx,1)
+    removeCurrent(state, action) {
+      let id = action.caseId;
+      let idx = state.list.indexOf(id);
+      state.list.splice(idx, 1);
       let list = state.list;
       let byIds = state.byIds;
       delete byIds[id];
@@ -110,9 +147,8 @@ export default {
     }
   },
 
-  subscriptions:{
-    setup({ dispatch }) {
-
+  subscriptions: {
+    setup({dispatch}) {
     }
   }
 };
