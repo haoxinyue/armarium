@@ -11,19 +11,41 @@ export default {
   },
 
   effects: {
-    * fetchNotices(_, {call, put}) {
+    * fetchNotices({payload}, {call, put,select}) {
       // const data = yield call(queryNotices);
 
       let data = [];
       // const user = yield select(state => state.user);
-      // const assigneeUserId = user&&user.currentUser && user.currentUser.userId;
+      const user = yield select((state) => state.user)
+      // console.log(currentUser)
+      if (!user){
+        return;
+      }
+
+      const assigneeUserId = user&&user.currentUser && user.currentUser.userId;
+      const roleName = user&&user.currentUser && user.currentUser.roleName||'调度';
+
+      let caseState = 10;
+
+      switch (roleName){
+        case '调度':
+          caseState= 10;
+          break;
+        case '驻场工程师':
+          caseState= 30;
+          break;
+        case '主管':
+          caseState= 40;
+          break;
+      }
+
       const mtCaseCount = yield call(queryMtCaseCount, {
-        assigneeUserId:10003,
+        assigneeUserId,
         // 报修中（10）：（主要是医护人员干的，当然也有可能是驻场工程师），
         // 已取消（20）：（驻场工程师使用app操作，认为这个报修是误报）
         // 维修处理中（30）：（驻场工程师使用app操作，确认这是一个问题，需要处理）
         // 已关闭（50）：（主管确认关闭，可以使用app，也可以是用web）
-        caseState: 10
+        // caseState
       });
 
       if (mtCaseCount.recordCount) {
