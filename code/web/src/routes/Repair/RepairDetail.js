@@ -49,7 +49,7 @@ export default class RepairDetail extends Component {
 
   render() {
 
-    const {repair, loading,match} = this.props;
+    const {repair,match} = this.props;
     const { caseId} = match.params;
     const info = repair.byIds[caseId]||{};
     const timeShaft = info.timeShaft||[];
@@ -67,13 +67,16 @@ export default class RepairDetail extends Component {
         case 30:
           statusStr ="开始维修";
           break;
+        case 40:
+          statusStr ="完成维修";
+          break;
         case 50:
           statusStr ="关闭工单";
           break;
 
       }
 
-      let timeStr = moment(data.createTime).format("YYYY/MM/DD");
+      let timeStr = moment(data.createTime).format("YYYY/MM/DD HH:mm:ss");
 
       return <Timeline.Item>{statusStr} - {timeStr} </Timeline.Item>
     }
@@ -87,6 +90,9 @@ export default class RepairDetail extends Component {
         break;
       case 30:
         pending="维修处理中...";
+        break;
+      case 40:
+        pending="等待关闭中...";
         break;
       case 50:
         pending=false;

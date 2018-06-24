@@ -118,7 +118,7 @@ class BasicLayout extends React.PureComponent {
       this.props. dispatch({
         type: 'global/fetchNotices'
       });
-    },60000)
+    },30000)
   }
 
   componentWillUnmount() {

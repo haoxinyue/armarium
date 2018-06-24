@@ -14,24 +14,32 @@ export default {
     *login({ payload }, { call, put }) {
       const response = yield call(fakeAccountLogin, payload);
       const success = response.code ===0;
-      yield put({
-        type: 'changeLoginStatus',
-        payload: {
-          status:success,
-          currentAuthority:success?'admin':''
-        },
-      });
-      setCurrentUser(response.data);
-      yield put({
-        type: 'user/saveCurrentUser',
-        payload: {
-          ...response.data||{}
-        },
-      });
       // Login successfully
       if (success) {
+        yield put({
+          type: 'changeLoginStatus',
+          payload: {
+            status:success,
+            currentAuthority:success?'admin':''
+          },
+        });
+        setCurrentUser(response.data);
+        yield put({
+          type: 'user/saveCurrentUser',
+          payload: {
+            ...response.data||{}
+          },
+        });
+
+        // console.log("lobal/fetchNotices")
+        yield put({
+          type: 'global/fetchNotices'
+        });
+
         reloadAuthorized();
         yield put(routerRedux.push('/'));
+
+
       }
     },
     *logout(_, { put, select }) {
