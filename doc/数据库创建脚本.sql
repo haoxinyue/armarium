@@ -599,6 +599,94 @@ COMMENT ON COLUMN public.tb_mt_case.case_file_path
 
 
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+CREATE TABLE public.tb_bad_event
+(
+    event_id serial NOT NULL,
+    event_subject character varying(50),
+    device_id integer NOT NULL,
+	event_time timestamp without time zone NOT NULL,
+	event_remark character varying(500),
+	
+	discussion_suggestion character varying(500),
+	discussion_participant character varying(100),
+	discussion_time timestamp without time zone,
+	
+	solve_result character varying(500),
+	solve_time timestamp without time zone,
+	
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    modify_time timestamp without time zone NOT NULL,
+    modifier integer NOT NULL,
+
+    PRIMARY KEY (event_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_bad_event
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_bad_event
+    IS '不良事件';
+
+COMMENT ON COLUMN public.tb_bad_event.event_id
+    IS '事件ID';
+
+COMMENT ON COLUMN public.tb_bad_event.event_subject
+    IS '事件主题';
+
+COMMENT ON COLUMN public.tb_bad_event.device_id
+    IS '设备ID';
+COMMENT ON COLUMN public.tb_bad_event.event_time
+    IS '事件发生时间 ';
+
+COMMENT ON COLUMN public.tb_bad_event.event_remark
+    IS '事件备注';
+
+COMMENT ON COLUMN public.tb_bad_event.discussion_suggestion
+    IS '讨论的建议';
+
+COMMENT ON COLUMN public.tb_bad_event.discussion_participant
+    IS '讨论的与会人员';
+
+COMMENT ON COLUMN public.tb_bad_event.discussion_time
+    IS '讨论的时间';
+
+	
+	
+	
+COMMENT ON COLUMN public.tb_bad_event.solve_result
+    IS '处理结果';
+
+COMMENT ON COLUMN public.tb_bad_event.solve_time
+    IS '处理时间';
+
+
+	
+	
+	
+	
+	
+
+
+
+
 
 
 
