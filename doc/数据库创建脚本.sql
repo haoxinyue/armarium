@@ -602,12 +602,185 @@ COMMENT ON COLUMN public.tb_mt_case.case_file_path
 	
 	
 	
+	-- Table: public.tb_device
+
+-- DROP TABLE public.tb_device;
+
+CREATE TABLE public.tb_device
+(
+    device_id serial NOT NULL,
+    device_code character varying(50),
+    device_name character varying(50),
+    hospital_id integer,
+    dept_id integer,
+    picture1 character varying(100),
+    picture2 character varying(100),
+    picture3 character varying(100),
+    picture4 character varying(100),
+    picture5 character varying(100),
+    asset_no character varying(50),
+    device_model character varying(50) NOT NULL,
+    device_desc character varying(500),
+    device_state smallint,
+    device_type integer NOT NULL,
+    serial_number character varying(100) NOT NULL,
+    usage_state smallint NOT NULL,
+    qr_code character varying(100) NOT NULL,
+    manufacturer character varying(50),
+    producing_place character varying(50),
+    setup_date timestamp without time zone,
+    accessory character varying(200),
+    accept_date timestamp without time zone,
+    accept_remark character varying(100),
+    accept_file character varying(100),
+    use_date timestamp without time zone,
+    device_owner character varying(50),
+    storage_date timestamp without time zone,
+    purchase_amount integer,
+    maintenance_end_date timestamp without time zone,
+    warranty_begin_date timestamp without time zone,
+    warranty_end_date timestamp without time zone,
+    warranty_amount integer,
+    warranty_content character varying(500),
+    sales_supplier character varying(50),
+    sales_supplier_contact character varying(50),
+    sales_supplier_phone character varying(50),
+    sales_supplier_desc character varying(500),
+    after_sale_provider character varying(50),
+    after_sale_provider_engineer character varying(50),
+    after_sale_provider_phone character varying(50),
+    after_sale_provider_desc character varying(500),
+    contract_id integer,
+	
+	setup_case_id integer,
+	
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    modify_time timestamp without time zone NOT NULL,
+    modifier integer NOT NULL,
+    CONSTRAINT tb_device_pkey PRIMARY KEY (device_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_device
+    OWNER to armarium;
+
+COMMENT ON COLUMN public.tb_device.device_code
+    IS '设备编号';
+
+COMMENT ON COLUMN public.tb_device.hospital_id
+    IS '医院ID';
+
+COMMENT ON COLUMN public.tb_device.dept_id
+    IS '部门ID';
+
+COMMENT ON COLUMN public.tb_device.asset_no
+    IS '资产编号';
+
+COMMENT ON COLUMN public.tb_device.device_model
+    IS '设备型号';
+
+COMMENT ON COLUMN public.tb_device.device_desc
+    IS '设备描述';
+
+COMMENT ON COLUMN public.tb_device.device_state
+    IS '设备状态';
+
+COMMENT ON COLUMN public.tb_device.device_type
+    IS '设备类型，关联字典表';
+
+COMMENT ON COLUMN public.tb_device.serial_number
+    IS '序列号';
+
+COMMENT ON COLUMN public.tb_device.usage_state
+    IS '使用状态：1，使用； 0，停用；2，待安装';
+
+COMMENT ON COLUMN public.tb_device.qr_code
+    IS '二维码';
+
+COMMENT ON COLUMN public.tb_device.manufacturer
+    IS '设备厂家';
+
+COMMENT ON COLUMN public.tb_device.producing_place
+    IS '产地';
+
+COMMENT ON COLUMN public.tb_device.setup_date
+    IS '安装日期';
+
+COMMENT ON COLUMN public.tb_device.accessory
+    IS '设备附件';
+
+COMMENT ON COLUMN public.tb_device.accept_date
+    IS '验收日期';
+
+COMMENT ON COLUMN public.tb_device.accept_remark
+    IS '验收评价';
+
+COMMENT ON COLUMN public.tb_device.accept_file
+    IS '验收清单文件地址';
+
+COMMENT ON COLUMN public.tb_device.use_date
+    IS '使用日期';
+
+COMMENT ON COLUMN public.tb_device.device_owner
+    IS '设备负责人';
+
+COMMENT ON COLUMN public.tb_device.storage_date
+    IS '入库日期';
+
+COMMENT ON COLUMN public.tb_device.purchase_amount
+    IS '采购金额，单位：分';
+
+COMMENT ON COLUMN public.tb_device.maintenance_end_date
+    IS '保修期结束时间';
+
+COMMENT ON COLUMN public.tb_device.warranty_begin_date
+    IS '保修合同开始时间';
+
+COMMENT ON COLUMN public.tb_device.warranty_end_date
+    IS '保修合同结束时间';
+
+COMMENT ON COLUMN public.tb_device.warranty_amount
+    IS '保修合同金额，单位：分';
+
+COMMENT ON COLUMN public.tb_device.warranty_content
+    IS '保修合同内容';
+
+COMMENT ON COLUMN public.tb_device.sales_supplier
+    IS '销售供应商名称';
+
+COMMENT ON COLUMN public.tb_device.sales_supplier_contact
+    IS '销售供应商联系人';
+
+COMMENT ON COLUMN public.tb_device.sales_supplier_phone
+    IS '销售供应商电话';
+
+COMMENT ON COLUMN public.tb_device.sales_supplier_desc
+    IS '销售供应商描述';
+
+COMMENT ON COLUMN public.tb_device.after_sale_provider
+    IS '售后服务供应商名称';
+
+COMMENT ON COLUMN public.tb_device.after_sale_provider_engineer
+    IS '售后服务供应商工程师';
+
+COMMENT ON COLUMN public.tb_device.after_sale_provider_phone
+    IS '售后服务供应商电话';
+
+COMMENT ON COLUMN public.tb_device.after_sale_provider_desc
+    IS '售后服务供应商描述';
+
+COMMENT ON COLUMN public.tb_device.contract_id
+    IS '合同ID，关联合同表';
 	
 	
+COMMENT ON COLUMN public.tb_device.setup_case_id
+    IS '安装工单ID';
 	
-	
-	
-	
+
 	
 	
 	
@@ -686,8 +859,159 @@ COMMENT ON COLUMN public.tb_bad_event.solve_time
 
 
 
+	
+	
+	
 
+	
 
+	
+	
+	
+CREATE TABLE public.tb_setup_case
+(
+    case_id serial NOT NULL,
+    case_subject character varying(50),
+    case_remark character varying(500),
+    case_state smallint NOT NULL,
+    
+	hospital_id integer NOT NULL,
+	dept_id integer,
+	
+	expected_time timestamp without time zone,
+    device_name character varying(50) NOT NULL,
+	device_type integer NOT NULL,
+	assignee_user_id integer,
+	
+	
+	setup_time timestamp without time zone,
+	setup_remark character varying(500), 
+	
 
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    modify_time timestamp without time zone NOT NULL,
+    modifier integer NOT NULL,
+	
 
+    PRIMARY KEY (case_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
 
+ALTER TABLE public.tb_setup_case
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_setup_case
+    IS '安装工单表';
+
+COMMENT ON COLUMN public.tb_setup_case.case_id
+    IS '工单ID';
+
+COMMENT ON COLUMN public.tb_setup_case.case_subject
+    IS '工单主题';
+
+COMMENT ON COLUMN public.tb_setup_case.case_remark
+    IS '工单描述';
+
+COMMENT ON COLUMN public.tb_setup_case.case_state
+    IS '工单状态：10，安装中，20，已取消，50，已关闭，';
+
+COMMENT ON COLUMN public.tb_setup_case.hospital_id
+    IS '医院ID';
+
+COMMENT ON COLUMN public.tb_setup_case.dept_id
+    IS '部门ID';
+	
+COMMENT ON COLUMN public.tb_setup_case.expected_time
+    IS '期望安装时间';
+
+COMMENT ON COLUMN public.tb_setup_case.device_name
+    IS '设备名称';
+	
+COMMENT ON COLUMN public.tb_setup_case.device_type
+    IS '设备类型，关联字典表';
+
+COMMENT ON COLUMN public.tb_setup_case.assignee_user_id
+    IS '当前指派人用户ID';
+	
+COMMENT ON COLUMN public.tb_setup_case.setup_time
+    IS '实际安装时间';
+	
+COMMENT ON COLUMN public.tb_setup_case.setup_remark
+    IS '安装备注';
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+
+	
+CREATE TABLE public.tb_device_timeline
+(
+    timeline_id serial NOT NULL,
+    device_id integer NOT NULL,
+    event_subject character varying(50),
+    event_type smallint NOT NULL,
+    event_time timestamp without time zone NOT NULL,
+	event_id integer NOT NULL, 
+
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    modify_time timestamp without time zone NOT NULL,
+    modifier integer NOT NULL,
+	
+    PRIMARY KEY (timeline_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_device_timeline
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_device_timeline
+    IS '设备时间轴表';
+
+COMMENT ON COLUMN public.tb_device_timeline.timeline_id
+    IS '时间轴ID';
+
+COMMENT ON COLUMN public.tb_device_timeline.device_id
+    IS '设备ID';
+
+COMMENT ON COLUMN public.tb_device_timeline.event_subject
+    IS '事件主题';
+COMMENT ON COLUMN public.tb_device_timeline.event_type
+    IS '事件类型：10，安装；20，盘点；30，报修；40，保养；50，巡检；60，不良事件';
+
+COMMENT ON COLUMN public.tb_device_timeline.event_time
+    IS '事件的时间，和各个详情表的时间一致';
+
+COMMENT ON COLUMN public.tb_device_timeline.event_id
+    IS '事件ID，对应各个状态详情表的ID';
+	
