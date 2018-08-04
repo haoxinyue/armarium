@@ -653,6 +653,14 @@ CREATE TABLE public.tb_device
     contract_id integer,
 	
 	setup_case_id integer,
+	need_inspection smallint DEFAULT 0,
+	inspection_interval integer,
+	next_inspection_date timestamp without time zone,
+	
+	need_metering smallint DEFAULT 0,
+	metering_interval integer,
+	next_metering_date timestamp without time zone,
+
 	
     create_time timestamp without time zone NOT NULL,
     creater integer NOT NULL,
@@ -779,11 +787,25 @@ COMMENT ON COLUMN public.tb_device.contract_id
 	
 COMMENT ON COLUMN public.tb_device.setup_case_id
     IS '安装工单ID';
+
+COMMENT ON COLUMN public.tb_device.need_inspection
+    IS '是否需要巡检；0，不需要；1，需要';
+
+COMMENT ON COLUMN public.tb_device.inspection_interval
+    IS '巡检周期：单位，天';
+COMMENT ON COLUMN public.tb_device.next_inspection_date
+    IS '下一次巡检的日期';
+	
+	
+COMMENT ON COLUMN public.tb_device.need_metering
+    IS '是否需要计量；0，不需要；1，需要';
+
+COMMENT ON COLUMN public.tb_device.metering_interval
+    IS '计量周期：单位，天';
+COMMENT ON COLUMN public.tb_device.next_metering_date
+    IS '下一次计量的日期';
 	
 
-	
-	
-	
 	
 	
 CREATE TABLE public.tb_bad_event
@@ -1015,3 +1037,320 @@ COMMENT ON COLUMN public.tb_device_timeline.event_time
 COMMENT ON COLUMN public.tb_device_timeline.event_id
     IS '事件ID，对应各个状态详情表的ID';
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+CREATE TABLE public.tb_inspection_case
+(
+    case_id serial NOT NULL,
+    case_subject character varying(50),
+    case_remark character varying(500),
+    case_state smallint NOT NULL,
+    
+    device_id  integer NOT NULL,
+	assignee_user_id integer,
+	
+	inspection_type smallint NOT NULL DEFAULT 1,
+	device_on_state smallint,
+	device_elec_evn_state smallint,
+	device_func_state smallint, 
+	device_param_input character varying(500),  
+	inspection_time timestamp without time zone,
+	inspection_remark character varying(500), 
+	
+
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    modify_time timestamp without time zone NOT NULL,
+    modifier integer NOT NULL,
+	
+
+    PRIMARY KEY (case_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_inspection_case
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_inspection_case
+    IS '巡检工单表';
+
+COMMENT ON COLUMN public.tb_inspection_case.case_id
+    IS '工单ID';
+
+COMMENT ON COLUMN public.tb_inspection_case.case_subject
+    IS '工单主题';
+
+COMMENT ON COLUMN public.tb_inspection_case.case_remark
+    IS '工单描述';
+	
+COMMENT ON COLUMN public.tb_inspection_case.inspection_type
+    IS '巡检类型：1，巡检；2，强检';
+
+COMMENT ON COLUMN public.tb_inspection_case.case_state
+    IS '工单状态：10，待巡检，20，已取消，30，巡检中，50，已关闭，';
+
+
+
+COMMENT ON COLUMN public.tb_inspection_case.device_id
+    IS '设备ID';
+	
+COMMENT ON COLUMN public.tb_inspection_case.assignee_user_id
+    IS '当前指派人用户ID';
+	
+	
+COMMENT ON COLUMN public.tb_inspection_case.device_on_state
+    IS '设备开机状态：1，正常；2，不正常';
+	
+	
+	
+COMMENT ON COLUMN public.tb_inspection_case.device_elec_evn_state
+    IS '设备电气环境状态：1，正常；2，不正常';
+	
+COMMENT ON COLUMN public.tb_inspection_case.device_func_state
+    IS '设备功能状态：1，正常；2，不正常';
+	
+COMMENT ON COLUMN public.tb_inspection_case.device_param_input
+    IS '设备参数输入';	
+	
+	
+COMMENT ON COLUMN public.tb_inspection_case.inspection_time
+    IS '巡检时间';
+	
+COMMENT ON COLUMN public.tb_inspection_case.inspection_remark
+    IS '巡检备注';
+
+	
+		
+
+
+		
+
+		
+
+		
+CREATE TABLE public.tb_metering_case
+(
+    case_id serial NOT NULL,
+    case_subject character varying(50),
+    case_remark character varying(500),
+    case_state smallint NOT NULL,
+    
+    device_id  integer NOT NULL,
+	assignee_user_id integer,
+	
+	metering_type smallint,
+	
+	metering_time timestamp without time zone,
+	metering_data character varying(500), 
+	
+
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    modify_time timestamp without time zone NOT NULL,
+    modifier integer NOT NULL,
+	
+
+    PRIMARY KEY (case_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_metering_case
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_metering_case
+    IS '计量工单表';
+
+COMMENT ON COLUMN public.tb_metering_case.case_id
+    IS '工单ID';
+
+COMMENT ON COLUMN public.tb_metering_case.case_subject
+    IS '工单主题';
+
+COMMENT ON COLUMN public.tb_metering_case.case_remark
+    IS '工单描述';
+	
+COMMENT ON COLUMN public.tb_metering_case.metering_type
+    IS '计量类型：';
+
+COMMENT ON COLUMN public.tb_metering_case.case_state
+    IS '工单状态：10，待计量，20，已取消，30，计量中，50，已关闭，';
+
+
+
+COMMENT ON COLUMN public.tb_metering_case.device_id
+    IS '设备ID';
+	
+COMMENT ON COLUMN public.tb_metering_case.assignee_user_id
+    IS '当前指派人用户ID';
+	
+
+	
+COMMENT ON COLUMN public.tb_metering_case.metering_data
+    IS '计量数据';
+
+COMMENT ON COLUMN public.tb_metering_case.metering_time
+    IS '巡检时间';
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	 
+	
+	
+CREATE TABLE public.tb_stocktaking_case
+(
+    case_id serial NOT NULL,
+    case_subject character varying(50),
+    case_remark character varying(500),
+    case_state smallint NOT NULL,
+    plan_time timestamp without time zone,
+	assignee_user_id integer,
+	actual_time timestamp without time zone, 
+	hospital_id integer NOT NULL,
+	
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    modify_time timestamp without time zone NOT NULL,
+    modifier integer NOT NULL,
+	
+    PRIMARY KEY (case_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_stocktaking_case
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_stocktaking_case
+    IS '盘点计划表';
+
+COMMENT ON COLUMN public.tb_stocktaking_case.case_id
+    IS '盘点ID';
+
+COMMENT ON COLUMN public.tb_stocktaking_case.case_subject
+    IS '盘点主题';
+
+COMMENT ON COLUMN public.tb_stocktaking_case.case_remark
+    IS '盘点描述';
+	
+
+COMMENT ON COLUMN public.tb_stocktaking_case.case_state
+    IS '盘点状态：10，待执行，20，已取消，30，执行中，50，已关闭，';
+
+	
+COMMENT ON COLUMN public.tb_stocktaking_case.assignee_user_id
+    IS '盘点当前指派人用户ID';
+	
+
+COMMENT ON COLUMN public.tb_stocktaking_case.plan_time
+    IS '盘点计划执行时间';
+	
+
+COMMENT ON COLUMN public.tb_stocktaking_case.actual_time
+    IS '盘点实际执行时间';
+	
+COMMENT ON COLUMN public.tb_stocktaking_case.hospital_id
+    IS '医院ID';
+	
+
+	
+
+	
+CREATE TABLE public.tb_stocktaking_case_plan_dept
+(
+	id serial NOT NULL,
+    case_id integer NOT NULL,
+    dept_id integer NOT NULL,
+	
+    
+    PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_stocktaking_case_plan_dept
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_stocktaking_case_plan_dept
+    IS '盘点计划科室表';
+
+COMMENT ON COLUMN public.tb_stocktaking_case_plan_dept.id
+    IS 'ID';
+
+COMMENT ON COLUMN public.tb_stocktaking_case_plan_dept.case_id
+    IS '盘点case_id，关联tb_stocktaking_case的case_id';
+	
+COMMENT ON COLUMN public.tb_stocktaking_case_plan_dept.dept_id
+    IS '科室ID';
+
+	
+	
+	
+CREATE TABLE public.tb_stocktaking_case_actual_device
+(
+	id serial NOT NULL,
+    case_id integer NOT NULL,
+    device_id integer NOT NULL,
+	operation_user_id integer NOT NULL,
+	operation_time timestamp without time zone NOT NULL, 
+    
+    PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_stocktaking_case_actual_device
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_stocktaking_case_actual_device
+    IS '盘点实际设备表';
+
+COMMENT ON COLUMN public.tb_stocktaking_case_actual_device.id
+    IS 'ID';
+
+COMMENT ON COLUMN public.tb_stocktaking_case_actual_device.case_id
+    IS '盘点case_id，关联tb_stocktaking_case的case_id';
+	
+COMMENT ON COLUMN public.tb_stocktaking_case_actual_device.device_id
+    IS '设备ID';
+	
+COMMENT ON COLUMN public.tb_stocktaking_case_actual_device.operation_user_id
+    IS '操作人ID';
+	
+COMMENT ON COLUMN public.tb_stocktaking_case_actual_device.operation_time
+    IS '操作时间';

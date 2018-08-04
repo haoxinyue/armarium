@@ -1,0 +1,17 @@
+先只做手工创建盘点计划。
+
+
+盘点建立了三张表
+tb_stocktaking_case 盘点表，
+tb_stocktaking_case_plan_dept 盘点计划科室表，
+tb_stocktaking_case_actual_device 盘点实际设备表
+
+
+用户界面上点击盘点，新建盘点，选择计划要盘点的一个医院的一些科室或者全部科室。输入盘点人，和计划盘点的时间。
+
+这时候，会在 tb_stocktaking_case  表中创建一条case，然后计划的科室会在tb_stocktaking_case_plan_dept 中记录。
+
+
+当实际去盘点的时候，没盘点一个设备，就会在tb_stocktaking_case_actual_device 所对应的case_id下面新建一条记录。
+
+盘点时通过扫码实现的，所以，盘点是在手机APP端完成。
