@@ -1,0 +1,4 @@
+角色用户分配页面返回左右两个json列表，在UI上添加用户时，添加事件中 要给这个用户对象设置属性,如creater:10002
+
+增减用户后，点确定按钮提交。
+提交参数为左侧已分配用户json数组：[{userId:10001,roleId:2,creater:10002},{userId:10003,roleId:2,creater:10002},{userId:10005,roleId:2,creater:10002}]
