@@ -597,11 +597,12 @@ COMMENT ON COLUMN public.tb_mt_case.case_file_path
 
 
 
+	
 
 
-	
-	
-	
+
+
+
 	-- Table: public.tb_device
 
 -- DROP TABLE public.tb_device;
@@ -805,7 +806,24 @@ COMMENT ON COLUMN public.tb_device.metering_interval
 COMMENT ON COLUMN public.tb_device.next_metering_date
     IS '下一次计量的日期';
 	
+ALTER TABLE public.tb_device
+    ADD COLUMN need_maintain smallint;
 
+COMMENT ON COLUMN public.tb_device.need_maintain
+    IS '是否需要保养';
+
+ALTER TABLE public.tb_device
+    ADD COLUMN maintenance_interval integer;
+
+COMMENT ON COLUMN public.tb_device.maintenance_interval
+    IS '保养周期：单位，天';
+
+ALTER TABLE public.tb_device
+    ADD COLUMN next_maintenance_date timestamp without time zone;
+
+COMMENT ON COLUMN public.tb_device.next_maintenance_date
+    IS '下一次保养时间';
+	
 	
 	
 CREATE TABLE public.tb_bad_event
@@ -1206,23 +1224,9 @@ COMMENT ON COLUMN public.tb_metering_case.metering_data
     IS '计量数据';
 
 COMMENT ON COLUMN public.tb_metering_case.metering_time
-    IS '巡检时间';
+    IS '计量时间';
 	
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -1354,3 +1358,139 @@ COMMENT ON COLUMN public.tb_stocktaking_case_actual_device.operation_user_id
 	
 COMMENT ON COLUMN public.tb_stocktaking_case_actual_device.operation_time
     IS '操作时间';
+
+	
+	
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+		
+CREATE TABLE public.tb_pm_case
+(
+    case_id serial NOT NULL,
+    case_subject character varying(50),
+    case_remark character varying(500),
+    case_state smallint NOT NULL,
+    
+    device_id  integer NOT NULL,
+	assignee_user_id integer,
+	
+	
+	plan_pm_time timestamp without time zone,
+	actual_pm_time timestamp without time zone,
+	actual_pm_user_id integer,
+	
+	accessory_info character varying(500),
+	pm_file character varying(100),
+	remark character varying(500),
+	
+
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    modify_time timestamp without time zone NOT NULL,
+    modifier integer NOT NULL,
+	
+
+    PRIMARY KEY (case_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_pm_case
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_pm_case
+    IS '保养工单';
+
+COMMENT ON COLUMN public.tb_pm_case.case_id
+    IS '工单ID';
+
+COMMENT ON COLUMN public.tb_pm_case.case_subject
+    IS '工单主题';
+
+COMMENT ON COLUMN public.tb_pm_case.case_remark
+    IS '工单描述';
+	
+
+COMMENT ON COLUMN public.tb_pm_case.case_state
+    IS '工单状态：10，待保养，20，已取消，30，保养中，50，已关闭，';
+
+
+
+COMMENT ON COLUMN public.tb_pm_case.device_id
+    IS '设备ID';
+	
+COMMENT ON COLUMN public.tb_pm_case.assignee_user_id
+    IS '当前指派人用户ID';
+	
+
+	
+	
+COMMENT ON COLUMN public.tb_pm_case.plan_pm_time
+    IS '计划保养时间';
+	
+COMMENT ON COLUMN public.tb_pm_case.actual_pm_time
+    IS '实际保养时间';
+	
+COMMENT ON COLUMN public.tb_pm_case.actual_pm_user_id
+    IS '实际保养人';
+	
+COMMENT ON COLUMN public.tb_pm_case.accessory_info
+    IS '配件信息';
+
+	
+COMMENT ON COLUMN public.tb_pm_case.pm_file
+    IS '上传的保养单';
+
+
+COMMENT ON COLUMN public.tb_pm_case.remark
+    IS '备注';
+
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
