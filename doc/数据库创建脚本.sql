@@ -1377,7 +1377,6 @@ COMMENT ON COLUMN public.tb_stocktaking_case_actual_device.operation_time
 	
 	
 	
-	
 
 		
 CREATE TABLE public.tb_pm_case
