@@ -1,7 +1,7 @@
-import React, {PureComponent, Fragment} from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import moment from 'moment';
-import {connect} from 'dva';
-import {Link, routerRedux} from 'dva/router';
+import { connect } from 'dva';
+import { Link, routerRedux } from 'dva/router';
 import {
   Row,
   Col,
@@ -17,16 +17,18 @@ import {
   DatePicker,
   Modal,
   message,
-  Badge
+  Badge,
+  Divider,
 } from 'antd';
 
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './TableList.less';
-import DeviceSelect from "../../components/biz/DeviceSelect";
+import DeviceSelect from '../../components/biz/DeviceSelect';
+import EngineerSelect from '../../components/biz/EngineerSelect';
 
-const {TextArea} = Input;
+const { TextArea } = Input;
 
 const FormItem = Form.Item;
 const getValue = obj =>
@@ -35,7 +37,7 @@ const getValue = obj =>
     .join(',');
 
 const CreateForm = Form.create()(props => {
-  const {modalVisible, form, handleAdd, handleModalVisible} = props;
+  const { modalVisible, form, handleAdd, handleModalVisible } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -49,57 +51,151 @@ const CreateForm = Form.create()(props => {
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="报修设备">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="报修设备">
         {form.getFieldDecorator('deviceId', {
-          rules: [{required: true, message: '请选择报修设备...'}],
-        })(
-          <DeviceSelect placeholder="请选择报修设备"/>
-        )}
+          rules: [{ required: true, message: '请选择报修设备...' }],
+        })(<DeviceSelect placeholder="请选择报修设备" />)}
       </FormItem>
-      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="报修描述">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="报修描述">
         {form.getFieldDecorator('caseRemark', {
-          rules: [{required: true, message: '请输入设备Id...'}],
-        })(<TextArea style={{minHeight: 32}} placeholder="请输入描述信息" rows={4}/>)}
+          rules: [{ required: true, message: '请输入设备Id...' }],
+        })(<TextArea style={{ minHeight: 32 }} placeholder="请输入描述信息" rows={4} />)}
       </FormItem>
-
     </Modal>
   );
 });
 
-@connect(({repair, loading, user}) => ({
+const OperationForm = Form.create()(props => {
+  const {
+    modalVisible,
+    form,
+    handleModalVisible,
+    currentRepair,
+    toState = '',
+    dispatch,
+    user,
+  } = props;
+  const okHandle = () => {
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+
+      let payload = {
+        reporterUserId: user.currentUser.userId,
+        caseState: toState,
+        caseId: currentRepair.caseId,
+        modifier: user.currentUser.userId,
+      };
+      if (fieldsValue.assigneeUserId) {
+        payload.assigneeUserId = fieldsValue.assigneeUserId;
+      }
+      if (fieldsValue.caseRemark) {
+        payload.caseRemark = fieldsValue.caseRemark;
+      }
+
+      dispatch({
+        type: 'repair/changeState',
+        payload,
+        callback: success => {
+          if (success) {
+            message.success('操作成功');
+            handleModalVisible(false);
+            dispatch({
+              type: 'repair/fetch',
+              payload: {
+                assigneeUserId: user.currentUser.userId,
+              },
+            });
+          } else {
+            message.error('操作失败');
+          }
+        },
+      });
+    });
+  };
+
+  let title = '操作';
+
+  switch (toState) {
+    case 20:
+      title += ` - 取消工单【${currentRepair.caseId}】`;
+      break;
+    case 30:
+      title += ` - 分配工单【${currentRepair.caseId}】给工程师`;
+      break;
+    case 40:
+      title += ` - 完成工单【${currentRepair.caseId}】`;
+      break;
+  }
+
+  let needSelectEngineer = toState == 30;
+
+  return (
+    <Modal
+      title={title}
+      visible={modalVisible}
+      onOk={okHandle}
+      onCancel={() => handleModalVisible()}
+    >
+      {needSelectEngineer && (
+        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="分配工程师">
+          {form.getFieldDecorator('assigneeUserId', {
+            rules: [{ required: true, message: '请选择工程师...' }],
+          })(<EngineerSelect placeholder="请选择工程师" />)}
+        </FormItem>
+      )}
+
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="描述信息">
+        {form.getFieldDecorator('caseRemark', {
+          rules: [{ required: true, message: '请输入描述信息' }],
+        })(<TextArea style={{ minHeight: 32 }} placeholder="请输入描述信息" rows={4} />)}
+      </FormItem>
+    </Modal>
+  );
+});
+//
+
+@connect(({ repair, loading, user }) => ({
   repair,
   user,
   loading: loading.models['repair/fetch'],
 }))
 @Form.create()
 export default class RepairList extends PureComponent {
-
   state = {
     modalVisible: false,
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    operation: {
+      currentRepair: null,
+      modalVisible: false,
+      formValues: {},
+      toState: 0,
+    },
   };
 
   componentDidMount() {
-    const {dispatch} = this.props;
+    const { dispatch, user } = this.props;
     dispatch({
       type: 'repair/fetch',
+      payload: {
+        assigneeUserId: user.currentUser.userId,
+      },
     });
   }
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const {dispatch} = this.props;
-    const {formValues} = this.state;
+    const { dispatch } = this.props;
+    const { formValues } = this.state;
 
     const filters = Object.keys(filtersArg).reduce((obj, key) => {
-      const newObj = {...obj};
+      const newObj = { ...obj };
       newObj[key] = getValue(filtersArg[key]);
       return newObj;
     }, {});
 
     const params = {
-      currentPage: pagination.current,
+      pageIndex: pagination.current - 1,
       pageSize: pagination.pageSize,
       ...formValues,
       ...filters,
@@ -111,23 +207,24 @@ export default class RepairList extends PureComponent {
     dispatch({
       type: 'repair/fetch',
       payload: {
-        ...params
+        ...params,
       },
     });
   };
 
   handleFormReset = () => {
-    const {form, dispatch} = this.props;
+    const { form, dispatch, user } = this.props;
     form.resetFields();
     this.setState({
       formValues: {},
     });
     dispatch({
       type: 'repair/fetch',
-      payload: {},
+      payload: {
+        assigneeUserId: user.currentUser.userId,
+      },
     });
   };
-
 
   handleSelectRows = rows => {
     this.setState({
@@ -138,36 +235,38 @@ export default class RepairList extends PureComponent {
   handleSearch = e => {
     e.preventDefault();
 
-    const {dispatch, form} = this.props;
+    const { dispatch, form, user } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
 
       const values = {
-        ...fieldsValue
+        ...fieldsValue,
       };
 
       this.setState({
         formValues: values,
       });
 
-      let payload = {}
+      let payload = {
+        assigneeUserId: user.currentUser.userId,
+      };
 
       for (let k in values) {
         if (values[k] !== undefined) {
-          payload[k] = values[k]
+          payload[k] = values[k];
         }
       }
 
       dispatch({
         type: 'repair/fetch',
-        payload
+        payload,
       });
     });
   };
 
   handleModalVisible = flag => {
-    const {dispatch} = this.props
+    const { dispatch } = this.props;
     // dispatch(routerRedux.push('/repair/repair-add'))
     this.setState({
       modalVisible: !!flag,
@@ -175,8 +274,8 @@ export default class RepairList extends PureComponent {
   };
 
   handleAdd = fields => {
-    const {user = {}, dispatch} = this.props;
-    const currentUserId = user.currentUser.userId
+    const { user = {}, dispatch } = this.props;
+    const currentUserId = user.currentUser.userId;
 
     dispatch({
       type: 'repair/add',
@@ -184,9 +283,9 @@ export default class RepairList extends PureComponent {
         ...fields,
         reporterUserId: currentUserId,
         creater: currentUserId,
-        modifier: currentUserId
+        modifier: currentUserId,
       },
-      callback: (success) => {
+      callback: success => {
         if (success) {
           message.success('报修成功');
           this.setState({
@@ -195,24 +294,25 @@ export default class RepairList extends PureComponent {
 
           dispatch({
             type: 'repair/fetch',
+            payload: {
+              assigneeUserId: user.currentUser.userId,
+            },
           });
         } else {
           message.success('报修失败，请稍后再试');
         }
-      }
+      },
     });
-
-
   };
 
   renderSimpleForm() {
-    const {getFieldDecorator} = this.props.form;
+    const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{md: 8, lg: 24, xl: 48}}>
+        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="设备ID">
-              {getFieldDecorator('deviceId')(<Input placeholder="请输入"/>)}
+              {getFieldDecorator('deviceId')(<Input placeholder="请输入" />)}
               {/*{getFieldDecorator('deviceId')(<DeviceSelect placeholder="请输入" />)}*/}
             </FormItem>
           </Col>
@@ -221,7 +321,7 @@ export default class RepairList extends PureComponent {
               <Button type="primary" htmlType="submit">
                 查询
               </Button>
-              <Button style={{marginLeft: 8}} onClick={this.handleFormReset}>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
               {/*<a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
@@ -234,76 +334,80 @@ export default class RepairList extends PureComponent {
     );
   }
 
-
   renderForm() {
     return this.renderSimpleForm();
   }
 
-  changeCaseState(caseInfo,toState){
+  changeCaseState(caseInfo, toState) {
+    const { dispatch, user } = this.props;
 
-    const {dispatch,user} = this.props;
-
-    dispatch({
-      type:"repair/changeState",
-      payload:{
-        reporterUserId:user.currentUser.userId,
-        caseState:toState,
-        caseId:caseInfo.caseId,
-        modifier:user.currentUser.userId
+    this.setState({
+      operation: {
+        ...this.state.operation,
+        currentRepair: caseInfo,
+        modalVisible: true,
+        toState: toState,
       },
-      callback:(success)=>{
-        if(success){
-          message.success('操作成功');
-          dispatch({
-            type: "repair/fetch",
-          })
-        }else{
-          message.error('操作失败');
-        }
-      }
-    })
-
+    });
   }
 
-
-  getCaseStateName(state){
-    const Names ={
-      10:"新报修",
-      20:"已取消",
-      30:"维修中",
-      40:"已完成",
-      50:"已关闭"
+  getCaseStateName(state) {
+    const Names = {
+      10: '新报修',
+      20: '已取消',
+      30: '维修中',
+      40: '已完成',
+      50: '已关闭',
     };
 
-    return Names[state]||"未知"
-
+    return Names[state] || '未知';
   }
 
   getOperation(caseInfo, role) {
     let ops = [];
-    ops.push(<Link to={"/repair/repair-detail/" + caseInfo.caseId} title="进入详情">详情</Link>);
+    ops.push(
+      <Link to={'/repair/repair-detail/' + caseInfo.caseId} title="进入详情">
+        详情
+      </Link>
+    );
     if (caseInfo && role && caseInfo.caseState) {
       switch (caseInfo.caseState) {
         case 10:
-          if (role === "调度") {
-            ops.push(<span>&nbsp;</span>)
-            ops.push(<a onClick={this.changeCaseState.bind(this,caseInfo,20)} title="取消工单">取消</a>);
-            ops.push(<span>&nbsp;</span>)
-            ops.push(<a onClick={this.changeCaseState.bind(this,caseInfo,30)} title="分配给工程师">分配</a>);
+          if (role === '调度') {
+            ops.push(<Divider type={'vertical'} />);
+            ops.push(
+              <a onClick={this.changeCaseState.bind(this, caseInfo, 20)} title="取消工单">
+                取消
+              </a>
+            );
+            ops.push(<Divider type={'vertical'} />);
+            ops.push(
+              <a onClick={this.changeCaseState.bind(this, caseInfo, 30)} title="分配给工程师">
+                分配
+              </a>
+            );
           }
           break;
         case 20:
           break;
         case 30:
-          if (role === "驻场工程师") {
-            ops.push(<span>&nbsp;</span>)
-            ops.push(<a onClick={this.changeCaseState.bind(this,caseInfo,40)} title="完成维修">完成</a>);
+          if (role === '驻场工程师') {
+            ops.push(<Divider type={'vertical'} />);
+            ops.push(
+              <a onClick={this.changeCaseState.bind(this, caseInfo, 40)} title="完成维修">
+                完成
+              </a>
+            );
           }
           break;
         case 40:
-          if (role === "主管") {
-            ops.push(<span>&nbsp;</span>)
-            ops.push(<a onClick={this.changeCaseState.bind(this,caseInfo,50)} title="关闭">关闭</a>);
+          if (role === '主管') {
+            ops.push(<Divider type={'vertical'} />);
+            ops.push(
+              <a onClick={this.changeCaseState.bind(this, caseInfo, 50)} title="关闭">
+                关闭
+              </a>
+            );
           }
           break;
         case 50:
@@ -311,44 +415,49 @@ export default class RepairList extends PureComponent {
       }
     }
 
-
-    return ops
-
+    return ops;
   }
 
   render() {
-    const {repair, loading, user} = this.props;
-    const {selectedRows, modalVisible} = this.state;
+    const { repair, loading, user, dispatch } = this.props;
+    const { selectedRows, modalVisible, operation } = this.state;
     const roleName = user.currentUser.roleName;
     let list = [];
-    repair.list.forEach((id) => {
-      list.push(repair.byIds[id])
+    repair.list.forEach(id => {
+      list.push(repair.byIds[id]);
     });
     let data = {
       list,
-      pagination: repair.pagination
+      pagination: repair.pagination,
     };
 
     const columns = [
       {
         title: '工单ID',
         dataIndex: 'caseId',
-      }, {
+      },
+      {
         title: '设备ID',
         dataIndex: 'deviceId',
-      }, {
+      },
+      {
         title: '报修描述',
         dataIndex: 'caseRemark',
       },
+      // {
+      //   title: '所属医院',
+      //   dataIndex: 'hospital',
+      // },
       {
-        title: '所属医院',
-        dataIndex: 'hospital',
+        title: '维修人',
+        dataIndex: 'assigneeUserName',
       },
       {
         title: '状态',
         dataIndex: 'caseState',
-        render:val=>this.getCaseStateName.bind(this)(val)
-      }, {
+        render: val => this.getCaseStateName.bind(this)(val, repair),
+      },
+      {
         title: '报修时间',
         dataIndex: 'createTime',
         // sorter: true,
@@ -356,19 +465,24 @@ export default class RepairList extends PureComponent {
       },
       {
         title: '操作',
-        render: (val) => (
-
-          <Fragment>
-            {this.getOperation.bind(this)(val, roleName)}
-          </Fragment>
-        ),
+        render: val => <Fragment>{this.getOperation.bind(this)(val, roleName)}</Fragment>,
       },
     ];
-
 
     const parentMethods = {
       handleAdd: this.handleAdd,
       handleModalVisible: this.handleModalVisible,
+    };
+
+    const opMethods = {
+      handleModalVisible: flag => {
+        this.setState({
+          operation: {
+            ...this.state.operation,
+            modalVisible: !!flag,
+          },
+        });
+      },
     };
 
     return (
@@ -395,14 +509,22 @@ export default class RepairList extends PureComponent {
               selectedRows={selectedRows}
               loading={loading}
               data={data}
-              rowKey={"caseId"}
+              rowKey={'caseId'}
               columns={columns}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}
             />
           </div>
         </Card>
-        <CreateForm {...parentMethods} modalVisible={modalVisible}/>
+        <CreateForm {...parentMethods} modalVisible={modalVisible} />
+        <OperationForm
+          {...opMethods}
+          dispatch={dispatch}
+          user={user}
+          currentRepair={operation.currentRepair}
+          toState={operation.toState}
+          modalVisible={operation.modalVisible}
+        />
       </PageHeaderLayout>
     );
   }

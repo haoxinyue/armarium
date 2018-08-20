@@ -5,7 +5,7 @@ const menuData = [
     name: '工作台',
     icon: 'dashboard',
     path: 'dashboard',
-    children:[
+    children: [
       {
         name: '综合分析',
         path: 'analysis',
@@ -13,25 +13,76 @@ const menuData = [
     ],
   },
   {
-    name: '设备',
+    name: '资产管理',
     icon: 'api',
-    path: 'device',
+    path: 'asset',
     children: [
       {
-        name: '设备列表',
-        path: 'device-list',
+        name: '添加资产',
+        path: 'asset-add',
       },
       {
+        name: '资产盘点',
+        path: 'asset-list',
+      },
+      {
+        name: '文档管理',
+        path: 'asset-doc',
+      },
+      {
+        name: '不良事件',
+        path: 'asset-event',
+      },
+      {
+        name: '统计报表',
+        path: 'asset-chart',
+      },
+      {
+        name: '角色设置',
+        path: 'asset-role',
+      },
+      /*{
         name: '设备详情',
         path: 'device-detail',
         authority:"invisible"
-      },
-      {
+      },*/
+      /*{
         name: '设备编辑',
         path: 'device-edit',
         authority:"invisible"
-      }
-    ]
+      },*/
+    ],
+  },
+  {
+    name: '工单管理',
+    icon: 'tool',
+    path: 'work-order',
+    children: [
+      {
+        name: '设备维修',
+        path: 'device-repair',
+      },
+      {
+        name: '设备保养',
+        path: 'device-care',
+      },
+      {
+        name: '设备巡检',
+        path: 'device-check',
+      },
+      {
+        name: '设备安装',
+        path: 'device-add',
+      },
+      {
+        name: '设备计量',
+        path: 'device-calc',
+      },
+      {
+        name: '派单管理',
+        path: 'order-dispatch',
+      },
+    ],
   },
   {
     name: '部门信息',
@@ -41,18 +92,8 @@ const menuData = [
       {
         name: '部门树',
         path: 'department-tree',
-      }
-    ]
-  },{
-    name: '报修信息',
-    icon: 'tool',
-    path: 'repair',
-    children: [
-      {
-        name: '报修列表',
-        path: 'repair-list',
-      }
-    ]
+      },
+    ],
   },
   {
     name: '用户',
@@ -62,9 +103,9 @@ const menuData = [
       {
         name: '用户列表',
         path: 'user-list',
-      }
-    ]
-  }/*,
+      },
+    ],
+  } /*,
   {
     name: '列表信息',
     icon: 'table',
@@ -84,9 +125,96 @@ const menuData = [
       }
 
     ]
-  }*/
-]
+  }*/,
+];
 
+const menuData2 = [
+  {
+    name: '工作台',
+    icon: 'dashboard',
+    path: 'dashboard',
+    children: [
+      {
+        name: '综合分析',
+        path: 'analysis',
+      },
+    ],
+  },
+  {
+    name: '设备',
+    icon: 'api',
+    path: 'device',
+    children: [
+      {
+        name: '设备列表',
+        path: 'device-list',
+      },
+      {
+        name: '设备详情',
+        path: 'device-detail',
+        authority: 'invisible',
+      },
+      {
+        name: '设备编辑',
+        path: 'device-edit',
+        authority: 'invisible',
+      },
+    ],
+  },
+  {
+    name: '部门信息',
+    icon: 'bars',
+    path: 'department',
+    children: [
+      {
+        name: '部门树',
+        path: 'department-tree',
+      },
+    ],
+  },
+  {
+    name: '报修信息',
+    icon: 'tool',
+    path: 'repair',
+    children: [
+      {
+        name: '报修列表',
+        path: 'repair-list',
+      },
+    ],
+  },
+  {
+    name: '用户',
+    icon: 'team',
+    path: 'users',
+    children: [
+      {
+        name: '用户列表',
+        path: 'user-list',
+      },
+    ],
+  } /*,
+  {
+    name: '列表信息',
+    icon: 'table',
+    path: 'list',
+    children: [
+      {
+        name: '医院列表',
+        path: 'hospital-list',
+      },
+      {
+        name: '合同列表',
+        path: 'contract-list',
+      },
+      {
+        name: '采购列表',
+        path: 'purchase-list',
+      }
+
+    ]
+  }*/,
+];
 const menuData1 = [
   {
     name: 'dashboard',
@@ -242,8 +370,6 @@ const menuData1 = [
     ],
   },
 ];
-
-
 
 function formatter(data, parentPath = '/', parentAuthority) {
   return data.map(item => {

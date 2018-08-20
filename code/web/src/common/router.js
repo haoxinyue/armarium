@@ -27,7 +27,6 @@ const dynamicWrapper = (app, models, component) => {
         routerDataCache = getRouterData(app);
       }
 
-
       return createElement(component().default, {
         ...props,
         routerData: routerDataCache,
@@ -72,119 +71,205 @@ function getFlatMenuData(menus) {
 export const getRouterData = app => {
   const routerConfig = {
     '/': {
-      component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
+      component: dynamicWrapper(app, ['user', 'login', 'hospital', 'department', 'engineer'], () =>
+        import(/* webpackChunkName: "BasicLayout" */ '../layouts/BasicLayout')
+      ),
     },
     '/dashboard/analysis': {
-      component: dynamicWrapper(app, ['chart'], () => import('../routes/Dashboard/Analysis')),
+      component: dynamicWrapper(app, ['chart'], () =>
+        import(/* webpackChunkName: "Analysis" */ '../routes/Dashboard/Analysis')
+      ),
     },
 
-    '/device/device-list':{
-      component: dynamicWrapper(app, ['device'], () => import('../routes/Device/DeviceList')),
+    '/device/device-list': {
+      component: dynamicWrapper(app, ['device'], () =>
+        import(/* webpackChunkName: "DeviceList" */ '../routes/Device/DeviceList')
+      ),
     },
-    '/device/device-detail/:deviceId':{
-      component: dynamicWrapper(app, ['device','hospital'], () => import('../routes/Device/DeviceDetail')),
+    '/device/device-detail/:deviceId': {
+      component: dynamicWrapper(app, ['device', 'hospital'], () =>
+        import(/* webpackChunkName: "DeviceDetail" */ '../routes/Device/DeviceDetail')
+      ),
     },
-    '/device/device-edit/:deviceId':{
-      component: dynamicWrapper(app, ['device','hospital'], () => import('../routes/Device/DeviceEdit')),
+    '/device/device-edit/:deviceId': {
+      component: dynamicWrapper(app, ['device', 'hospital', 'department'], () =>
+        import(/* webpackChunkName: "DeviceEdit" */ '../routes/Device/DeviceEdit')
+      ),
     },
-    '/device/device-add/':{
-      component: dynamicWrapper(app, ['device','hospital'], () => import('../routes/Device/DeviceEdit')),
-    },
-
-     '/users/user-list':{
-      component: dynamicWrapper(app, ['userlist'], () => import('../routes/User/UserList')),
-    },
-
-     '/users/user-detail/:userId':{
-      component: dynamicWrapper(app, ['userlist'], () => import('../routes/User/UserDetail')),
-    },
-
-     '/users/user-edit/:userId':{
-      component: dynamicWrapper(app, ['userlist'], () => import('../routes/User/UserList')),
+    '/device/device-add/': {
+      component: dynamicWrapper(app, ['device', 'hospital', 'department'], () =>
+        import(/* webpackChunkName: "DeviceEdit" */ '../routes/Device/DeviceEdit')
+      ),
     },
 
-
-     '/department/department-tree':{
-      component: dynamicWrapper(app, ['department'], () => import('../routes/Department/DepartmentTree')),
+    '/users/user-list': {
+      component: dynamicWrapper(app, ['userlist'], () =>
+        import(/* webpackChunkName: "UserList" */ '../routes/User/UserList')
+      ),
     },
 
-
-    '/repair/repair-detail/:caseId':{
-      component: dynamicWrapper(app, ['repair'], () => import('../routes/Repair/RepairDetail')),
-    },
-    '/repair/repair-list':{
-      component: dynamicWrapper(app, ['repair'], () => import('../routes/Repair/RepairList')),
+    '/users/user-detail/:userId': {
+      component: dynamicWrapper(app, ['userlist'], () =>
+        import(/* webpackChunkName: "UserDetail" */ '../routes/User/UserDetail')
+      ),
     },
 
+    //  '/users/user-edit/:userId':{
+    //   component: dynamicWrapper(app, ['userlist'], () => import(/* webpackChunkName: "UserList" */'../routes/User/UserList')),
+    // },
 
+    '/department/department-tree': {
+      component: dynamicWrapper(app, ['department', 'hospital'], () =>
+        import(/* webpackChunkName: "DepartmentTree" */ '../routes/Department/DepartmentTree')
+      ),
+    },
 
+    '/repair/repair-detail/:caseId': {
+      component: dynamicWrapper(app, ['repair', 'engineer'], () =>
+        import(/* webpackChunkName: "RepairDetail" */ '../routes/Repair/RepairDetail')
+      ),
+    },
+    '/repair/repair-list': {
+      component: dynamicWrapper(app, ['repair', 'engineer', 'device'], () =>
+        import(/* webpackChunkName: "RepairList" */ '../routes/Repair/RepairList')
+      ),
+    },
 
     /* ============================================================================================ */
 
-    '/dashboard/monitor': {
-      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Dashboard/Monitor')),
-    },
-    '/dashboard/workplace': {
-      component: dynamicWrapper(app, ['project', 'activities', 'chart'], () =>
-        import('../routes/Dashboard/Workplace')
-      ),
-      // hideInBreadcrumb: true,
-      // name: '工作台',
-      // authority: 'admin',
-    },
-    '/form/basic-form': {
-      component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
-    },
-    '/form/step-form': {
-      component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm')),
-    },
-    '/form/step-form/info': {
-      name: '分步表单（填写转账信息）',
-      component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step1')),
-    },
-    '/form/step-form/confirm': {
-      name: '分步表单（确认转账信息）',
-      component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
-    },
-    '/form/step-form/result': {
-      name: '分步表单（完成）',
-      component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step3')),
-    },
-    '/form/advanced-form': {
-      component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
-    },
-
-
-
-    '/list/table-list': {
-      component: dynamicWrapper(app, ['rule'], () => import('../routes/List/TableList')),
-    },
-    '/list/basic-list': {
-      component: dynamicWrapper(app, ['list'], () => import('../routes/List/BasicList')),
-    },
-    '/list/card-list': {
-      component: dynamicWrapper(app, ['list'], () => import('../routes/List/CardList')),
-    },
-    '/list/search': {
-      component: dynamicWrapper(app, ['list'], () => import('../routes/List/List')),
-    },
-    '/list/search/projects': {
-      component: dynamicWrapper(app, ['list'], () => import('../routes/List/Projects')),
-    },
-    '/list/search/applications': {
-      component: dynamicWrapper(app, ['list'], () => import('../routes/List/Applications')),
-    },
-    '/list/search/articles': {
-      component: dynamicWrapper(app, ['list'], () => import('../routes/List/Articles')),
-    },
-    '/profile/basic': {
-      component: dynamicWrapper(app, ['profile'], () => import('../routes/Profile/BasicProfile')),
-    },
-    '/profile/advanced': {
-      component: dynamicWrapper(app, ['profile'], () =>
-        import('../routes/Profile/AdvancedProfile')
+    '/asset/asset-add': {
+      component: dynamicWrapper(app, ['device', 'hospital', 'department'], () =>
+        import(/* webpackChunkName: "DeviceEdit" */ '../routes/Device/DeviceEdit')
       ),
     },
+    '/asset/asset-list': {
+      component: dynamicWrapper(app, ['device'], () =>
+        import(/* webpackChunkName: "DeviceList" */ '../routes/Device/DeviceList')
+      ),
+    },
+    '/asset/asset-doc': {
+      component: dynamicWrapper(app, ['device'], () =>
+        import(/* webpackChunkName: "DeviceList" */ '../routes/Device/DeviceList')
+      ),
+    },
+    '/asset/asset-chart': {
+      component: dynamicWrapper(app, ['device'], () =>
+        import(/* webpackChunkName: "DeviceList" */ '../routes/Device/DeviceList')
+      ),
+    },
+    '/asset/asset-event': {
+      component: dynamicWrapper(app, ['repair', 'engineer', 'device'], () =>
+        import(/* webpackChunkName: "RepairList" */ '../routes/Repair/RepairList')
+      ),
+    },
+    '/asset/asset-role': {
+      component: dynamicWrapper(app, ['role'], () =>
+        import(/* webpackChunkName: "RepairList" */ '../routes/User/RoleList')
+      ),
+    },
+
+    /* ============================================================================================ */
+    '/work-order/device-repair': {
+      component: dynamicWrapper(app, ['repair', 'engineer', 'device'], () =>
+        import(/* webpackChunkName: "RepairList" */ '../routes/Repair/RepairList')
+      ),
+    },
+    '/work-order/device-care': {
+      component: dynamicWrapper(app, ['repair', 'engineer', 'device'], () =>
+        import(/* webpackChunkName: "RepairList" */ '../routes/Repair/RepairList')
+      ),
+    },
+    '/work-order/device-check': {
+      component: dynamicWrapper(app, ['repair', 'engineer', 'device'], () =>
+        import(/* webpackChunkName: "RepairList" */ '../routes/Repair/RepairList')
+      ),
+    },
+    '/work-order/device-add': {
+      component: dynamicWrapper(app, ['device', 'hospital', 'department', 'installCase'], () =>
+        import(/* webpackChunkName: "DeviceEdit" */ '../routes/InstallCase/InstallCaseList')
+      ),
+    },
+    '/work-order/device-calc': {
+      component: dynamicWrapper(app, ['repair', 'engineer', 'device'], () =>
+        import(/* webpackChunkName: "RepairList" */ '../routes/Repair/RepairList')
+      ),
+    },
+    '/work-order/order-dispatch': {
+      component: dynamicWrapper(app, ['repair', 'engineer', 'device'], () =>
+        import(/* webpackChunkName: "RepairList" */ '../routes/Repair/RepairList')
+      ),
+    },
+    /* ============================================================================================ */
+    '/install-case/case-edit/:caseId': {
+      component: dynamicWrapper(app, ['installCase', 'hospital'], () =>
+        import(/* webpackChunkName: "InstallCaseEdit" */ '../routes/InstallCase/InstallCaseEdit')
+      ),
+    },
+    /* ============================================================================================ */
+
+    // '/dashboard/monitor': {
+    //   component: dynamicWrapper(app, ['monitor'], () => import(/* webpackChunkName: "Monitor" */'../routes/Dashboard/Monitor')),
+    // },
+    // '/dashboard/workplace': {
+    //   component: dynamicWrapper(app, ['project', 'activities', 'chart'], () =>
+    //     /* webpackChunkName: "Workplace" */
+    //     import('../routes/Dashboard/Workplace')
+    //   ),
+    //   // hideInBreadcrumb: true,
+    //   // name: '工作台',
+    //   // authority: 'admin',
+    // },
+    // '/form/basic-form': {
+    //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/BasicForm')),
+    // },
+    // '/form/step-form': {
+    //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm')),
+    // },
+    // '/form/step-form/info': {
+    //   name: '分步表单（填写转账信息）',
+    //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step1')),
+    // },
+    // '/form/step-form/confirm': {
+    //   name: '分步表单（确认转账信息）',
+    //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step2')),
+    // },
+    // '/form/step-form/result': {
+    //   name: '分步表单（完成）',
+    //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/StepForm/Step3')),
+    // },
+    // '/form/advanced-form': {
+    //   component: dynamicWrapper(app, ['form'], () => import('../routes/Forms/AdvancedForm')),
+    // },
+
+    // '/list/table-list': {
+    //   component: dynamicWrapper(app, ['rule'], () => import('../routes/List/TableList')),
+    // },
+    // '/list/basic-list': {
+    //   component: dynamicWrapper(app, ['list'], () => import('../routes/List/BasicList')),
+    // },
+    // '/list/card-list': {
+    //   component: dynamicWrapper(app, ['list'], () => import('../routes/List/CardList')),
+    // },
+    // '/list/search': {
+    //   component: dynamicWrapper(app, ['list'], () => import('../routes/List/List')),
+    // },
+    // '/list/search/projects': {
+    //   component: dynamicWrapper(app, ['list'], () => import('../routes/List/Projects')),
+    // },
+    // '/list/search/applications': {
+    //   component: dynamicWrapper(app, ['list'], () => import('../routes/List/Applications')),
+    // },
+    // '/list/search/articles': {
+    //   component: dynamicWrapper(app, ['list'], () => import('../routes/List/Articles')),
+    // },
+    // '/profile/basic': {
+    //   component: dynamicWrapper(app, ['profile'], () => import('../routes/Profile/BasicProfile')),
+    // },
+    // '/profile/advanced': {
+    //   component: dynamicWrapper(app, ['profile'], () =>
+    //     import('../routes/Profile/AdvancedProfile')
+    //   ),
+    // },
     '/result/success': {
       component: dynamicWrapper(app, [], () => import('../routes/Result/Success')),
     },

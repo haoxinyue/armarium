@@ -1,6 +1,7 @@
 const path = require('path');
 
 module.exports = {
+  presets: ['env'],
   plugins: [
     [
       'module-resolver',

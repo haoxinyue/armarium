@@ -16,11 +16,14 @@ import {
   InputNumber,
   DatePicker,
   Modal,
+  Checkbox,
   message,
   Badge,
 } from 'antd';
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
+import DepartmentSelect from '../../components/biz/DepartmentSelect';
+import HospitalSelect from '../../components/biz/HospitalSelect';
 
 import styles from './TableList.less';
 
@@ -30,113 +33,101 @@ const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
-const statusMap = ['', '1', '2'];
-const status = ['未知', '正常', '故障'];
-const usageStatusMap = ['0', '1'];
-const usageStatus = ['停用', '使用'];
+const statusMap = { '10': '安装中', '20': '已取消', '50': '已关闭' };
+
+const caseStatus = ['安装中', '已取消', '已关闭'];
 
 const CreateForm = Form.create()(props => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      form.resetFields();
-      handleAdd(fieldsValue);
+      handleAdd(fieldsValue, form);
     });
   };
   return (
     <Modal
-      title="添加设备"
+      title="新建工单"
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备编号">
-        {form.getFieldDecorator('deviceCode', {
-          rules: [{ required: true, message: '请输入设备编号...' }],
-        })(<Input placeholder="请输入" />)}
-      </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="名称">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备名称">
         {form.getFieldDecorator('deviceName', {
           rules: [{ required: true, message: '请输入设备名称...' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="编号">
-        {form.getFieldDecorator('AssetNo', {
-          rules: [{ required: true, message: '请输入资产编号...' }],
-        })(<Input placeholder="请输入" />)}
+
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="所属医院">
+        {form.getFieldDecorator('hospitalId', {
+          rules: [{ required: true, message: '请选择医院...' }],
+        })(<HospitalSelect placeholder="请选择医院" />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="型号">
-        {form.getFieldDecorator('deviceModel', {
-          rules: [{ required: true, message: '请输入设备型号...' }],
-        })(<Input placeholder="请输入" />)}
+
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="所属部门">
+        {form.getFieldDecorator('deptId', {
+          rules: [{ required: true, message: '请选择所属部门...' }],
+        })(<DepartmentSelect placeholder="请选择所属部门" />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="描述">
-        {form.getFieldDecorator('deviceDesc', {
-          rules: [{ required: true, message: '请输入设备描述...' }],
-        })(<Input placeholder="请输入" />)}
+
+      {/*<FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备类型">
+        {form.getFieldDecorator('deviceType', {
+          rules: [{ required: true, message: '请输入设备类型...' }],
+        })(<Input placeholder="请输入设备类型" />)}
+      </FormItem>*/}
+
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否需要巡检">
+        {form.getFieldDecorator('needInspection', {
+          rules: [{ required: true }],
+        })(<Checkbox style={{ marginLeft: 8 }} />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="序列号">
-        {form.getFieldDecorator('SerialNumber', {
-          rules: [{ required: true, message: '请输入设备序列号...' }],
-        })(<Input placeholder="请输入" />)}
+
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否需要计量">
+        {form.getFieldDecorator('needMetering', {
+          rules: [{ required: true }],
+        })(<Checkbox style={{ marginLeft: 8 }} />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="二维码号">
-        {form.getFieldDecorator('QRCode', {
-          rules: [{ required: true, message: '请输入设备二维码号...' }],
-        })(<Input placeholder="请输入" />)}
-      </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="厂商">
-        {form.getFieldDecorator('Manufacturer', {
-          rules: [{ required: true, message: '请输入设备厂商...' }],
-        })(<Input placeholder="请输入" />)}
-      </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="产地">
-        {form.getFieldDecorator('ProducingPlace', {
-          rules: [{ required: true, message: '请输入设备产地...' }],
-        })(<Input placeholder="请输入" />)}
-      </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备状态">
-        {form.getFieldDecorator('deviceState', {
-          rules: [{ required: true, message: '请输入设置状态...' }],
-        })(
-          <Select placeholder="请选择" initialValue="1">
-            <Option value="1">正常</Option>
-            <Option value="2">故障</Option>
-          </Select>
-        )}
-      </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="使用状态">
-        {form.getFieldDecorator('usageState', {
-          rules: [{ required: true, message: '请输入设置状态...' }],
-        })(
-          <Select placeholder="请选择" initialValue="1">
-            <Option value="1">使用</Option>
-            <Option value="0">停用</Option>
-          </Select>
-        )}
-      </FormItem>
+
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备类型">
         {form.getFieldDecorator('deviceType', {
-          rules: [{ required: true, message: '请输入设置状态...' }],
+          rules: [{ required: true, message: '请设置设备类型...' }],
         })(
-          <Select placeholder="请选择" initialValue="1">
+          <Select placeholder="请选择" initialValue="1" style={{ width: '100%' }}>
             <Option value="1">B超</Option>
             <Option value="2">眼检仪</Option>
             <Option value="0">其他</Option>
           </Select>
         )}
       </FormItem>
+
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="期望安装时间">
+        {form.getFieldDecorator('expectedTime', {
+          rules: [{ required: true, message: '请选择时间...' }],
+        })(<DatePicker showTime format="YYYY-MM-DD HH:mm:ss" placeholder="请选择时间" />)}
+      </FormItem>
+
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="型号">
+        {form.getFieldDecorator('deviceModel', {
+          rules: [{ required: true, message: '请输入设备型号...' }],
+        })(<Input placeholder="请输入" />)}
+      </FormItem>
+
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="序列号">
+        {form.getFieldDecorator('serialNumber', {
+          rules: [{ required: true, message: '请输入序列号...' }],
+        })(<Input placeholder="请输入序列号" />)}
+      </FormItem>
     </Modal>
   );
 });
 
-@connect(({ device, loading }) => ({
-  device,
-  loading: loading.models.device,
+@connect(({ installCase, user, loading }) => ({
+  installCase,
+  currentUser: user.currentUser || {},
+  loading: loading.models['installCase/fetch'],
 }))
 @Form.create()
-export default class DeviceList extends PureComponent {
+export default class InstallCaseList extends PureComponent {
   state = {
     modalVisible: false,
     expandForm: false,
@@ -147,7 +138,7 @@ export default class DeviceList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'device/fetch',
+      type: 'installCase/fetch',
     });
   }
 
@@ -189,31 +180,52 @@ export default class DeviceList extends PureComponent {
     });
   };
 
-  toggleForm = () => {
-    this.setState({
-      expandForm: !this.state.expandForm,
-    });
-  };
-
-  deleteDevice(device) {
+  closeCase(mCase) {
     const { dispatch } = this.props;
     Modal.confirm({
       title: `确认`,
-      content: `确认删除 【${device.deviceName}(${device.deviceId})】?`,
+      content: `确认关闭 【${mCase.deviceName}(${mCase.caseId})】?`,
       okText: '确认',
       cancelText: '取消',
       onOk() {
         dispatch({
-          type: 'device/remove',
-          payload: device,
-          callback(res) {
-            if (res.success) {
-              message.success('删除成功');
-            } else {
-              message.error('删除失败');
-            }
-          },
+          type: 'installCase/close',
+          payload: mCase,
+        }).then(res => {
+          message.success('关闭成功');
+          dispatch({
+            type: 'installCase/fetchDetail',
+            payload: mCase,
+          });
         });
+      },
+      onCancel() {},
+    });
+  }
+
+  completeCase(mCase) {
+    const { dispatch } = this.props;
+    Modal.confirm({
+      title: `确认`,
+      content: `确认完成 【${mCase.deviceName}(${mCase.caseId})】?`,
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        dispatch({
+          type: 'installCase/close',
+          payload: mCase,
+        }).then(
+          res => {
+            message.success('操作成功');
+            dispatch({
+              type: 'installCase/fetchDetail',
+              payload: mCase,
+            });
+          },
+          () => {
+            message.info('操作失败，请稍后再试');
+          }
+        );
       },
       onCancel() {},
     });
@@ -282,25 +294,46 @@ export default class DeviceList extends PureComponent {
   };
 
   handleModalVisible = flag => {
-    const { dispatch } = this.props;
-    dispatch(routerRedux.push('/device/device-add'));
-    // this.setState({
-    //   modalVisible: !!flag,
-    // });
+    // const {dispatch} = this.props
+    // dispatch(routerRedux.push('/device/device-add'))
+    this.setState({
+      modalVisible: !!flag,
+    });
   };
 
-  handleAdd = fields => {
-    this.props.dispatch({
-      type: 'device/add',
-      payload: {
-        description: fields.desc,
-      },
-    });
+  handleAdd = (fields, form) => {
+    const { currentUser = {} } = this.props;
+    let subFields = Object.assign({}, fields);
+    subFields.expectedTime = subFields.expectedTime.format('YYYY/MM/DD HH:mm:ss');
+    subFields.creater = currentUser.userId;
+    subFields.modifier = currentUser.userId;
+    subFields.needInspection = currentUser.needInspection ? 1 : 0;
+    subFields.needMetering = currentUser.needMetering ? 1 : 0;
 
-    message.success('添加成功');
-    this.setState({
-      modalVisible: false,
-    });
+    this.props
+      .dispatch({
+        type: 'installCase/add',
+        payload: subFields,
+      })
+      .then(
+        success => {
+          if (success) {
+            message.success('添加成功');
+            this.setState({
+              modalVisible: false,
+            });
+            form.resetFields();
+            this.props.dispatch({
+              type: 'installCase/fetch',
+            });
+          } else {
+            message.error('操作失败，请稍后再试');
+          }
+        },
+        () => {
+          message.error('操作失败，请稍后再试');
+        }
+      );
   };
 
   renderSimpleForm() {
@@ -341,66 +374,57 @@ export default class DeviceList extends PureComponent {
   }
 
   render() {
-    const { device, loading } = this.props;
+    const { installCase, loading } = this.props;
     const { selectedRows, modalVisible } = this.state;
     let list = [];
-    device.list.forEach(id => {
-      list.push(device.byIds[id]);
+    installCase.list.forEach(id => {
+      list.push(installCase.byIds[id]);
     });
     let data = {
       list,
-      pagination: device.pagination,
+      pagination: installCase.pagination,
     };
 
     const columns = [
       {
-        title: '设备ID',
-        dataIndex: 'deviceId',
-      },
-      {
-        title: '设备编号',
-        dataIndex: 'deviceCode',
+        title: '工单ID',
+        dataIndex: 'caseId',
       },
       {
         title: '设备名称',
         dataIndex: 'deviceName',
       },
       {
-        title: '设备状态',
-        dataIndex: 'deviceState',
+        title: '工单状态',
+        dataIndex: 'caseState',
         filters: [
           {
-            text: status[1],
-            value: 1,
+            text: statusMap['10'],
+            value: 10,
           },
           {
-            text: status[2],
-            value: 2,
+            text: statusMap['20'],
+            value: 20,
+          },
+          {
+            text: statusMap['50'],
+            value: 50,
           },
         ],
-        onFilter: (value, record) => record.deviceState == value,
+        onFilter: (value, record) => record.caseState == value,
         render(val) {
-          return <Badge status={statusMap[val]} text={status[val]} />;
+          return <Badge status={val} text={statusMap[val]} />;
         },
       },
       {
-        title: '使用状态',
-        dataIndex: 'usageState',
-        filters: [
-          {
-            text: usageStatus[0],
-            value: '0',
-          },
-          {
-            text: usageStatus[1],
-            value: '1',
-          },
-        ],
-        onFilter: (value, record) => record.usageState.toString() === value,
-        render(val) {
-          return <Badge status={usageStatusMap[val]} text={usageStatus[val]} />;
-        },
+        title: '安装人员',
+        dataIndex: 'assigneeUserName',
       },
+      {
+        title: '期望安装时间',
+        dataIndex: 'expectedTime',
+      },
+
       // {
       //   title: '更新时间',
       //   dataIndex: 'updatedAt',
@@ -411,10 +435,9 @@ export default class DeviceList extends PureComponent {
         title: '操作',
         render: val => (
           <Fragment>
-            <Link to={'/device/device-detail/' + val.deviceId}>详情</Link>
+            <Link to={'/install-case/case-edit/' + val.caseId}>详情</Link>
             &nbsp;
-            <a onClick={this.deleteDevice.bind(this, val)}>删除</a>
-            {/*<a href="`/device/detail?id=${val.id}`" >详情</a>*/}
+            <a onClick={this.closeCase.bind(this, val)}>关闭</a>
           </Fragment>
         ),
       },
@@ -440,22 +463,23 @@ export default class DeviceList extends PureComponent {
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
                 新建
               </Button>
-              {selectedRows.length > 0 && (
-                <span>
-                  <Button>批量操作</Button>
-                  <Dropdown overlay={menu}>
-                    <Button>
-                      更多操作 <Icon type="down" />
-                    </Button>
-                  </Dropdown>
-                </span>
-              )}
+              {false &&
+                selectedRows.length > 0 && (
+                  <span>
+                    <Button>批量操作</Button>
+                    <Dropdown overlay={menu}>
+                      <Button>
+                        更多操作 <Icon type="down" />
+                      </Button>
+                    </Dropdown>
+                  </span>
+                )}
             </div>
             <StandardTable
               selectedRows={selectedRows}
               loading={loading}
               data={data}
-              rowKey={'deviceId'}
+              rowKey={'caseId'}
               columns={columns}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}

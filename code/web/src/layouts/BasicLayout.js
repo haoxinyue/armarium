@@ -109,23 +109,22 @@ class BasicLayout extends React.PureComponent {
       type: 'user/fetchCurrent',
     });
 
-    this.initNoticeTimer.bind(this)()
+    this.initNoticeTimer.bind(this)();
   }
 
-  initNoticeTimer(){
-    clearInterval(this.noticeTimer)
-    this.noticeTimer = setInterval(()=>{
-      this.props. dispatch({
-        type: 'global/fetchNotices'
+  initNoticeTimer() {
+    clearInterval(this.noticeTimer);
+    this.noticeTimer = setInterval(() => {
+      this.props.dispatch({
+        type: 'global/fetchNotices',
       });
-    },30000)
+    }, 60000 * 60 * 6);
   }
 
   componentWillUnmount() {
     unenquireScreen(this.enquireHandler);
 
-    clearInterval(this.noticeTimer)
-
+    clearInterval(this.noticeTimer);
   }
   getPageTitle() {
     const { routerData, location } = this.props;
@@ -203,7 +202,7 @@ class BasicLayout extends React.PureComponent {
       routerData,
       match,
       location,
-      dispatch
+      dispatch,
     } = this.props;
     const bashRedirect = this.getBashRedirect();
     const layout = (
@@ -257,8 +256,9 @@ class BasicLayout extends React.PureComponent {
           </Content>
           <Footer style={{ padding: 0 }}>
             <GlobalFooter
-              links={[
-                /*{
+              links={
+                [
+                  /*{
                   key: 'Pro 首页',
                   title: 'Pro 首页',
                   href: 'http://pro.ant.design',
@@ -276,7 +276,8 @@ class BasicLayout extends React.PureComponent {
                   href: 'http://ant.design',
                   blankTarget: true,
                 },*/
-              ]}
+                ]
+              }
               copyright={
                 <Fragment>
                   Copyright <Icon type="copyright" /> 2018 医疗云出品
@@ -299,10 +300,8 @@ class BasicLayout extends React.PureComponent {
 }
 
 export default connect(({ user, global, loading }) => ({
-
-  currentUser: user.currentUser||{},
+  currentUser: user.currentUser || {},
   collapsed: global && global.collapsed,
   fetchingNotices: loading.effects['global/fetchNotices'],
-  notices:  global && global.notices,
-
+  notices: global && global.notices,
 }))(BasicLayout);

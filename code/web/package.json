@@ -5,11 +5,11 @@
   "private": true,
   "scripts": {
     "precommit": "npm run lint-staged",
-    "start": "cross-env ESLINT=none PORT=3000 roadhog dev",
+    "start": "cross-env ESLINT=none roadhog dev",
     "start:no-proxy": "cross-env NO_PROXY=true ESLINT=none roadhog dev",
     "build": "cross-env ESLINT=none roadhog build",
     "site": "roadhog-api-doc static && gh-pages -d dist",
-    "analyze": "cross-env ANALYZE=true roadhog build",
+    "analyze": "cross-env ANALYZE=true ESLINT=none  roadhog build",
     "lint:style": "stylelint \"src/**/*.less\" --syntax less",
     "lint": "eslint --ext .js src mock tests && npm run lint:style",
     "lint:fix": "eslint --fix --ext .js src mock tests && npm run lint:style",
@@ -41,6 +41,7 @@
     "path-to-regexp": "^2.1.0",
     "prop-types": "^15.5.10",
     "qr.js": "^0.0.0",
+    "qrcode.react": "^0.8.0",
     "qs": "^6.5.0",
     "rc-drawer-menu": "^0.5.0",
     "react": "^16.2.0",
@@ -48,6 +49,7 @@
     "react-document-title": "^2.0.3",
     "react-dom": "^16.2.0",
     "react-fittext": "^1.0.0",
+    "redux-logger": "^3.0.6",
     "rollbar": "^2.3.4",
     "url-polyfill": "^1.0.10"
   },
@@ -56,6 +58,9 @@
     "babel-plugin-dva-hmr": "^0.4.1",
     "babel-plugin-import": "^1.6.7",
     "babel-plugin-module-resolver": "^3.1.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-register": "^6.26.0",
     "cross-env": "^5.1.1",
     "cross-port-killer": "^1.0.1",
     "enzyme": "^3.1.0",
@@ -80,7 +85,8 @@
     "roadhog-api-doc": "^1.0.3",
     "stylelint": "^8.4.0",
     "stylelint-config-prettier": "^3.0.4",
-    "stylelint-config-standard": "^18.0.0"
+    "stylelint-config-standard": "^18.0.0",
+    "webpack-bundle-analyzer": "^2.13.1"
   },
   "optionalDependencies": {
     "puppeteer": "^1.4.0"

@@ -1,29 +1,24 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
-const USE_FAKE= false;
-
 const IS_DEBUG = true;
 
-export const httpDomain = IS_DEBUG ? "/API":"http://47.100.198.255:8080";
-export const httpDomain_TEST =  "/api";
+export const httpDomain = IS_DEBUG ? '/MAPI' : 'http://47.100.198.255:8080';
+export const httpDomain_TEST = '/api';
 
-export const uploadUrl = `${httpDomain}/accessory/fileUpload`
+export const uploadUrl = `${httpDomain}/accessory/fileUpload`;
 
 export function getFormData(params) {
   let data = new FormData();
-  for (let key in params){
-    data.append(key,params[key])
+  for (let key in params) {
+    data.append(key, params[key]);
   }
   return data;
 }
 
-
-
 /* user */
 
 export async function fakeAccountLogin(params) {
-
   // return request(`${httpDomain_TEST}/login/account`,{
   //   method: 'POST',
   //   body: {
@@ -33,24 +28,20 @@ export async function fakeAccountLogin(params) {
   //   },
   // })
 
-
   return request(`${httpDomain}/auth/login`, {
     method: 'POST',
     body: getFormData({
-      loginName:params.loginName,
-      loginPassword:params.password
+      loginName: params.loginName,
+      loginPassword: params.password,
     }),
   });
-
 }
 
 export async function queryUserDetail(params) {
-
-  return request(`${httpDomain}/equip/getDevice`,{
-    method:"POST",
-    body:getFormData(params)
+  return request(`${httpDomain}/equip/getDevice`, {
+    method: 'POST',
+    body: getFormData(params),
   });
-
 }
 
 export async function queryUsers(params) {
@@ -77,14 +68,13 @@ export async function addUser(params) {
   });
 }
 
-
 /* =============================================================== */
 export async function queryDepartments(params) {
   return request(`${httpDomain}/dept/getDeptTree`, {
     method: 'POST',
     body: getFormData({
       ...params,
-      userId:10002
+      userId: 10002,
     }),
   });
 }
@@ -111,7 +101,6 @@ export async function updateDepartment(params) {
 }
 
 /* =============================================================== */
-
 
 export async function queryProjectNotice() {
   return request('/api/project/notice');
@@ -171,8 +160,6 @@ export async function queryAdvancedProfile() {
 export async function queryFakeList(params) {
   return request(`/api/fake_list?${stringify(params)}`);
 }
-
-
 
 export async function fakeRegister(params) {
   return request('/api/register', {
