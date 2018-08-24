@@ -158,8 +158,8 @@ export const getRouterData = app => {
       ),
     },
     '/asset/asset-event': {
-      component: dynamicWrapper(app, ['repair', 'engineer', 'device'], () =>
-        import(/* webpackChunkName: "RepairList" */ '../routes/Repair/RepairList')
+      component: dynamicWrapper(app, ['repair', 'badEvent', 'device'], () =>
+        import(/* webpackChunkName: "RepairList" */ '../routes/BadEvent/BadEventList')
       ),
     },
     '/asset/asset-role': {
@@ -201,8 +201,14 @@ export const getRouterData = app => {
     },
     /* ============================================================================================ */
     '/install-case/case-edit/:caseId': {
-      component: dynamicWrapper(app, ['installCase', 'hospital'], () =>
+      component: dynamicWrapper(app, ['installCase', 'hospital', 'device'], () =>
         import(/* webpackChunkName: "InstallCaseEdit" */ '../routes/InstallCase/InstallCaseEdit')
+      ),
+    },
+    /* ============================================================================================ */
+    '/bad-event/event-edit/:eventId': {
+      component: dynamicWrapper(app, ['badEvent', 'hospital', 'device'], () =>
+        import(/* webpackChunkName: "InstallCaseEdit" */ '../routes/BadEvent/BadEventEdit')
       ),
     },
     /* ============================================================================================ */

@@ -26,6 +26,7 @@ import DepartmentSelect from '../../components/biz/DepartmentSelect';
 import HospitalSelect from '../../components/biz/HospitalSelect';
 
 import styles from './TableList.less';
+import EngineerSelect from '../../components/biz/EngineerSelect';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -69,6 +70,11 @@ const CreateForm = Form.create()(props => {
           rules: [{ required: true, message: '请选择所属部门...' }],
         })(<DepartmentSelect placeholder="请选择所属部门" />)}
       </FormItem>
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="指派给">
+        {form.getFieldDecorator('assigneeUserId', {
+          rules: [{ required: true, message: '请选择工程师...' }],
+        })(<EngineerSelect placeholder="请选择工程师" />)}
+      </FormItem>
 
       {/*<FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备类型">
         {form.getFieldDecorator('deviceType', {
@@ -78,12 +84,14 @@ const CreateForm = Form.create()(props => {
 
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否需要巡检">
         {form.getFieldDecorator('needInspection', {
+          initialValue: false,
           rules: [{ required: true }],
         })(<Checkbox style={{ marginLeft: 8 }} />)}
       </FormItem>
 
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否需要计量">
         {form.getFieldDecorator('needMetering', {
+          initialValue: false,
           rules: [{ required: true }],
         })(<Checkbox style={{ marginLeft: 8 }} />)}
       </FormItem>

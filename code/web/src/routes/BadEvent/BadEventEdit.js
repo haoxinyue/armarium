@@ -24,83 +24,65 @@ import {
 } from 'antd';
 import { Link } from 'dva/router';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import DepartmentSelect from '../../components/biz/DepartmentSelect';
 import styles from '../Forms/style.less';
-import HospitalSelect from '../../components/biz/HospitalSelect';
-import EngineerSelect from '../../components/biz/EngineerSelect';
+import DeviceSelect from '../../components/biz/DeviceSelect';
 
 const FormItem = Form.Item;
 const { Option } = Select;
 const { TextArea } = Input;
 
-@connect(({ installCase, hospital, user, loading }) => ({
-  installCase,
+@connect(({ badEvent, hospital, user, loading }) => ({
+  badEvent,
   hospital,
   currentUser: user.currentUser || {},
 }))
 @Form.create()
-export default class InstallCaseEdit extends Component {
-  state = {
-    previewVisible: false,
-    previewImage: '',
-    fileList: [],
-  };
-
-  handleCancel = () => this.setState({ previewVisible: false });
-
-  handlePreview = file => {
-    this.setState({
-      previewImage: file.url || file.thumbUrl,
-      previewVisible: true,
-    });
-  };
-
+export default class BadEventEdit extends Component {
   handleSubmit = e => {
     e.preventDefault();
     const { dispatch, match: { params }, currentUser = {} } = this.props;
-    let isEditMode = params.deviceId != null;
+    let isEditMode = params.eventId != null;
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         let fData = {
           ...values,
-          expectedTime: moment(values.expectedTime).format('YYYY/MM/DD'),
+          eventTime: moment(values.eventTime).format('YYYY/MM/DD'),
           creater: currentUser.userId,
           modifier: currentUser.userId,
         };
 
         if (!isEditMode) {
-          delete fData['caseId'];
+          delete fData['eventId'];
         }
 
         dispatch({
-          type: isEditMode ? 'installCase/complete' : 'installCase/add',
+          type: isEditMode ? 'badEvent/updateDetail' : 'badEvent/add',
           payload: fData,
-          callback(v) {
-            if (v.success) {
-              message.success('保存成功');
-              dispatch({
-                type: 'installCase/fetchDetail',
-                payload: {
-                  caseId: fData.caseId,
-                },
-              });
-              // dispatch(routerRedux.push(`/device/device-detail/${v.deviceId}`));
-            } else {
-              message.error('保存失败');
-            }
-          },
+        }).then(v => {
+          if (v.success) {
+            message.success('保存成功');
+            dispatch({
+              type: 'badEvent/fetchDetail',
+              payload: {
+                eventId: fData.eventId,
+              },
+            });
+            // dispatch(routerRedux.push(`/device/device-detail/${v.deviceId}`));
+          } else {
+            message.error('保存失败');
+          }
         });
       }
     });
   };
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { dispatch, match: { params: { caseId } } } = this.props;
-    const { match: { params: { caseId: NextCaseId } } } = nextProps;
-    if (NextCaseId && NextCaseId !== caseId) {
+    const { dispatch, match: { params: { eventId } } } = this.props;
+    const { match: { params: { eventId: NextEventId } } } = nextProps;
+    if (NextEventId && NextEventId !== eventId) {
       dispatch({
-        type: 'installCase/fetchDetail',
-        payload: { caseId: NextCaseId },
+        type: 'badEvent/fetchDetail',
+        payload: { eventId: NextEventId },
       });
       return true;
     }
@@ -110,7 +92,7 @@ export default class InstallCaseEdit extends Component {
   componentDidMount() {
     const { dispatch, form, match } = this.props;
 
-    const { params: { caseId } } = match;
+    const { params: { eventId } } = match;
 
     const callback = function(d) {
       const { form } = this.props;
@@ -122,26 +104,29 @@ export default class InstallCaseEdit extends Component {
           data[k] = d[k];
         }
 
-        if (k === 'expectedTime') {
+        if (k === 'eventTime') {
           data[k] = moment(data[k]);
         }
       }
       setFieldsValue(data);
     }.bind(this);
 
-    if (caseId) {
+    if (eventId) {
       dispatch({
-        type: 'installCase/fetchDetail',
+        type: 'badEvent/fetchDetail',
         payload: {
-          caseId,
+          eventId,
         },
-        callback,
+      }).then(res => {
+        if (res && res.success) {
+          callback(res.data);
+        }
       });
     }
   }
 
   render() {
-    const { submitting, match: { params }, installCase } = this.props;
+    const { submitting, match: { params } } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
 
     const formItemLayout = {
@@ -163,19 +148,7 @@ export default class InstallCaseEdit extends Component {
       },
     };
 
-    let isEditMode = params.caseId != null;
-
-    let mCase = isEditMode && installCase.byIds[params.caseId];
-
-    let devices = [];
-
-    if (mCase) {
-      //暂时只有一个
-      devices.push({
-        deviceId: mCase.deviceId,
-        deviceName: mCase.deviceName,
-      });
-    }
+    let isEditMode = params.eventId != null;
 
     function getDateFieldNode(fieldName, title, isRequired, options = {}) {
       const dateFormat = options.format || 'YYYY/MM/DD HH:mm:ss';
@@ -274,105 +247,24 @@ export default class InstallCaseEdit extends Component {
 
     return (
       <PageHeaderLayout
-        title={isEditMode ? `安装工单 ${params.caseId}` : '安装工单新增'}
+        title={isEditMode ? `安装工单 [${params.eventId}]` : '安装工单新增'}
         content=""
       >
-        {isEditMode && (
-          <Card bordered={false}>
-            <List
-              className={'ant-col-md-16 ant-col-offset-4'}
-              grid={{ gutter: 4, xs: 1, sm: 2, md: 4, lg: 4, xl: 4, xxl: 3 }}
-              header={<div>关联设备</div>}
-              bordered
-              dataSource={devices}
-              renderItem={item => (
-                <List.Item style={{ textAlign: 'center', padding: 8 }}>
-                  <Card title={item.deviceName}>
-                    <Link to={'/device/device-edit/' + item.deviceId}>编辑</Link>
-                  </Card>
-                </List.Item>
-              )}
-            />
-          </Card>
-        )}
-
         <Card bordered={false}>
           <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
-            {getInputFieldNode('deviceName', '设备名称', true)}
-
-            <FormItem {...formItemLayout} label="*所属医院">
-              {getFieldDecorator('hospitalId', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择所属医院',
-                  },
-                ],
-              })(<HospitalSelect placeholder="请选择所属医院" />)}
+            <FormItem {...formItemLayout} label="设备Id">
+              {getFieldDecorator('deviceId', {
+                rules: [{ required: true, message: '请选择设备...' }],
+              })(<DeviceSelect placeholder="请选择设备" />)}
             </FormItem>
 
-            <FormItem {...formItemLayout} label="*所属部门">
-              {getFieldDecorator('departmentId', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择所属部门',
-                  },
-                ],
-              })(<DepartmentSelect placeholder="请选择所属部门" />)}
-            </FormItem>
+            {getInputFieldNode('eventSubject', '事件主题', true)}
 
-            {getInputFieldNode('deviceModel', '设备型号', true)}
+            {getTextFieldNode('eventRemark', '事件描述', true)}
 
-            {getDateFieldNode('expectedTime', '期望安装时间', true)}
+            {getDateFieldNode('eventTime', '事件时间', true)}
 
-            {getDateFieldNode('setupTime', '安装时间', true)}
-
-            {getTextFieldNode('caseRemark', '工单描述', true)}
-
-            {getSelectFieldNode('deviceType', '设备类型', true, [
-              {
-                value: 1,
-                text: 'B超',
-              },
-              {
-                value: 2,
-                text: 'MR',
-              },
-              {
-                value: 3,
-                text: '普放',
-              },
-            ])}
-
-            {getInputFieldNode('deviceId', '设备编号', false, { hidden: true })}
-
-            <FormItem {...formItemLayout} label="*安装人">
-              {getFieldDecorator('assigneeUserId', {
-                rules: [
-                  {
-                    required: true,
-                    message: '请选择安装人',
-                  },
-                ],
-              })(<EngineerSelect placeholder="请选择安装人" />)}
-            </FormItem>
-
-            <FormItem {...formItemLayout} label="*是否需要巡检">
-              {getFieldDecorator('needInspection', {
-                initialValue: false,
-                rules: [],
-              })(<Checkbox />)}
-            </FormItem>
-
-            <FormItem {...formItemLayout} label="*是否需要计量">
-              {getFieldDecorator('needMetering', {
-                initialValue: false,
-                rules: [],
-              })(<Checkbox />)}
-            </FormItem>
-
-            {getTextFieldNode('setupRemark', '安装描述', true)}
+            {getInputFieldNode('eventId', '编号', false, { hidden: true })}
 
             {/* ================================== */}
 

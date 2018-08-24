@@ -2,7 +2,7 @@ import { httpDomain, getFormData } from './api';
 import request from '../utils/request';
 
 export async function queryBadEventList(params) {
-  return request(`${httpDomain}/case/getMtCaseList`, {
+  return request(`${httpDomain}/bad_event/getBadEventList`, {
     method: 'POST',
     /*
    *     //assigneeUserId
@@ -12,14 +12,14 @@ export async function queryBadEventList(params) {
 }
 
 export async function removeBadEvent(params) {
-  return request(`${httpDomain}/case/delMtCase`, {
+  return request(`${httpDomain}/bad_event/removeBadEvent`, {
     method: 'POST',
     body: getFormData(params),
   });
 }
 
 export async function addBadEvent(params) {
-  return request(`${httpDomain}/case/addMtCase`, {
+  return request(`${httpDomain}/bad_event/addBadEvent`, {
     method: 'POST',
     body: getFormData({
       ...params,
@@ -27,7 +27,7 @@ export async function addBadEvent(params) {
   });
 }
 export async function updateBadEvent(params) {
-  return request(`${httpDomain}/case/updMtCase`, {
+  return request(`${httpDomain}/bad_event/updBadEvent`, {
     method: 'POST',
     body: getFormData({
       ...params,
@@ -36,7 +36,7 @@ export async function updateBadEvent(params) {
 }
 
 export async function queryBadEventDetail(params) {
-  return request(`${httpDomain}/case/getMtCaseInfo`, {
+  return request(`${httpDomain}/bad_event/getBadEventInfo`, {
     method: 'POST',
     body: getFormData(params),
   });

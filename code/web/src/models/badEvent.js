@@ -26,7 +26,7 @@ export default {
     },
     *fetchDetail({ payload, callback }, { call, put }) {
       const response = yield call(queryBadEventDetail, {
-        caseId: Number(payload.caseId),
+        eventId: Number(payload.eventId),
       });
 
       const data = {
@@ -38,7 +38,11 @@ export default {
           ...data,
         },
       });
-      if (callback) callback(response.data);
+      const res = {
+        success: response.code === 0,
+        data: response.data,
+      };
+      return res;
     },
     *add({ payload, callback }, { call, put }) {
       const response = yield call(addBadEvent, payload) || {};
@@ -46,30 +50,20 @@ export default {
         type: 'saveCurrent',
         payload: response.data,
       });
-      if (callback) callback(response.code === 0);
+      const result = {
+        success: response.code === 0,
+      };
+      return result;
     },
     *remove({ payload, callback }, { call, put }) {
       const response = yield call(removeBadEvent, payload);
       yield put({
         type: 'removeCurrent',
         payload: {
-          caseId: payload.caseId,
+          eventId: payload.eventId,
         },
       });
       if (callback) callback(response);
-    },
-    *changeState({ payload, callback }, { call, put }) {
-      const response = yield call(updateBadEvent, {
-        ...payload,
-      }) || {};
-      let success = response.code === 0;
-      if (success) {
-        yield put({
-          type: 'saveCurrent',
-          payload: response.data,
-        });
-      }
-      if (callback) callback(success);
     },
     *updateDetail({ payload, callback }, { call, put }) {
       const response = yield call(updateBadEvent, payload);
@@ -77,7 +71,10 @@ export default {
         type: 'saveCurrent',
         payload: response.data,
       });
-      if (callback) callback(response);
+      const result = {
+        success: response.code === 0,
+      };
+      return result;
     },
   },
 
@@ -87,10 +84,10 @@ export default {
         list = [];
       if (action.payload.data) {
         action.payload.data.forEach(item => {
-          if (item && item.caseId != null) {
-            byIds[item.caseId] = item;
-            if (list.indexOf(item.caseId) === -1) {
-              list.push(item.caseId);
+          if (item && item.eventId != null) {
+            byIds[item.eventId] = item;
+            if (list.indexOf(item.eventId) === -1) {
+              list.push(item.eventId);
             }
           }
         });
@@ -112,7 +109,7 @@ export default {
         };
       }
       let byIds = Object.assign({}, state.byIds);
-      byIds[action.payload.caseId] = action.payload;
+      byIds[action.payload.eventId] = action.payload;
 
       return {
         ...state,
@@ -120,7 +117,7 @@ export default {
       };
     },
     removeCurrent(state, action) {
-      let id = action.caseId;
+      let id = action.eventId;
       let idx = state.list.indexOf(id);
       state.list.splice(idx, 1);
       let list = state.list;
