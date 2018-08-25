@@ -2,7 +2,12 @@
  * Created by Administrator on 2017/8/4.
  */
 
-import * as types from '../actions/actionTypes'
+export const ACTION_TYPES ={
+    CHANGE_HEADER_TITLE:"HEADER/CHANGE_HEADER_TITLE",
+    CHANGE_HEADER_VISIBLE:"HEADER/CHANGE_HEADER_VISIBLE",
+    CHANGE_HEADER_LEFT_CONTENT:"HEADER/CHANGE_HEADER_LEFT_CONTENT",
+    CHANGE_HEADER_RIGHT_CONTENT:"HEADER/CHANGE_HEADER_RIGHT_CONTENT",
+};
 
 const header = (state = {
 
@@ -14,22 +19,22 @@ const header = (state = {
 	switch (action.type) {
 
 
-		case types.CHANGE_HEADER_TITLE:
+		case ACTION_TYPES.CHANGE_HEADER_TITLE:
 			return {
                 ...state,
 				title:action.title
 			}
-		case types.CHANGE_HEADER_VISIBLE:
+		case ACTION_TYPES.CHANGE_HEADER_VISIBLE:
 			return {
                 ...state,
 				visible:action.visible
 			}
-		case types.CHANGE_HEADER_LEFT_CONTENT:
+		case ACTION_TYPES.CHANGE_HEADER_LEFT_CONTENT:
 			return {
                 ...state,
 				leftContent:action.leftContent
 			}
-		case types.CHANGE_HEADER_RIGHT_CONTENT:
+		case ACTION_TYPES.CHANGE_HEADER_RIGHT_CONTENT:
 			return {
                 ...state,
 				rightContent:action.rightContent

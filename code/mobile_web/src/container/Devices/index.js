@@ -4,18 +4,16 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {
-    changeHeaderRight
+    changeHeaderRight,
+    fetchDeviceList
 } from '../../redux/actions'
-import {PullToRefresh, ListView, SearchBar, Drawer, Toast, Modal} from 'antd-mobile'
+import {PullToRefresh, ListView, SearchBar, Drawer, Toast} from 'antd-mobile'
 import RadioGroup from '../../components/RadioGroup'
 import DeviceListItem from '../../components/DeviceListItem'
-import {getQueryString} from '../../utils'
-import axios from '../../http'
-import api from '../../api'
 import './deviceList.less'
 
 
-class Customer extends Component {
+class Devices extends Component {
     constructor(props) {
         super(props)
 
@@ -23,20 +21,21 @@ class Customer extends Component {
             rowHasChanged: (row1, row2) => row1 !== row2,
         });
 
+        this.rData =[];
+
         this.state = {
             dataSource,
             refreshing: true,
             isLoading: true,
             height: document.documentElement.clientHeight - 88 - 90,
             useBodyScroll: false,
-
             openFilter: false,
-
-
             searchValue: '',
-
-
+            pageIndex:0,
+            hasMore:false
         }
+
+        this.queryPageData = this.queryPageData.bind(this)
     }
 
 
@@ -67,7 +66,6 @@ class Customer extends Component {
     }
 
     onOpenChange = (...args) => {
-
         this.setState({openFilter: !this.state.openFilter});
     }
 
@@ -78,111 +76,71 @@ class Customer extends Component {
         this.onRefresh()
     }
 
+    queryPageData(clear){
+        const {dispatch} = this.props
+        const nextPage =(clear?0:(this.state.pageIndex+1))
+        this.setState({refreshing: !!clear, pageIndex:nextPage,isLoading: true});
 
-    onRefresh = () => {
-        this.setState({refreshing: true, isLoading: true});
-        // simulate initial Ajax
-        axios.http.post(api.deviceListGet,{pageIndex:1}).then((res)=>{
-            // Toast.info("success")
-            // setTimeout(()=>{
-            //     Toast.fail(JSON.stringify(res))
-            // },1000)
+        dispatch(fetchDeviceList({pageIndex: nextPage})).then((res) => {
+            Toast.info("success")
             Toast.hide()
-        },(res)=>{
+            this.rData =clear?[]:this.rData;
+            const listdata =res.payload.data||[];
+            listdata.forEach((item)=>{
+                this.rData.push(item)
+            });
+
+            let dataSource = this.state.dataSource.cloneWithRows(this.rData);
+
+            this.setState({
+                dataSource,
+                refreshing: false,
+                isLoading: false,
+                hasMore:listdata.length>0
+            });
+
+        }, (res) => {
+            if (clear){
+                let dataSource = this.state.dataSource.cloneWithRows([]);
+                this.setState({
+                    dataSource,
+                    refreshing: false,
+                    isLoading: false,
+                    hasMore:false
+                });
+            }else{
+                this.setState({
+                    refreshing: false,
+                    isLoading: false,
+                    hasMore:false
+                });
+            }
+
             // Toast.fail("failed")
-            // setTimeout(()=>{
+            // setTimeout(() => {
             //     Toast.fail(JSON.stringify(res))
-            // },1000)
+            // }, 1000)
             Toast.hide()
 
         })
+    }
 
-        setTimeout(() => {
-            this.rData = [{
-                DeviceId: "1",
-                DeviceCode: "001",
-                DeviceName: "电脑中频治疗仪",
-                DeviceModel: "CP-600TCI",
-                SerialNumber: "20170808111122",
-                QRCode: "00000000001",
-                DeviceState: "1"
-            }, {
-                DeviceId: "2",
-                DeviceCode: "002",
-                DeviceName: "电脑中频治疗仪2",
-                DeviceModel: "CP-600TCI",
-                SerialNumber: "20170808111222",
-                QRCode: "00000000002",
-                DeviceState: "2"
-            }, {
-                DeviceId: "3",
-                DeviceCode: "003",
-                DeviceName: "电脑中频治疗仪3",
-                DeviceModel: "CP-600TCI",
-                SerialNumber: "20170808111222",
-                QRCode: "00000000002",
-                DeviceState: "2"
-            }, {
-                DeviceId: "4",
-                DeviceCode: "004",
-                DeviceName: "电脑中频治疗仪4",
-                DeviceModel: "CP-600TCI",
-                SerialNumber: "20170808111222",
-                QRCode: "00000000002",
-                DeviceState: "2"
-            }, {
-                DeviceId: "5",
-                DeviceCode: "005",
-                DeviceName: "电脑中频治疗仪5",
-                DeviceModel: "CP-600TCI",
-                SerialNumber: "20170808111222",
-                QRCode: "00000000002",
-                DeviceState: "2"
-            }
-            ];
-            this.setState({
-                dataSource: this.state.dataSource.cloneWithRows(this.rData),
-                refreshing: false,
-                isLoading: false,
-            });
-        }, 600);
 
+    onRefresh = () => {
+        this.queryPageData(true)
     };
 
+
     onEndReached = (event) => {
+
         // load new data
         // hasMore: from backend data, indicates whether it is the last page, here is false
         if (this.state.isLoading && !this.state.hasMore) {
             return;
         }
-        // console.log('reach end', event);
-        this.setState({isLoading: true});
 
-        setTimeout(() => {
+        this.queryPageData(false)
 
-            this.rData = [...this.rData, ...[{
-                DeviceId: "1",
-                DeviceCode: "001",
-                DeviceName: "电脑中频治疗仪",
-                DeviceModel: "CP-600TCI",
-                SerialNumber: "20170808111122",
-                QRCode: "00000000001",
-                DeviceState: "1"
-            }, {
-                DeviceId: "2",
-                DeviceCode: "002",
-                DeviceName: "电脑中频治疗仪2",
-                DeviceModel: "CP-600TCI",
-                SerialNumber: "20170808111222",
-                QRCode: "00000000002",
-                DeviceState: "2"
-            },
-            ]];
-            this.setState({
-                dataSource: this.state.dataSource.cloneWithRows(this.rData),
-                isLoading: false,
-            });
-        }, 1000);
     };
 
     render() {
@@ -194,19 +152,9 @@ class Customer extends Component {
             data: ['所有', '正常', '故障'],
             onChange: () => {
                 this.setState({
-                    openFilter:false
+                    openFilter: false
                 })
                 this.onRefresh()
-
-            }
-        }
-
-        // 客户类型props
-        const customerProps = {
-            name: 'customer',
-            defaultValue: '所有',
-            data: ['所有', '新客户', '老客户'],
-            onChange: () => {
             }
         }
 
@@ -230,12 +178,8 @@ class Customer extends Component {
                         <h6 className="filter-list-item-title">设备状态</h6>
                         <RadioGroup {...partProps} />
                     </li>
-                    {/*<li className="filter-list-item">*/}
-                        {/*<h6 className="filter-list-item-title">客户类型</h6>*/}
-                        {/*<RadioGroup {...customerProps} />*/}
-                    {/*</li>*/}
                 </ul>
-            </div>
+            </div>;
 
         return (
             <Drawer
@@ -257,7 +201,7 @@ class Customer extends Component {
                         <div className="scroll-hook">
                             <ListView
                                 className="dataList-list"
-                                key={ '0'}
+                                key={'0'}
                                 ref={el => this.lv = el}
                                 dataSource={this.state.dataSource}
 
@@ -285,45 +229,22 @@ class Customer extends Component {
                                 pageSize={8}
                             />
 
-
-                            {/*<ul className="dataList-list">
-                             {
-                             this.state.data.map((item, index) => (
-                             <DeviceListItem key={index}
-                             history={this.props.history}
-                             list={item}
-                             />
-                             ))
-                             }
-                             </ul>*/}
-
                         </div>
                     </div>
-                    <div className="mask" style={{display}} onClick={this.onOpenChange}></div>
+                    <div className="mask" style={{display}} onClick={this.onOpenChange}>
+                    </div>
                 </section>
 
-
-                {/*<ul className="filter-list">
-                 <li className="filter-list-item">
-                 <h6 className="filter-list-item-title">参会状态</h6>
-                 <RadioGroup {...partProps} />
-                 </li>
-                 <li className="filter-list-item">
-                 <h6 className="filter-list-item-title">客户类型</h6>
-                 <RadioGroup {...customerProps} />
-                 </li>
-                 </ul>*/}
-                {/*</div>*/}
             </Drawer>
         )
     }
 }
 
 const mapStateToProps = (state) => {
-    const {sidebarStatus} = state.app
+    const {filter} = state.device
     return {
-        sidebarStatus
+        searchWord: filter.searchWord
     }
 }
 
-export default connect(mapStateToProps)(Customer)
+export default connect(mapStateToProps)(Devices)

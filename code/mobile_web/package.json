@@ -7,7 +7,10 @@
     "axios": "^0.16.2",
     "better-scroll": "^0.4.0",
     "classnames": "^2.2.5",
+    "moment": "^2.22.2",
     "pinyin": "^2.8.3",
+    "rc-form": "^2.2.1",
+    "rc-upload": "^2.5.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-loadable": "^4.0.4",
@@ -15,7 +18,9 @@
     "react-router-dom": "^4.1.2",
     "react-router-redux": "^4.0.8",
     "react-transition-group": "^1.2.1",
-    "redux": "^3.7.2"
+    "redux": "^3.7.2",
+    "redux-actions": "^2.3.2",
+    "redux-promise": "^0.5.3"
   },
   "devDependencies": {
     "antd-mobile-demo-data": "^0.2.0",
@@ -102,5 +107,25 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "homepage": "."
+  "homepage": ".",
+  "devServer": {
+    "proxy": {
+      "/api": {
+        "target": "http://47.100.198.255:8080/",
+        "pathRewrite": {
+          "^/api": ""
+        },
+        "changeOrigin": true
+      }
+    }
+  },
+  "proxy": {
+    "/api": {
+      "target": "http://47.100.198.255:8080/",
+      "pathRewrite": {
+        "^/api": ""
+      },
+      "changeOrigin": true
+    }
+  }
 }

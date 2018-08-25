@@ -5,22 +5,11 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import './deviceDetail.less'
 import {Tabs,ImagePicker,Button} from 'antd-mobile'
-import { changeHeaderRight} from '../../redux/actions'
+import { changeHeaderRight,getDeviceDetail} from '../../redux/actions'
 
 class DeviceDetail extends Component {
     constructor(props) {
         super(props)
-        const data = [{
-            url: 'https://zos.alipayobjects.com/rmsportal/PZUUCKTRIHWiZSY.jpeg',
-            id: '2121',
-        }, {
-            url: 'https://zos.alipayobjects.com/rmsportal/hqQWgTXdrlmVVYi.jpeg',
-            id: '2122',
-        }];
-        this.state = {
-            showData: [],
-            files:data
-        }
     }
 
     componentDidMount() {
@@ -31,11 +20,26 @@ class DeviceDetail extends Component {
 
     }
 
-    componentDidUpdate() {
-        // scroll.refresh()
+    componentWillMount() {
+        const {dispatch,match:{params:{deviceId}}} = this.props;
+        if (deviceId){
+            dispatch(getDeviceDetail({
+                deviceId:Number(deviceId)
+            }));
+        }
     }
 
-    componentWillUnmount() {
+    componentWillReceiveProps(nextProps, nextState){
+        const {dispatch,match:{params:{deviceId}}} = this.props;
+        const {match:{params:{deviceId:NextDeviceId}}} = nextProps;
+        if (NextDeviceId && NextDeviceId!==deviceId){
+            dispatch(getDeviceDetail({
+                deviceId:Number(NextDeviceId)
+            }));
+            return true
+        }
+        return true
+
     }
 
     onFileChange = (files, type, index) => {
@@ -46,15 +50,54 @@ class DeviceDetail extends Component {
     }
 
     onGotoEditPage(){
-        let id = 1
-        this.props.history.push(`/deviceEdit/${id}`)
+        const {match:{params:{deviceId}}} = this.props;
+        this.props.history.push(`/deviceEdit/${deviceId}`)
     }
 
     render() {
+
+        const {device,match} = this.props;
+        const { deviceId} = match.params;
+        const deviceInfo = device.byIds[deviceId] ||{}
+
         const tabs = [
             {title: '资产信息', sub: '1'},
             {title: '图片', sub: '2'}
         ];
+
+        let pictures =[];
+        if (deviceInfo.picture1){
+            pictures.push({
+                url:deviceInfo.picture1,
+                id:'pic1'
+            })
+        }
+        if (deviceInfo.picture2){
+            pictures.push({
+                url:deviceInfo.picture2,
+                id:'pic2'
+            })
+        }
+        if (deviceInfo.picture3){
+            pictures.push({
+                url:deviceInfo.picture3,
+                id:'pic3'
+            })
+        }
+        if (deviceInfo.picture4){
+            pictures.push({
+                url:deviceInfo.picture4,
+                id:'pic4'
+            })
+        }
+        if (deviceInfo.picture5){
+            pictures.push({
+                url:deviceInfo.picture5,
+                id:'pic5'
+            })
+        }
+
+
 
         return (
             <div className="device-detail" ref={(scroll) => {
@@ -84,29 +127,24 @@ class DeviceDetail extends Component {
                                     <div className="block-content">
 
                                         <div className="content-line">
-                                            <span className="key">资产名称</span>
-                                            <span className="value">靶控注射泵</span>
+                                            <span className="key">设备ID</span>
+                                            <span className="value">{deviceInfo.deviceId}</span>
                                         </div>
                                         <div className="content-line">
-                                            <span className="key">资产型号</span>
-                                            <span className="value">CP-600TCI</span>
+                                            <span className="key">设备编号</span>
+                                            <span className="value">{deviceInfo.deviceCode}</span>
                                         </div>
                                         <div className="content-line">
-                                            <span className="key">资产编号</span>
-                                            <span className="value">20180808271182</span>
+                                            <span className="key">设备名称</span>
+                                            <span className="value">{deviceInfo.deviceName}</span>
                                         </div>
                                         <div className="content-line">
-                                            <span className="key">所在院区</span>
-                                            <span className="value">南山医院</span>
+                                            <span className="key">设备类型</span>
+                                            <span className="value">{deviceInfo.deviceModel}</span>
                                         </div>
                                         <div className="content-line">
-                                            <span className="key">所属科室</span>
-                                            <span className="value">麻醉科</span>
-                                        </div>
-
-                                        <div className="content-line">
-                                            <span className="key">序列号</span>
-                                            <span className="value">907006</span>
+                                            <span className="key">设备描述</span>
+                                            <span className="value">{deviceInfo.deviceDesc}</span>
                                         </div>
 
 
@@ -124,12 +162,12 @@ class DeviceDetail extends Component {
                                     <div className="block-content">
 
                                         <div className="content-line">
-                                            <span className="key">资产名称</span>
-                                            <span className="value">靶控注射泵</span>
+                                            <span className="key">所属医院</span>
+                                            <span className="value">{deviceInfo.hospital}</span>
                                         </div>
                                         <div className="content-line">
-                                            <span className="key">备注</span>
-                                            <span className="value">无</span>
+                                            <span className="key">所属部门</span>
+                                            <span className="value">{deviceInfo.department}</span>
                                         </div>
 
                                     </div>
@@ -141,7 +179,7 @@ class DeviceDetail extends Component {
 
                     </div>
                     <div>
-                    <div className="block-list">
+                    <div className="block-list" style={{minHeight:'60vh'}}>
                         <li>
                             <div className="detail-block">
 
@@ -150,49 +188,16 @@ class DeviceDetail extends Component {
                                 </div>
 
                                 <div className="block-content">
-                                    <ImagePicker
-                                        files={this.state.files}
-                                        onChange={this.onFileChange}
-                                        onImageClick={(index, fs) => console.log(index, fs)}
-                                        selectable={false}
-                                        accept="image/gif,image/jpeg,image/jpg,image/png"
-                                    />
-                                </div>
-                            </div>
-                            <div className="detail-block">
+                                    {
+                                        pictures.length?<ImagePicker
+                                            files={pictures}
+                                            onChange={this.onFileChange}
+                                            onImageClick={(index, fs) => console.log(index, fs)}
+                                            selectable={false}
+                                            accept="image/gif,image/jpeg,image/jpg,image/png"
+                                        />:<span>暂无</span>
+                                    }
 
-                                <div className="block-title">
-                                    <span>铭牌图片</span>
-                                </div>
-
-                                <div className="block-content">
-                                    <ImagePicker
-                                        files={this.state.files}
-                                        onChange={this.onFileChange}
-                                        onImageClick={(index, fs) => console.log(index, fs)}
-                                        selectable={false}
-                                        accept="image/gif,image/jpeg,image/jpg,image/png"
-                                    />
-                                </div>
-                            </div>
-                            <div className="detail-block">
-
-                                <div className="block-title">
-                                    <span>标签图片</span>
-                                </div>
-
-                                <div className="block-content">
-                                    {/*<ImagePicker
-                                        files={[]}
-
-                                        onChange={this.onFileChange}
-                                        onImageClick={(index, fs) => console.log(index, fs)}
-                                        selectable={false}
-                                        accept="image/gif,image/jpeg,image/jpg,image/png"
-                                    />*/}
-                                    <div className="block-line">
-                                        <div className="key">暂无</div>
-                                    </div>
                                 </div>
                             </div>
 
@@ -208,10 +213,9 @@ class DeviceDetail extends Component {
 }
 
 const mapStateToProps = state => {
-    const {metaData, listData} = state.app
+    const {device} = state;
     return {
-        metaData,
-        listData
+        device
     }
 }
 export default connect(mapStateToProps)(DeviceDetail)

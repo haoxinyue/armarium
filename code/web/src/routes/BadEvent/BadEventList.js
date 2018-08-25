@@ -59,6 +59,11 @@ const CreateForm = Form.create()(props => {
           rules: [{ required: true, message: '请输入事件主题...' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="事件关联人">
+        {form.getFieldDecorator('eventPerson', {
+          rules: [{ required: true, message: '请输入事件关联人...' }],
+        })(<Input placeholder="请输入" />)}
+      </FormItem>
 
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="事件描述">
         {form.getFieldDecorator('eventRemark', {

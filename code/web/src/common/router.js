@@ -180,8 +180,8 @@ export const getRouterData = app => {
       ),
     },
     '/work-order/device-check': {
-      component: dynamicWrapper(app, ['repair', 'engineer', 'device'], () =>
-        import(/* webpackChunkName: "RepairList" */ '../routes/Repair/RepairList')
+      component: dynamicWrapper(app, ['repair', 'engineer', 'inspectionCase'], () =>
+        import(/* webpackChunkName: "InspectionCaseList" */ '../routes/InspectionCase/InspectionCaseList')
       ),
     },
     '/work-order/device-add': {

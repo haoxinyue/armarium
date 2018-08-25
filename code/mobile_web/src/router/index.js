@@ -56,6 +56,42 @@ export  const routes = [
         },
 
 	},{
+		path: '/install-case-list',
+		component: loadComponent('InstallCaseList'),
+		exact: true,
+        header:{
+            title: '安装工单列表',
+            visible:true,
+            left:"back"
+        }
+	},{
+		path: '/install-case-edit/:caseId',
+		component: loadComponent('InstallCaseEdit'),
+		exact: true,
+        header:{
+            title: '安装工单编辑',
+            visible:true,
+            left:"back"
+        }
+	},{
+		path: '/inspectionCaseList',
+		component: loadComponent('InspectionCaseList'),
+		exact: true,
+        header:{
+            title: '巡检历史',
+            visible:true,
+            left:"back"
+        }
+	},{
+		path: '/inspectionCaseEdit/:deviceId',
+		component: loadComponent('InspectionCaseEdit'),
+		exact: true,
+        header:{
+            title: '巡检',
+            visible:true,
+            left:"back"
+        }
+	},{
 		path: '/devices',
 		component: loadComponent('Devices'),
 		exact: true,
@@ -66,7 +102,7 @@ export  const routes = [
         }
 	},
 	{
-		path: '/deviceDetail/:id',
+		path: '/deviceDetail/:deviceId',
 		exact: true,
 		component: loadComponent('DeviceDetail'),
         header:{
@@ -74,7 +110,7 @@ export  const routes = [
             left:"back"
         }
 	},{
-		path: '/deviceEdit/:id',
+		path: '/deviceEdit/:deviceId',
 		exact: true,
 		component: loadComponent('DeviceEdit'),
         header:{
@@ -87,6 +123,30 @@ export  const routes = [
 		component: loadComponent('DeviceEdit'),
         header:{
             title: '新增设备',
+            left:"back"
+        }
+	},{
+		path: '/repairs',
+		exact: true,
+		component: loadComponent('Repairs'),
+        header:{
+            title: '工单',
+            left:"back"
+        }
+	},{
+		path: '/repairAdd',
+		exact: true,
+		component: loadComponent('RepairAdd'),
+        header:{
+            title: '新增报修',
+            left:"back"
+        }
+	},{
+		path: '/repairDetail/:caseId',
+		exact: true,
+		component: loadComponent('RepairDetail'),
+        header:{
+            title: '工单详情',
             left:"back"
         }
 	},
@@ -114,6 +174,18 @@ export  const routes = [
         header:{
             title: '采购管理',
             left:"back"
+        }
+	},
+	{
+		path: '/myself',
+		exact: true,
+		component: loadComponent('MySelf'),
+        header:{
+            title: '个人中心',
+            left:"back"
+        },
+        footer:{
+            visible:true
         }
 	},
 	{

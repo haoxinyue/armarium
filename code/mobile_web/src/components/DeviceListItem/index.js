@@ -11,28 +11,16 @@ import {addRippleEffect} from '../../utils'
 
 class DeviceListItem extends Component {
 
-    // 确认参会
-    ensurePart = () => {
-        this.props.ensurePart()
-    }
 
-    // 取消参会
-    cancelPart = () => {
-        this.props.cancelPart()
-    }
-
-    //签到
-    sign = () => {
-        this.props.sign()
-    }
 
     // 查看详情
     goDetail = (list) => {
-        this.props.history.push(`/deviceDetail/${list.id}`)
+        this.props.history.push(`/deviceDetail/${list.deviceId}`)
     }
 
     render() {
-        const itemData = this.props.list;
+        const itemData = this.props.list||{};
+        const onClick = this.props.onClick || this.goDetail;
         const emptyImage="";
         return (
             <li className="device-list-item"
@@ -40,20 +28,22 @@ class DeviceListItem extends Component {
                     let touch = e.touches[0]
                     addRippleEffect(e.currentTarget, touch.pageX, touch.pageY)
                 }}
-                onClick={this.goDetail.bind(this, itemData)}>
+                onClick={onClick.bind(this, itemData)}>
                 <WingBlank>
-                <div className="item-name"> <span className="icon-device"></span> <span style={{verticalAlign:"middle"}}>{itemData.DeviceName}</span></div>
+                <div className="item-name"> <span className="icon-device"></span> <span style={{verticalAlign:"middle"}}>{itemData.deviceName}</span></div>
 
                 <div className="item-desc">
                     <div className="item-desc-right">
                         <div className="item-image" style={{
-                            backgroundImage:"url("+(itemData.Picture1 || emptyImage)+")"
-                        }}></div>
+                            backgroundImage:"url("+(itemData.picture1 || emptyImage)+")"
+                        }}>
+
+                        </div>
                     </div>
                     <div className="item-desc-left">
                         <div>
                             <span className="key">设备型号</span>：
-                            <span className="value">{itemData.DeviceModel}</span>
+                            <span className="value">{itemData.deviceModel}</span>
                         </div>
                         {/*<div>
                             <span className="key">设备类型</span>：
@@ -61,15 +51,15 @@ class DeviceListItem extends Component {
                         </div>*/}
                         <div>
                             <span className="key">设备序号</span>：
-                            <span className="value">{itemData.SerialNumber}</span>
+                            <span className="value">{itemData.serialNumber}</span>
                         </div>
                         <div>
                             <span className="key">二维码号</span>：
-                            <span className="value">{itemData.QRCode}</span>
+                            <span className="value">{itemData.qrCode}</span>
                         </div>
                         <div>
                             <span className="key">设备状态</span>：
-                            <span className="value warning">{itemData.DeviceState=="1"?"正常":"故障"}</span>
+                            <span className="value warning">{itemData.deviceState=="1"?"正常":"故障"}</span>
                         </div>
                     </div>
 
@@ -81,4 +71,4 @@ class DeviceListItem extends Component {
     }
 }
 
-export default connect()(DeviceListItem)
+export default DeviceListItem

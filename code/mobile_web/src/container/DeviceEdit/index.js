@@ -4,74 +4,79 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {List, Button, InputItem, Toast, WingBlank, WhiteSpace, Tabs, ImagePicker, Picker, Switch} from 'antd-mobile';
-import {changeHeaderRight, addDevice} from '../../redux/actions'
-import axios from '../../http'
-import api from '../../api'
+import {changeHeaderRight, addDevice, getDeviceDetail, updateDevice, uploadFile} from '../../redux/actions'
 
+import Upload from 'rc-upload';
+import moment from 'moment'
 import './device.less'
+import api from "../../api";
 
 const fields = [
-    // {key: "DeviceId", name: "设备ID", desc: "请输入设备ID", type: "text"},
-    {key: "DeviceCode", name: "设备编号", desc: "请输入设备编号", required: true, type: "text"},
-    {key: "DeviceName", name: "设备名称", desc: "请输入设备名称", required: true, type: "text"},
-    // {key: "HospitalId", name: "医院", desc: "请选择医院", type: "text",component:"DepartmentSelector"},
-    // {key: "DepartmentId", name: "部门ID", desc: "请输入部门ID", type: "text"},
-    // {key: "Picture1", name: "设备照片1", desc: "请输入设备照片1", type: "text"},
-    // {key: "Picture2", name: "设备照片2", desc: "请输入设备照片2", type: "text"},
-    // {key: "Picture3", name: "设备照片3", desc: "请输入设备照片3", type: "text"},
-    // {key: "Picture4", name: "设备照片4", desc: "请输入设备照片4", type: "text"},
-    // {key: "Picture5", name: "设备照片5", desc: "请输入设备照片5", type: "text"},
-    {key: "AssetNo", name: "资产编号", desc: "请输入设备资产编号", required: true, type: "text"},
-    {key: "DeviceModel", name: "设备型号", desc: "请输入设备型号", required: true, type: "text"},
-    {key: "DeviceDesc", name: "设备描述", desc: "请输入设备描述", type: "text"},
-    {key: "SerialNumber", name: "设备序列号", desc: "请输入设备序列号", type: "text"},
-    {key: "QrCode", name: "二维码编号", desc: "请输入二维码编号", required: true, type: "text"},
-    {key: "Manufacturer", name: "设备厂家", desc: "请输入设备厂家", type: "text"},
-    {key: "ProducingPlace", name: "设备产地", desc: "请输入设备产地", type: "text"},
+    // {key: "deviceId", name: "设备ID", desc: "请输入设备ID", type: "text"},
+    {key: "deviceCode", name: "设备编号", desc: "请输入设备编号", required: true, type: "text"},
+    {key: "deviceName", name: "设备名称", desc: "请输入设备名称", required: true, type: "text"},
+    // {key: "hospitalId", name: "医院", desc: "请选择医院", type: "text",component:"DepartmentSelector"},
+    // {key: "departmentId", name: "部门ID", desc: "请输入部门ID", type: "text"},
+    // {key: "picture1", name: "设备照片1", desc: "请输入设备照片1", type: "text"},
+    // {key: "picture2", name: "设备照片2", desc: "请输入设备照片2", type: "text"},
+    // {key: "picture3", name: "设备照片3", desc: "请输入设备照片3", type: "text"},
+    // {key: "picture4", name: "设备照片4", desc: "请输入设备照片4", type: "text"},
+    // {key: "picture5", name: "设备照片5", desc: "请输入设备照片5", type: "text"},
+    {key: "assetNo", name: "资产编号", desc: "请输入设备资产编号", required: true, type: "text"},
+    {key: "deviceModel", name: "设备型号", desc: "请输入设备型号", required: true, type: "text"},
+    {key: "deviceDesc", name: "设备描述", desc: "请输入设备描述", type: "text"},
+    {key: "serialNumber", name: "设备序列号", desc: "请输入设备序列号", type: "text"},
+    {key: "qrCode", name: "二维码编号", desc: "请输入二维码编号", required: true, type: "text"},
+    {key: "manufacturer", name: "设备厂家", desc: "请输入设备厂家", type: "text"},
+    {key: "producingPlace", name: "设备产地", desc: "请输入设备产地", type: "text"},
     {
-        key: "DeviceState", name: "设备状态", desc: "请设置设备状态", required: true, type: "text", options: [
-        [
-            {
-                label: '正常',
-                value: 1,
-            },
-            {
-                label: '故障',
-                value: 2,
-            }]
-    ]
-    },
-    {
-        key: "DeviceType", name: "设备类型", desc: "请设置设备类型", required: true, type: "text", options: [
-        [
-            {
-                label: 'B超',
-                value: 1,
-            },
-            {
-                label: '眼科仪器',
-                value: 2,
-            },
-            {
-                label: '其他',
-                value: 3,
-            }
-        ]
-    ]
-    },
-    {
-        key: "UsageState", name: "使用状态", desc: "请设置使用状态", required: true, type: "text", options: [
-        [
-            {
-                label: '启用',
-                value: 1,
-            },
-            {
-                label: '停用',
+        key: "deviceState", name: "设备状态", desc: "请设置设备状态", required: true, type: "text", options: [
+            [
+                {
+                    label: '正常',
+                    value: 1,
+                },
+                {
+                    label: '故障',
+                    value: 2,
+                }, {
+                label: '无',
                 value: 0,
             }
+            ]
         ]
-    ]
+    },
+    {
+        key: "deviceType", name: "设备类型", desc: "请设置设备类型", required: true, type: "text", options: [
+            [
+                {
+                    label: 'B超',
+                    value: 1,
+                },
+                {
+                    label: '眼科仪器',
+                    value: 2,
+                },
+                {
+                    label: '其他',
+                    value: 3,
+                }
+            ]
+        ]
+    },
+    {
+        key: "usageState", name: "使用状态", desc: "请设置使用状态", required: true, type: "text", options: [
+            [
+                {
+                    label: '启用',
+                    value: 1,
+                },
+                {
+                    label: '停用',
+                    value: 0,
+                }
+            ]
+        ]
     }
 ];
 
@@ -81,38 +86,41 @@ class DeviceEdit extends Component {
         hasError: {},
         value: '',
 
-        files: [],
+        imageFiles: [],
 
         formValue: {
             // DeviceId: '',//设备ID
-            DeviceCode: '',//设备编号
-            DeviceName: '',//设备名称
-            HospitalId: '',//医院ID
-            DepartmentId: '',//部门ID
-            AssetNo: '',//设备资产编号
-            DeviceModel: '',//设备型号
-            DeviceDesc: '',//设备描述
-            DeviceState: [1],//设备状态
-            DeviceType: [1],//设备类型
-            SerialNumber: '',//设备序列号
-            UsageState: [1],//使用状态
-            QrCode: '',//二维码编号
-            Manufacturer: '',//设备厂家
-            ProducingPlace: '',//设备产地
+            deviceCode: '',//设备编号
+            deviceName: '',//设备名称
+            hospitalId: '',//医院ID
+            departmentId: '',//部门ID
+            assetNo: '',//设备资产编号
+            deviceModel: '',//设备型号
+            deviceDesc: '',//设备描述
+            deviceState: [1],//设备状态
+            deviceType: [1],//设备类型
+            serialNumber: '',//设备序列号
+            usageState: [1],//使用状态
+            qrCode: '',//二维码编号
+            manufacturer: '',//设备厂家
+            producingPlace: '',//设备产地
 
-            // Picture1: '',//设备照片1
-            // Picture2: '',//设备照片2
-            // Picture3: '',//设备照片3
-            // Picture4: '',//设备照片4
-            // Picture5: '',//设备照片5
-            Creator: 1,
-            Modifier: 1,
-        }
+            // picture1: '',//设备照片1
+            // picture2: '',//设备照片2
+            // picture3: '',//设备照片3
+            // picture4: '',//设备照片4
+            // picture5: '',//设备照片5
+            creater: 0,
+            modifier: 0,
+        },
+
+
     }
 
     onErrorClick = (field) => {
         Toast.info('请输入正确的[' + field.name + ']');
     }
+
     onChange = (field, value) => {
         // if (value.replace(/\s/g, '').length < 11) {
         //     this.setState({
@@ -135,23 +143,35 @@ class DeviceEdit extends Component {
     }
 
     onFileChange = (files, type, index) => {
-        // console.log(files, type, index);
         this.setState({
-            files,
+            imageFiles: files,
         });
     }
 
     getSubmitFormValue() {
-        return {
+
+        let formData =  {
             ...this.state.formValue,
-            DeviceState: this.state.formValue.DeviceState[0],
-            DeviceType: this.state.formValue.DeviceType[0],
-            UsageState: this.state.formValue.UsageState[0]
+            deviceState: this.state.formValue.deviceState[0],
+            deviceType: this.state.formValue.deviceType[0],
+            usageState: this.state.formValue.usageState[0]
         }
+        const { match: {params: {deviceId}}} = this.props;
+
+        if (this.state.imageFiles&&this.state.imageFiles.length){
+            this.state.imageFiles.forEach((f,i)=>{
+                formData['picture'+(i+1)] = f.url
+            })
+        }
+        if (deviceId){
+            formData.deviceId = deviceId
+        }
+
+        return formData
     }
 
     save() {
-        const {dispatch, history} = this.props;
+        const {dispatch,history, match: {params: {deviceId}}} = this.props;
 
         for (let i = 0; i < fields.length; i++) {
             let field = fields[i]
@@ -161,38 +181,133 @@ class DeviceEdit extends Component {
             }
         }
 
-        if (this.state.formValue.DeviceId) {
+        if (deviceId) {
+            dispatch(updateDevice(this.getSubmitFormValue()))
+                .then(res => {
+                    console.log(res)
+                    if (res.payload.code == 0) {
+                        Toast.hide();
+                        Toast.success("保存成功", 0.5);
+                        // dispatch(addDevice())
+                        history.push(`/deviceDetail/${deviceId}`);
+                    } else {
+                        Toast.hide();
+                        Toast.fail("保存失败，请稍后再试", 0.5);
+                    }
+                })
+                .catch(err => {
+                    Toast.hide();
+                    Toast.fail("保存失败，请稍后再试:" + JSON.stringify(err), 0.5);
+                })
 
         } else {
-            Toast.success("保存成功", 0.5);
-            // dispatch(addDevice())
-            history.push('/devices');
 
-            // axios.http.post(api.deviceAdd, this.getSubmitFormValue())
-            //     .then(res => {
-            //         if (res.code == 0) {
-            //             Toast.hide();
-            //             Toast.success("保存成功", 0.5);
-            //             // dispatch(addDevice())
-            //             history.push('/devices');
-            //         } else {
-            //             Toast.hide();
-            //             Toast.fail("保存失败，请稍后再试", 0.5);
-            //         }
-            //     })
-            //     .catch(err => {
-            //         Toast.hide();
-            //         Toast.fail("保存失败，请稍后再试:" + JSON.stringify(err), 0.5);
-            //     })
+            dispatch(addDevice(this.getSubmitFormValue()))
+                .then(res => {
+                    if (res.payload.code == 0) {
+                        let deviceId = res.payload.data.deviceId;
+                        Toast.hide();
+                        Toast.success("保存成功", 0.5);
+                        // dispatch(addDevice())
+                        history.push(`/deviceDetail/${deviceId}`);
+                    } else {
+                        Toast.hide();
+                        Toast.fail("保存失败，请稍后再试", 0.5);
+                    }
+                })
+                .catch(err => {
+                    Toast.hide();
+                    Toast.fail("保存失败，请稍后再试:" + JSON.stringify(err), 0.5);
+                })
         }
 
     }
 
+
+    componentWillReceiveProps(nextProps, nextState) {
+        const {dispatch, match: {params: {deviceId}}, device, userInfo} = this.props;
+        const {match: {params: {deviceId: NextDeviceId}}} = nextProps;
+        if (NextDeviceId && NextDeviceId !== deviceId) {
+            console.log("ReceiveProps----");
+            dispatch(getDeviceDetail({
+                deviceId: Number(NextDeviceId)
+            }));
+            return false
+        }
+
+        let info = deviceId && device.byIds[deviceId];
+        if (info) {
+            console.log("update----");
+            let formValue = {
+                creater: userInfo.userId,
+                modifier: userInfo.userId,
+            }
+            for (let k in this.state.formValue) {
+                if (info[k] != null) {
+
+                    if (k === "maintenanceEndDate") {
+                        formValue[k] = moment(info[k])
+                    } else if (["deviceState", "deviceType", "usageState"].indexOf(k) !== -1) {
+                        formValue[k] = [info[k]]
+                    } else {
+                        formValue[k] = info[k]
+                    }
+                }
+            }
+
+            let imageFiles = [];
+            info.picture1 && imageFiles.push({
+                url: info.picture1
+            });
+            info.picture2 && imageFiles.push({
+                url: info.picture2
+            });
+            info.picture3 && imageFiles.push({
+                url: info.picture3
+            });
+            info.picture4 && imageFiles.push({
+                url: info.picture4
+            });
+            info.picture5 && imageFiles.push({
+                url: info.picture5
+            });
+
+
+            this.setState({
+                formValue,
+                imageFiles
+            })
+        }
+        return true
+    }
+
+    componentWillUpdate() {
+
+    }
+
     componentDidMount() {
-        const {dispatch} = this.props;
+        const {dispatch, match: {params: {deviceId}}} = this.props;
         dispatch(changeHeaderRight([
             <Button key="0" size="small" type="primary" onClick={this.save.bind(this)}>保存</Button>
         ]))
+
+        if (deviceId) {
+            console.log("mount----")
+            dispatch(getDeviceDetail({
+                deviceId: Number(deviceId)
+            }));
+        }
+    }
+
+    onImageUploaded(res) {
+        console.log('onSuccess', res);
+        this.state.imageFiles.push({
+            url: res.data
+        })
+        this.setState({
+            imageFiles: this.state.imageFiles
+        })
+
     }
 
     render() {
@@ -222,6 +337,10 @@ class DeviceEdit extends Component {
 
             if (field.options && field.options.length) {
 
+                let value = this.state.formValue[field.key]
+                for (let i = 0; i < field.options.length; i++) {
+
+                }
 
                 return <Picker
                     className="field-item"
@@ -230,11 +349,11 @@ class DeviceEdit extends Component {
                     cascade={false}
                     extra={field.desc}
 
-                    value={this.state.formValue[field.key]}
+                    value={value}
                     onChange={this.onChange.bind(this, field)}
                     onOk={this.onChange.bind(this, field)}
                 >
-                    <FieldSelector >{field.name}</FieldSelector>
+                    <FieldSelector>{field.name}</FieldSelector>
                 </Picker>
             }
 
@@ -249,6 +368,33 @@ class DeviceEdit extends Component {
                 onChange={this.onChange.bind(this, field)}
                 value={this.state.formValue[field.key]}
             >{field.name}</InputItem>
+        }
+
+        let uploaderProps = {
+            action: "/api/" + api.fileUpload,
+            // data: { a: 1, b: 2 },
+            // headers: {
+            //     Authorization: 'xxxxxxx',
+            // },
+            name: 'fileUpload',
+            // headers:{
+            //     'Content-type':'multipart/form-data'
+            // },
+            multiple: false,
+            beforeUpload: (file) => {
+                // console.log('beforeUpload', file.name);
+            },
+            onStart: (file) => {
+                // console.log('onStart', file.name);
+                // this.refs.inner.abort(file);
+            },
+            onSuccess: this.onImageUploaded.bind(this),
+            onProgress(step, file) {
+                // console.log('onProgress', Math.round(step.percent), file.name);
+            },
+            onError(err) {
+                // console.log('onError', err);
+            },
         }
 
         return (
@@ -268,7 +414,7 @@ class DeviceEdit extends Component {
                     <div className="tab-content">
                         <List className="field-list" renderHeader={() => '编辑'}>
                             <WingBlank size="sm">
-                                {fields.map((field) => getFieldEle.bind(this)(field))}
+                                {fields.map((field, i) => <div key={i}>{getFieldEle.bind(this)(field)}</div>)}
                                 <WhiteSpace size="large"/>
                             </WingBlank>
 
@@ -280,18 +426,26 @@ class DeviceEdit extends Component {
                                 <li>
                                     <div className="detail-block">
 
-                                        {/*<div className="block-title">*/}
-                                        {/*<span>设备图片</span>*/}
-                                        {/*</div>*/}
-
                                         <div className="block-content">
                                             <ImagePicker
-                                                files={this.state.files}
+                                                files={this.state.imageFiles}
                                                 onChange={this.onFileChange}
                                                 onImageClick={(index, fs) => console.log(index, fs)}
-                                                selectable={this.state.files.length <= 3}
+                                                selectable={false}
                                                 accept="image/gif,image/jpeg,image/jpg,image/png"
                                             />
+                                            <Upload
+
+                                                {...uploaderProps}
+                                                className={"am-flexbox am-flexbox-align-center"}
+                                                component="div"
+                                                style={{
+                                                    display: this.state.imageFiles.length < 5 ? 'inline-block' : 'none',
+
+                                                }}
+                                            >
+                                                <Button type="primary" size="small" inline>上传</Button>
+                                            </Upload>
                                         </div>
                                     </div>
 
@@ -306,9 +460,13 @@ class DeviceEdit extends Component {
 }
 
 const mapStateToProps = (state) => {
-    const {sidebarStatus} = state.app
+    const {sidebarStatus} = state.app;
+    const {userInfo} = state.auth;
+
     return {
-        sidebarStatus
+        sidebarStatus,
+        device: state.device,
+        userInfo
     }
 }
 

@@ -171,7 +171,7 @@ export default class InstallCaseList extends PureComponent {
     }
 
     dispatch({
-      type: 'device/fetch',
+      type: 'installCase/fetch',
       payload: params,
     });
   };
@@ -183,7 +183,7 @@ export default class InstallCaseList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'device/fetch',
+      type: 'installCase/fetch',
       payload: {},
     });
   };
@@ -192,18 +192,22 @@ export default class InstallCaseList extends PureComponent {
     const { dispatch } = this.props;
     Modal.confirm({
       title: `确认`,
-      content: `确认关闭 【${mCase.deviceName}(${mCase.caseId})】?`,
+      content: `确认关闭工单 【${mCase.deviceName}(${mCase.caseId})】?`,
       okText: '确认',
       cancelText: '取消',
       onOk() {
         dispatch({
           type: 'installCase/close',
-          payload: mCase,
+          payload: {
+            caseId:mCase.caseId
+          },
         }).then(res => {
           message.success('关闭成功');
           dispatch({
             type: 'installCase/fetchDetail',
-            payload: mCase,
+            payload: {
+              caseId:mCase.caseId
+            },
           });
         });
       },
@@ -444,8 +448,8 @@ export default class InstallCaseList extends PureComponent {
         render: val => (
           <Fragment>
             <Link to={'/install-case/case-edit/' + val.caseId}>详情</Link>
-            &nbsp;
-            <a onClick={this.closeCase.bind(this, val)}>关闭</a>
+            {/*&nbsp;
+            <a onClick={this.closeCase.bind(this, val)}>关闭</a>*/}
           </Fragment>
         ),
       },

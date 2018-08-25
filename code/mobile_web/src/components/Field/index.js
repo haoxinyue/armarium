@@ -1,48 +1,132 @@
 /**
  * Created by zhouzechen on 2018/5/8.
  */
-import React ,{Component} from 'react';
-import {connect} from 'react-redux';
 
-class Footer extends Component {
+import {List, Input, Checkbox, Radio, Picker, DatePicker} from 'antd-mobile';
 
-    state={
-        active:'left'
+const {InputItem} = Input;
+const {CheckboxItem} = Checkbox;
+const {RadioItem} = Radio;
+
+
+const Field = (props) => {
+
+    /*
+    * props:
+    * {
+    *   type: 'checkbox' ,
+    *   name: '',
+    *   initialValue:true,
+    *   desc: '',
+    *   options: {}
+    * }
+    * {
+    *   type: 'text' ,
+    *   name: '',
+    *   initialValue:1,
+    *   desc: '',
+    *   options: {}
+    * }
+    * {
+    *   type: 'date' ,
+    *   name: '',
+    *   initialValue:moment(),
+    *   desc: '',
+    *   options: {
+    *       format:"YYYY/MM/DD"
+    *   }
+    * }
+    * {
+    *   type: 'select' ,
+    *   name: '',
+    *   desc: '',
+    *   initialValue:1,
+    *   options: {
+    *       data:[
+    *           {
+    *               id:1,
+    *               text:'t1'
+    *           }
+    *       ]
+    *   }
+    * }
+    * */
+
+    const {form, type, name, desc, initialValue, rules, options = {}} = props;
+    const {getFieldProps, validateFields} = form;
+
+
+    switch (type) {
+        case 'text': {
+            const fProps = getFieldProps(name, {
+                initialValue,
+                rules
+            });
+            return <InputItem
+                {...fProps}
+                placeholder={options.placeholder || `请输入${desc}`}
+                extra={options.extra}>{desc}</InputItem>;
+        }
+        case 'checkbox':
+            return <List renderHeader={() => desc}>
+                {options.items && options.items.map(i => {
+                    const fProps = getFieldProps(i.name, {
+                        initialValue: i.initialValue,
+                        rules:i.rules
+                    });
+                    return <CheckboxItem key={i.value} checked={fProps.value === i.value}
+                                         onChange={() => fProps.onChange(i.value)}>
+                        {i.label}
+                    </CheckboxItem>
+                })}
+            </List>;
+        case 'radio': {
+            const fProps = getFieldProps(name, {
+                initialValue,
+                rules
+            });
+            return <List renderHeader={() => desc}>
+                {options.items && options.items.map(i => (
+                    <RadioItem key={i.value} checked={fProps.value === i.value}
+                               onChange={() => fProps.onChange(i.value)}>
+                        {i.label}
+                    </RadioItem>
+                ))}
+            </List>;
+        }
+        case 'select': {
+            const fProps = getFieldProps(name, {
+                initialValue,
+                rules
+            });
+            return <Picker
+                {...fProps}
+                data={options.data || []}
+                title={`请选择${desc}`}
+                cascade={false}
+                extra={options.extra}
+            >
+                <List.Item arrow="horizontal">{desc}</List.Item>
+            </Picker>
+        }
+        case 'date': {
+            const fProps = getFieldProps(name, {
+                initialValue,
+                rules
+            });
+            return <DatePicker
+                {...options}
+                {...fProps}
+            >
+                <List.Item arrow="horizontal">{desc}</List.Item>
+            </DatePicker>
+        }
+        default:
+            return <div>未知类型</div>
+
     }
 
 
+};
 
-    render() {
-
-        const {visible} = this.props
-        const {active} = this.state
-        return (
-            <footer  className="app-footer " style={
-                {display: visible ? "" : "none"}
-            }>
-
-                <div className="content">
-                    <div className={["item",active === "left"?"active":""].join(" ")} onClick={this.handleClick.bind(this,'left')}>
-                        <div className="item-icon fa fa-2x fa-home"></div>
-                        <div className="item-desc">主页</div>
-                    </div>
-                    <div className={["item",active !== "left"?"active":""].join(" ")} onClick={this.handleClick.bind(this,'right')}>
-                        <div className="item-icon fa fa-2x fa-user"></div>
-                        <div className="item-desc">我的</div>
-                    </div>
-
-                </div>
-
-            </footer>
-        )
-    }
-}
-
-const mapStateToProps = (state) => {
-    const {visible} = state.footer
-    return {
-        visible
-    }
-}
-
-export default connect(mapStateToProps)(Footer)
+export default Field

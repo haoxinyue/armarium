@@ -8,7 +8,7 @@ import axios from '../../http'
 import api from '../../api'
 import './login.less'
 
-import { login} from '../../redux/actions'
+import {login} from '../../redux/actions'
 
 class Login extends Component {
     constructor(props) {
@@ -38,7 +38,7 @@ class Login extends Component {
     }
 
     handleClick = () => {
-        const {history,dispatch} = this.props
+        const {history, dispatch} = this.props
         if (!this.state.username) {
             Toast.fail('请输入用户名！', 1)
             return
@@ -47,33 +47,28 @@ class Login extends Component {
             Toast.fail('请输入密码！', 1)
             return
         }
-        const params = {
-            loginName: this.state.username,
-            password: this.state.password
-        }
 
-        Toast.success("登陆成功", 1);
-        dispatch(login(params.loginName,params.loginName));
-        history.push('/');
+        // Toast.success("登陆成功", 1);
+        // dispatch(login(params.loginName,params.loginName));
+        // history.push('/');
 
-        // Toast.loading("登陆中");
-        // let dtd = axios.http.post(api.loginUrl, params);
-        //
-        // dtd.then(res => {
-        //         if (res.code == 0) {
-        //             Toast.hide();
-        //             Toast.success("登陆成功", 1);
-        //             dispatch(login(params.loginName,params.loginName))
-        //             history.push('/');
-        //         } else {
-        //             Toast.hide();
-        //             Toast.fail("登陆失败，请稍后再试", 1);
-        //         }
-        //     })
-        //     .catch(err => {
-        //         Toast.hide();
-        //         Toast.fail("登陆失败，请稍后再试:"+JSON.stringify(err), 1);
-        //     })
+        Toast.loading("登陆中");
+
+        dispatch(login(this.state.username, this.state.password))
+            .then(res => {
+                if(!res.payload.error){
+                    Toast.hide();
+                    Toast.success("登陆成功", 1);
+                    history.push('/');
+                }else{
+                    Toast.hide();
+                    Toast.fail("登陆失败，请稍后再试:" +res.payload.code,1);
+                }
+
+            }, err => {
+                Toast.hide();
+                Toast.fail("登陆失败，请稍后再试:" + JSON.stringify(err), 1);
+            })
 
     }
 
