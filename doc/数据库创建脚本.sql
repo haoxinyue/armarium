@@ -661,6 +661,8 @@ CREATE TABLE public.tb_device
 	need_metering smallint DEFAULT 0,
 	metering_interval integer,
 	next_metering_date timestamp without time zone,
+	inspection_owner integer,
+
 	
     create_time timestamp without time zone NOT NULL,
     creater integer NOT NULL,
@@ -823,7 +825,8 @@ ALTER TABLE public.tb_device
 COMMENT ON COLUMN public.tb_device.next_maintenance_date
     IS '下一次保养时间';
 	
-	
+COMMENT ON COLUMN public.tb_device.inspection_owner
+    IS '巡检负责人';
 	
 CREATE TABLE public.tb_bad_event
 (
@@ -1470,7 +1473,29 @@ COMMENT ON COLUMN public.tb_pm_case.remark
 	
 
 	
+CREATE TABLE public.tsys_config
+(
+    config_id serial NOT NULL,
+    config_key character varying(100) NOT NULL,
+    config_value character varying(500) NOT NULL,
+    config_desc character varying(500),
 	
+	create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    modify_time timestamp without time zone NOT NULL,
+    modifier integer NOT NULL,
+	
+    PRIMARY KEY (config_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tsys_config
+    OWNER to armarium;
+COMMENT ON TABLE public.tsys_config
+    IS '系统配置表';
 	
 	
 	
