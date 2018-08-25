@@ -624,9 +624,9 @@ CREATE TABLE public.tb_device
     device_desc character varying(500),
     device_state smallint,
     device_type integer NOT NULL,
-    serial_number character varying(100) NOT NULL,
+    serial_number character varying(100) NULL,
     usage_state smallint NOT NULL,
-    qr_code character varying(100) NOT NULL,
+    qr_code character varying(100),
     manufacturer character varying(50),
     producing_place character varying(50),
     setup_date timestamp without time zone,
@@ -661,7 +661,6 @@ CREATE TABLE public.tb_device
 	need_metering smallint DEFAULT 0,
 	metering_interval integer,
 	next_metering_date timestamp without time zone,
-
 	
     create_time timestamp without time zone NOT NULL,
     creater integer NOT NULL,
@@ -926,7 +925,7 @@ CREATE TABLE public.tb_setup_case
 	
 	setup_time timestamp without time zone,
 	setup_remark character varying(500), 
-	
+	setup_begin_time timestamp without time zone,
 
     create_time timestamp without time zone NOT NULL,
     creater integer NOT NULL,
@@ -981,6 +980,10 @@ COMMENT ON COLUMN public.tb_setup_case.setup_time
 	
 COMMENT ON COLUMN public.tb_setup_case.setup_remark
     IS '安装备注';
+	
+
+COMMENT ON COLUMN public.tb_setup_case.setup_begin_time
+    IS '安装开始时间';
 
 	
 	
