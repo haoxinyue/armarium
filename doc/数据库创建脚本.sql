@@ -1178,7 +1178,8 @@ CREATE TABLE public.tb_metering_case
 	
 	metering_time timestamp without time zone,
 	metering_data character varying(500), 
-	
+    metering_result smallint DEFAULT 1,
+	result_file character varying(100),
 
     create_time timestamp without time zone NOT NULL,
     creater integer NOT NULL,
@@ -1229,9 +1230,11 @@ COMMENT ON COLUMN public.tb_metering_case.metering_data
 COMMENT ON COLUMN public.tb_metering_case.metering_time
     IS '计量时间';
 	
-
+COMMENT ON COLUMN public.tb_metering_case.metering_result
+    IS '1：通过， 0：不通过';
 	
-	
+COMMENT ON COLUMN public.tb_metering_case.result_file
+    IS '上传的结果文件';
 	
 	 
 	
