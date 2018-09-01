@@ -11,10 +11,13 @@ import api from '../../api'
 
 import {ACTION_TYPES as DEVICE} from "../reducers/device";
 import {ACTION_TYPES as INSTALL_CASE} from "../reducers/installCase";
+import {ACTION_TYPES as NOTICE} from "../reducers/notice";
+import {ACTION_TYPES as INSPECTION_CASE} from "../reducers/inspectionCase";
+import {ACTION_TYPES as PM_CASE} from "../reducers/pmCase";
 import {ACTION_TYPES as AUTH} from "../reducers/auth";
-import {ACTION_TYPES as FOOTER } from "../reducers/footer";
-import {ACTION_TYPES as HEADER } from "../reducers/header";
-import {ACTION_TYPES as REPAIR } from "../reducers/repair";
+import {ACTION_TYPES as FOOTER} from "../reducers/footer";
+import {ACTION_TYPES as HEADER} from "../reducers/header";
+import {ACTION_TYPES as REPAIR} from "../reducers/repair";
 import {getFormData} from "../../utils";
 
 /**
@@ -61,26 +64,25 @@ export const changeFooterSide = (side) => ({
 
 export const login = createAction(AUTH.LOG_IN,
     (username, password) =>
-        new Promise((resolve,reject)=>{
+        new Promise((resolve, reject) => {
             axios.http.post(api.loginUrl, getFormData({
                 loginName: username,
                 loginPassword: password
             })).then((res) => {
-                let success = res.data && res.data.code ===0;
-                if(success){
+                let success = res.data && res.data.code === 0;
+                if (success) {
                     resolve({
                         username: username,
                         token: username,
-                        userinfo:res.data.data
+                        userinfo: res.data.data
                     })
-                }else{
+                } else {
                     reject(res.data)
                 }
-            },(err)=>{
+            }, (err) => {
                 reject(err)
             })
         })
-
 )
 
 
@@ -89,34 +91,136 @@ export const logout = createAction(AUTH.LOG_OUT,
 )
 
 
-
 /* ******************************************************** */
-export const fetchInspectionCaseList = createAction(INSTALL_CASE.UPDATE_LIST,
+export const fetchInspectionCaseList = createAction(INSPECTION_CASE.UPDATE_LIST,
     (params) =>
         axios.http.post(api.inspectionCaseListGet, getFormData({
             ...params
         })).then((res) => (res.data))
 )
-export const fetchToInspectionDeviceList = createAction(INSTALL_CASE.UPDATE_LIST,
+export const fetchToInspectionDeviceList = createAction(INSPECTION_CASE.UPDATE_LIST,
     (params) =>
         axios.http.post(api.inspectionCaseDeviceListGet, getFormData({
             ...params
         })).then((res) => (res.data))
 )
 
-export const getInspectionCaseDetail = createAction(INSTALL_CASE.SAVE,
+export const getInspectionCaseDetail = createAction(INSPECTION_CASE.SAVE,
     (params) =>
         axios.http.post(api.inspectionCaseGet, getFormData({
             ...params
         })).then((res) => (res.data))
 )
 
-export const completeInspectionCaseDetail = createAction(INSTALL_CASE.SAVE,
+export const completeInspectionCaseDetail = createAction(INSPECTION_CASE.SAVE,
     (params) =>
         axios.http.post(api.inspectionCaseComplete, getFormData({
             ...params
         })).then((res) => (res.data))
 )
+
+/* ******************************************************** */
+export const fetchPmCaseList = createAction(PM_CASE.UPDATE_LIST,
+    (params) =>
+        axios.http.post(api.pmCaseListGet, getFormData({
+            ...params
+        })).then((res) => (res.data))
+)
+
+
+export const getPmCaseDetail = createAction(PM_CASE.SAVE,
+    (params) =>
+        axios.http.post(api.pmCaseGet, getFormData({
+            ...params
+        })).then((res) => (res.data))
+)
+
+export const completePmCaseDetail = createAction(PM_CASE.SAVE,
+    (params) =>
+        axios.http.post(api.pmCaseComplete, getFormData({
+            ...params
+        })).then((res) => (res.data))
+)
+
+/* ******************************************************** */
+
+function getUserNoticeFetch(userId) {
+
+    return new Promise((resolve, reject) => {
+        if (userId == null) {
+            reject({
+                code: -1,
+                message: "userId not be null"
+            })
+            return
+        }
+        userId = Number(userId)
+        Promise.all([
+            axios.http.post(api.noticeInstallCaseGet, getFormData({
+                assigneeUserId: userId
+            })),
+
+            axios.http.post(api.noticeInspectionCaseGet, getFormData({
+                assigneeUserId: userId
+            })),
+
+            axios.http.post(api.noticePmCaseGet, getFormData({
+                assigneeUserId: userId
+            })),
+
+            axios.http.post(api.noticeRepairCaseGet, getFormData({
+                assigneeUserId: userId
+            })),
+        ]).then((resList) => {
+            // "code": 0,
+            //     "message": "",
+            //     "recordCount":0,
+            let res = {
+                code: 0,
+                data: []
+            };
+            const typeList = ["install", "inspection", "pm", "repair"];
+            const typeNameList = ["安装工单", "巡检工单", "保养工单", "保修工单"];
+            resList.forEach((r, i) => {
+                let rData = r.data;
+                if (rData) {
+
+                    // if (rData.code === 0 && rData.recordCount) {
+                        res.data.push({
+                            noticeId: i,
+                            type: typeList[i],
+                            message: `您有${rData.recordCount || 0}条${typeNameList[i]}需要处理`
+                        })
+                    // }
+
+                }
+
+            });
+
+            resolve(res);
+
+
+        }, (err) => {
+            reject(err)
+        })
+
+
+    })
+
+}
+
+
+export const fetchNoticeList = createAction(NOTICE.UPDATE_LIST,
+    (params) =>
+        getUserNoticeFetch(params.userId)
+)
+
+
+export const delNoticeList = createAction(NOTICE.UPDATE_LIST,(params)=>Promise.resolve({
+    code:0,
+    noticeId:params.noticeId
+}))
+
 /* ******************************************************** */
 export const fetchInstallCaseList = createAction(INSTALL_CASE.UPDATE_LIST,
     (params) =>
@@ -134,24 +238,23 @@ export const getInstallCaseDetail = createAction(INSTALL_CASE.SAVE,
 
 export const compeleteInstallCaseDetail = createAction(INSTALL_CASE.SAVE,
     (params) =>
-        new Promise((resolve,reject)=> {
+        new Promise((resolve, reject) => {
             axios.http.post(api.installCaseComplete, getFormData({
                 ...params
             })).then((res) => {
-                let success = res.data && res.data.code ===0;
-                if(success){
+                let success = res.data && res.data.code === 0;
+                if (success) {
                     resolve(res.data)
-                }else{
+                } else {
                     reject(res)
                 }
-            },(err)=>{
+            }, (err) => {
                 reject(err)
             })
         })
 )
 
 /* ******************************************************** */
-
 
 
 export const fetchDeviceList = createAction(DEVICE.UPDATE_LIST,
@@ -212,26 +315,25 @@ export const getRepairList = createAction(REPAIR.UPDATE_LIST,
 
 export const getRepairDetail = createAction(REPAIR.SAVE,
     (params) =>
-        new Promise((resolve,reject)=>{
+        new Promise((resolve, reject) => {
             Promise.all([axios.http.post(api.repairGet, ({
                 ...params
-            })),axios.http.post(api.repairTimeShaftGet, ({
+            })), axios.http.post(api.repairTimeShaftGet, ({
                 ...params
-            }))]).then((reslist) =>{
+            }))]).then((reslist) => {
 
                 let info = {
                     ...reslist[0].data.data,
-                    timeShaft:reslist[1].data.data
+                    timeShaft: reslist[1].data.data
                 };
                 resolve({
-                    data:info
+                    data: info
                 });
 
-            },(err)=>{
+            }, (err) => {
                 reject(err)
             })
         })
-
 );
 
 /* ******************************************************** */
@@ -245,7 +347,7 @@ export const uploadFile = (fileDatas) => {
     fileDatas.forEach((d) => {
         list.push(axios.http.post(api.fileUpload, {
             fileUpload: d.file
-        },{
+        }, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
