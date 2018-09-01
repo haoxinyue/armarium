@@ -6,7 +6,7 @@ import './dashboard.less'
 
 import {addRippleEffect, runScanner, getLocalPicture} from '../../utils'
 
-import {logout,changeFooterSide} from '../../redux/actions'
+import {logout,changeFooterSide,fetchNoticeList} from '../../redux/actions'
 
 class Dashboard extends Component {
 
@@ -89,7 +89,7 @@ class Dashboard extends Component {
                     {
                         image: require("../../assets/img/hospital/if_8_hospital_2774754.png"),
                         desc: "设备保养",
-                        link: "/devices"
+                        link: "/PmCaseList"
                     },
                     {
                         image: require("../../assets/img/hospital/if_11_hospital_2774742.png"),
@@ -112,7 +112,7 @@ class Dashboard extends Component {
                     {
                         image: require("../../assets/img/hospital/if_13_hospital_2774744.png"),
                         desc: "设备安装",
-                        link: "/install-case-list",
+                        link: "/installCaseList",
                         noticeTag: 'installCase'
 
                     },
@@ -158,6 +158,10 @@ class Dashboard extends Component {
                 title: "其他",
                 items: [
                     {
+                        image: require("../../assets/img/hospital/if_2_hospital_2774748.png"),
+                        desc: "我的消息",
+                        link:"/noticeList"
+                    },{
                         image: require("../../assets/img/hospital/if_2_hospital_2774748.png"),
                         desc: "资产购置",
                         func(){
@@ -226,7 +230,7 @@ class Dashboard extends Component {
                     },
                 ]
             },
-            {
+            /*{
                 title: "操作",
                 items: [
                     {
@@ -240,7 +244,8 @@ class Dashboard extends Component {
                         }
                     },
                 ]
-            }/*,
+            }*/
+            /*,
             {
                 title: "其他",
                 items: [

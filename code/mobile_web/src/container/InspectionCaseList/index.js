@@ -19,7 +19,7 @@ class InspectionCaseItem extends Component {
 
     // 查看详情
     goDetail = (item) => {
-        // this.props.history.push(`/inspection-case-edit/${item.caseId}`)
+        // this.props.history.push(`/inspectionCaseEdit/${item.caseId}`)
     }
 
 
@@ -132,7 +132,7 @@ class InspectionCaseList extends Component {
                     if (deviceId) {
                         this.props.history.push({pathname: `/inspectionCaseEdit/${deviceId}`})
                     } else {
-                        alert('无效的二维码')
+                        // alert('无效的二维码')
                     }
                 }, (error) => {
                     alert("请重新扫描");
@@ -454,7 +454,7 @@ class InspectionCaseList extends Component {
 }
 
 const mapStateToProps = (state) => {
-    const {filter} = state.installCase
+    const {filter} = state.inspectionCase;
     const {userInfo} = state.auth;
     return {
         searchWord: filter.searchWord,

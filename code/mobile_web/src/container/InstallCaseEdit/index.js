@@ -187,7 +187,7 @@ class DeviceEdit extends Component {
                     console.log(res)
                     if (res.payload.code == 0) {
                         Toast.hide();
-                        history.push(`/install-case-list`);
+                        history.push(`/installCaseList`);
                         Toast.success("保存成功", 0.5);
                     } else {
                         Toast.hide();

@@ -5,19 +5,19 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {
     changeHeaderRight,
-    fetchInstallCaseList
+    fetchPmCaseList
 } from '../../redux/actions'
-import {PullToRefresh, ListView, SearchBar, Drawer, Toast, WingBlank} from 'antd-mobile'
+import {PullToRefresh, ListView, SearchBar, Drawer, Tabs, Toast, WingBlank, Button} from 'antd-mobile'
 import RadioGroup from '../../components/RadioGroup'
-import './InstallCaseList.less'
+import './InspectionCaseList.less'
 import './listItem.less'
-import {addRippleEffect} from "../../utils";
+import {addRippleEffect, runScanner} from "../../utils";
 
-class InstallListItem extends Component {
+class PmCaseItem extends Component {
 
     // 查看详情
     goDetail = (item) => {
-        this.props.history.push(`/installCaseEdit/${item.caseId}`)
+        // this.props.history.push(`/inspectionCaseEdit/${item.caseId}`)
     }
 
 
@@ -28,9 +28,11 @@ class InstallListItem extends Component {
         function getStateName(state) {
             switch (state) {
                 case 10:
-                    return "安装中";
+                    return "待巡检";
                 case 20:
-                    return "已完成";
+                    return "已取消";
+                case 30:
+                    return "巡检中";
                 case 50:
                     return "已关闭";
                 default:
@@ -48,28 +50,17 @@ class InstallListItem extends Component {
                 onClick={this.goDetail.bind(this, itemData)}>
                 <WingBlank>
                     <div className="item-name"><span className="icon-device"></span> <span
-                        style={{verticalAlign: "middle"}}>{itemData.deviceName}</span></div>
+                        style={{verticalAlign: "middle"}}>{itemData.deviceName}({itemData.deviceId})</span></div>
                     <div className="item-desc">
-                        <div className="item-desc-right">
-                            <div className="item-image" style={{
-                                backgroundImage: "url(" + (itemData.picture1 || emptyImage) + ")"
-                            }}>
 
-                            </div>
-                        </div>
                         <div className="item-desc-left">
                             <div>
-                                <span className="key">科室</span>：
+                                <span className="key">所属医院</span>：
+                                <span className="value">{itemData.hospital}</span>
+                            </div>
+                            <div>
+                                <span className="key">所属部门</span>：
                                 <span className="value">{itemData.deptName}</span>
-                            </div>
-                            <div>
-                                <span className="key">期望安装时间</span>：
-                                <span className="value">{itemData.expectedTime}</span>
-                            </div>
-
-                            <div>
-                                <span className="key">安装状态</span>：
-                                <span className="value warning">{getStateName(itemData.caseState)}</span>
                             </div>
                         </div>
 
@@ -82,7 +73,7 @@ class InstallListItem extends Component {
 }
 
 
-class InstallCaseList extends Component {
+class PmCaseList extends Component {
     constructor(props) {
         super(props)
 
@@ -90,10 +81,15 @@ class InstallCaseList extends Component {
             rowHasChanged: (row1, row2) => row1 !== row2,
         });
 
+        const dataSourceDeviceList = new ListView.DataSource({
+            rowHasChanged: (row1, row2) => row1 !== row2,
+        });
+
         this.rData = [];
 
         this.state = {
             dataSource,
+            dataSourceDeviceList,
             refreshing: true,
             isLoading: true,
             height: document.documentElement.clientHeight - 88 - 90,
@@ -101,21 +97,42 @@ class InstallCaseList extends Component {
             openFilter: false,
             searchValue: '',
             pageIndex: 0,
-            hasMore: false
+            hasMore: false,
+            tabIndex: 0
         }
 
         this.queryPageData = this.queryPageData.bind(this)
     }
 
+    createNewCase(deviceId) {
+        // this.props.history.push({pathname: "/inspectionCaseEdit/123"})
+        if (deviceId) {
+            this.props.history.push({pathname: `/inspectionCaseEdit/${deviceId}`})
+        } else {
+            runScanner().then((result) => {
+                    let deviceId = /\[(\S+)\]/.exec(result.text)
+                    deviceId = deviceId && deviceId[1]
+                    if (deviceId) {
+                        this.props.history.push({pathname: `/inspectionCaseEdit/${deviceId}`})
+                    } else {
+                        // alert('无效的二维码')
+                    }
+                }, (error) => {
+                    alert("请重新扫描");
+                }
+            )
+        }
+
+
+    }
+
 
     componentDidMount() {
-        const {dispatch} = this.props;
-        /*dispatch(changeHeaderRight([
-            <div key="0" className="filter-btn" onClick={this.onOpenChange}>
-                <i className="filter-bg"></i>
-                <span>筛选</span>
-            </div>
-        ]))*/
+        // const {dispatch} = this.props;
+        // dispatch(changeHeaderRight([
+        //     <Button key="0" size="small" type="primary" onClick={this.createNewCase.bind(this,null)}>开始巡检</Button>
+        // ]))
+
 
         this.onRefresh()
     }
@@ -145,24 +162,24 @@ class InstallCaseList extends Component {
         this.onRefresh()
     }
 
-    queryPageData(clear) {
-        const {dispatch} = this.props
+    queryPageData(clear, tabIndex) {
+        const {dispatch, userInfo} = this.props
         const {searchValue} = this.state
         const nextPage = (clear ? 0 : (this.state.pageIndex + 1))
         this.setState({refreshing: !!clear, pageIndex: nextPage, isLoading: true});
 
         let queryData = {
             pageIndex: nextPage,
-            caseState:10
+            assigneeUserId: userInfo.userId
         };
-        if (searchValue){
+        if (searchValue) {
             queryData.deviceName = searchValue
         }
 
-        dispatch(fetchInstallCaseList(queryData)).then((res) => {
-            Toast.info("success");
-            Toast.hide();
 
+        dispatch(fetchPmCaseList(queryData)).then((res) => {
+            // Toast.info("success");
+            Toast.hide();
             this.rData = clear ? [] : this.rData;
             const listdata = res.payload.data || [];
             listdata.forEach((item) => {
@@ -196,11 +213,13 @@ class InstallCaseList extends Component {
             }
             Toast.hide()
         })
+
+
     }
 
 
     onRefresh = () => {
-        this.queryPageData(true)
+        this.queryPageData(true, this.state.tabIndex)
     };
 
 
@@ -212,11 +231,14 @@ class InstallCaseList extends Component {
             return;
         }
 
-        this.queryPageData(false)
+        this.queryPageData(false, this.state.tabIndex)
 
     };
 
     render() {
+
+
+
         const display = this.state.openFilter ? 'block' : 'none'
         // 参会状态props
         const partProps = {
@@ -270,7 +292,7 @@ class InstallCaseList extends Component {
                     <SearchBar className="search-box" placeholder="请输入设备名称" value={this.state.searchValue}
                                onChange={this.handleChange}
                                onSubmit={this.handleSubmit}/>
-                    <div className="dataList-container" id="J_Scroll">
+                    <div className="dataList-container2" id="J_Scroll">
                         <div className="scroll-hook">
                             <ListView
                                 className="dataList-list"
@@ -279,9 +301,9 @@ class InstallCaseList extends Component {
                                 dataSource={this.state.dataSource}
 
                                 renderRow={(rowData, sectionID, rowID) => (
-                                    <InstallListItem key={sectionID + '_' + rowID}
-                                                     history={this.props.history}
-                                                     list={rowData}
+                                    <PmCaseItem key={sectionID + '_' + rowID}
+                                                history={this.props.history}
+                                                list={rowData}
                                     />
                                 )}
                                 renderFooter={() => (<div style={{padding: 30, textAlign: 'center'}}>
@@ -304,9 +326,11 @@ class InstallCaseList extends Component {
 
                         </div>
                     </div>
+
                     <div className="mask" style={{display}} onClick={this.onOpenChange}>
                     </div>
                 </section>
+
 
             </Drawer>
         )
@@ -314,10 +338,12 @@ class InstallCaseList extends Component {
 }
 
 const mapStateToProps = (state) => {
-    const {filter} = state.installCase
+    const {filter} = state.pmCase;
+    const {userInfo} = state.auth;
     return {
-        searchWord: filter.searchWord
+        searchWord: filter.searchWord,
+        userInfo
     }
 }
 
-export default connect(mapStateToProps)(InstallCaseList)
+export default connect(mapStateToProps)(PmCaseList)

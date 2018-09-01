@@ -10,6 +10,9 @@ import device from './device'
 import repair from './repair'
 import auth from './auth'
 import installCase from './installCase'
+import pmCase from './pmCase'
+import notice from './notice'
+import inspectionCase from './inspectionCase'
 
 const rootReducer = combineReducers({
 	app,
@@ -17,7 +20,10 @@ const rootReducer = combineReducers({
     footer,
     device,
     installCase,
+    inspectionCase,
+    pmCase,
     header,
+    notice,
     repair
 })
 
