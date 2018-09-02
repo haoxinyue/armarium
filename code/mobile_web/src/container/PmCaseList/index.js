@@ -17,7 +17,7 @@ class PmCaseItem extends Component {
 
     // 查看详情
     goDetail = (item) => {
-        // this.props.history.push(`/inspectionCaseEdit/${item.caseId}`)
+        this.props.history.push(`/pmCaseEdit/${item.deviceId}`)
     }
 
 
@@ -107,13 +107,13 @@ class PmCaseList extends Component {
     createNewCase(deviceId) {
         // this.props.history.push({pathname: "/inspectionCaseEdit/123"})
         if (deviceId) {
-            this.props.history.push({pathname: `/inspectionCaseEdit/${deviceId}`})
+            this.props.history.push({pathname: `/pmCaseEdit/${deviceId}`})
         } else {
             runScanner().then((result) => {
                     let deviceId = /\[(\S+)\]/.exec(result.text)
                     deviceId = deviceId && deviceId[1]
                     if (deviceId) {
-                        this.props.history.push({pathname: `/inspectionCaseEdit/${deviceId}`})
+                        this.props.history.push({pathname: `/pmCaseEdit/${deviceId}`})
                     } else {
                         // alert('无效的二维码')
                     }
@@ -128,10 +128,10 @@ class PmCaseList extends Component {
 
 
     componentDidMount() {
-        // const {dispatch} = this.props;
-        // dispatch(changeHeaderRight([
-        //     <Button key="0" size="small" type="primary" onClick={this.createNewCase.bind(this,null)}>开始巡检</Button>
-        // ]))
+        const {dispatch} = this.props;
+        dispatch(changeHeaderRight([
+            <Button key="0" size="small" type="primary" onClick={this.createNewCase.bind(this,null)}>开始保养</Button>
+        ]))
 
 
         this.onRefresh()
@@ -307,7 +307,7 @@ class PmCaseList extends Component {
                                     />
                                 )}
                                 renderFooter={() => (<div style={{padding: 30, textAlign: 'center'}}>
-                                    {this.state.isLoading ? '加载中...' : '已加载'}
+                                    {this.state.isLoading ? '加载中...' : (this.state.dataSource.length?'已加载':'暂无数据')}
                                 </div>)}
                                 renderSeparator={separator}
                                 useBodyScroll={this.state.useBodyScroll}

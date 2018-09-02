@@ -371,7 +371,7 @@ class DeviceEdit extends Component {
         }
 
         let uploaderProps = {
-            action: "/api/" + api.fileUpload,
+            action: api.baseUrl() + api.fileUpload,
             // data: { a: 1, b: 2 },
             // headers: {
             //     Authorization: 'xxxxxxx',
