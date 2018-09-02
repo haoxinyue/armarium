@@ -2,6 +2,10 @@
  * Created by Administrator on 2017/8/7.
  */
 export default {
+
+    baseUrl:()=>window.cordovaHTTP?"http://47.100.198.255:8080/":"/api/",
+
+
     loginUrl: 'auth/login',
     logoutUrl: 'auth/logout',
 

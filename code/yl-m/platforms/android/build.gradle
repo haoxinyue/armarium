@@ -92,9 +92,9 @@ ext {
 }
 
 // PLUGIN GRADLE EXTENSIONS START
-apply from: "cordova-hot-code-push-plugin/hellocordova-chcp.gradle"
-apply from: "cordova-plugin-badge/hellocordova-badge.gradle"
-apply from: "cordova-plugin-local-notification/hellocordova-localnotification.gradle"
+apply from: "cordova-hot-code-push-plugin/amarium-chcp.gradle"
+apply from: "cordova-plugin-badge/amarium-badge.gradle"
+apply from: "cordova-plugin-local-notification/amarium-localnotification.gradle"
 // PLUGIN GRADLE EXTENSIONS END
 
 def hasBuildExtras = file('build-extras.gradle').exists()

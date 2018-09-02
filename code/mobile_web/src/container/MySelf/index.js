@@ -17,7 +17,7 @@ class MySelf extends Component {
     doLogout(){
         const {dispatch, auth, history} = this.props;
         dispatch(logout(auth.userToken)).then(() => {
-            Toast.info("已退出");
+            Toast.info("已退出",0.5);
             history.replace('/login');
         })
     }

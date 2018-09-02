@@ -392,7 +392,6 @@ export default class DeviceEdit extends Component {
             {getInputFieldNode('assetNo', '设备资产编号', false)}
             {getInputFieldNode('deviceModel', '设备型号', true)}
             {getInputFieldNode('serialNumber', '设备序列号', true)}
-            {/*{getInputFieldNode("qrCode", "二维码", false)}*/}
 
             {getInputFieldNode('deviceOwner', '设备负责人', true)}
             {getInputFieldNode('purchaseAmount', '采购金额', true, {
@@ -444,9 +443,6 @@ export default class DeviceEdit extends Component {
               },
             ])}
 
-            {/* {<FormItem {...formItemLayout} label="二维码">
-
-            </FormItem>}*/}
 
             <FormItem {...formItemLayout} label="图片">
               <div className="clearfix">

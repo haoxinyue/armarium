@@ -92,7 +92,7 @@ export const routes = [
             left: "back"
         }
     },{
-        path: '/PmCaseList',
+        path: '/pmCaseList',
         component: loadComponent('PmCaseList'),
         exact: true,
         header: {
@@ -101,7 +101,7 @@ export const routes = [
             left: "back"
         }
     }, {
-        path: '/PmCaseEdit/:caseId',
+        path: '/pmCaseEdit/:deviceId',
         component: loadComponent('PmCaseEdit'),
         exact: true,
         header: {

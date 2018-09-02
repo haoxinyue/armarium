@@ -175,9 +175,10 @@ export const getRouterData = app => {
       ),
     },
     '/work-order/device-care': {
-      component: dynamicWrapper(app, ['repair', 'engineer', 'device'], () =>
-        import(/* webpackChunkName: "RepairList" */ '../routes/Repair/RepairList')
+      component: dynamicWrapper(app, ['repair', 'engineer', 'device','pmCase'], () =>
+        import(/* webpackChunkName: "RepairList" */ '../routes/PmCase/PmCaseList')
       ),
+
     },
     '/work-order/device-check': {
       component: dynamicWrapper(app, ['repair', 'engineer', 'inspectionCase'], () =>

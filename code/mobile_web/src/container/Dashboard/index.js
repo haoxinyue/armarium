@@ -89,7 +89,7 @@ class Dashboard extends Component {
                     {
                         image: require("../../assets/img/hospital/if_8_hospital_2774754.png"),
                         desc: "设备保养",
-                        link: "/PmCaseList"
+                        link: "/pmCaseList"
                     },
                     {
                         image: require("../../assets/img/hospital/if_11_hospital_2774742.png"),
