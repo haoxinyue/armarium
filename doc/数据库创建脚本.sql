@@ -536,7 +536,10 @@ CREATE TABLE public.tb_mt_case
     feedback_content character varying(500),
     cost integer,  
     case_file_path character varying(100),
-
+	reporter_name character varying(50),
+	reporter_company character varying(50),
+	reporter_mobile character varying(30),
+	
     create_time timestamp without time zone NOT NULL,
     creater integer NOT NULL,
     modify_time timestamp without time zone NOT NULL,
@@ -595,12 +598,14 @@ COMMENT ON COLUMN public.tb_mt_case.cost
 COMMENT ON COLUMN public.tb_mt_case.case_file_path
     IS '工单上传的地址';
 
+COMMENT ON COLUMN public.tb_mt_case.reporter_name
+    IS '报修人名字';
 
+COMMENT ON COLUMN public.tb_mt_case.reporter_company
+    IS '报修人公司';
 
-	
-
-
-
+COMMENT ON COLUMN public.tb_mt_case.reporter_mobile
+    IS '报修人手机';
 
 
 	-- Table: public.tb_device
