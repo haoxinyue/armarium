@@ -566,7 +566,7 @@ COMMENT ON COLUMN public.tb_mt_case.case_subject
 COMMENT ON COLUMN public.tb_mt_case.case_remark
     IS '工单描述';
 COMMENT ON COLUMN public.tb_mt_case.case_state
-    IS '工单状态：10，报修中，20，已取消，30，维修中，50，已关闭';
+    IS '工单状态：10，报修中，20，已取消，25，已派单，30，维修中，50，已关闭';
 
 COMMENT ON COLUMN public.tb_mt_case.reporter_weixin
     IS '创建工单用户微信';
@@ -1030,7 +1030,8 @@ CREATE TABLE public.tb_device_timeline
     event_subject character varying(50),
     event_type smallint NOT NULL,
     event_time timestamp without time zone NOT NULL,
-	event_id integer NOT NULL, 
+	event_id integer NOT NULL,
+    user_id integer NOT NULL,
 
     create_time timestamp without time zone NOT NULL,
     creater integer NOT NULL,
@@ -1066,8 +1067,9 @@ COMMENT ON COLUMN public.tb_device_timeline.event_time
 COMMENT ON COLUMN public.tb_device_timeline.event_id
     IS '事件ID，对应各个状态详情表的ID';
 	
-	
-	
+COMMENT ON COLUMN public.tb_device_timeline.user_id
+    IS '设备的这个事件所属的用户id，操作人。
+举例，如果是报修，则是报修人医生或者护士的用户id，如果是维修中则是工程师的用户id，如果是报修关单，则有可能是调度的用户id，以此类推';
 	
 	
 	
@@ -1484,6 +1486,9 @@ CREATE TABLE public.tsys_config
     config_key character varying(100) NOT NULL,
     config_value character varying(500) NOT NULL,
     config_desc character varying(500),
+	config_code character varying(50),
+
+
 	
 	create_time timestamp without time zone NOT NULL,
     creater integer NOT NULL,
@@ -1501,6 +1506,9 @@ ALTER TABLE public.tsys_config
     OWNER to armarium;
 COMMENT ON TABLE public.tsys_config
     IS '系统配置表';
+	
+COMMENT ON COLUMN public.tsys_config.config_code
+    IS '配置编码';
 	
 	
 	
