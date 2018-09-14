@@ -21,7 +21,7 @@ class DeviceListItem extends Component {
     render() {
         const itemData = this.props.list||{};
         const onClick = this.props.onClick || this.goDetail;
-        const emptyImage="";
+        const emptyImage=require("../../assets/img/empty.png");
         return (
             <li className="device-list-item"
                 onTouchStart={(e)=>{

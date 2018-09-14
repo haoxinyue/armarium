@@ -220,7 +220,7 @@ export const routes = [
         exact: true,
         component: loadComponent('Test'),
         header: {
-            title: '测试',
+            title: '统计',
             left: "back"
         }
     }

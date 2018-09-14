@@ -23,7 +23,7 @@ class PmCaseItem extends Component {
 
     render() {
         const itemData = this.props.list || {};
-        const emptyImage = "";
+        const emptyImage = require("../../assets/img/empty.png");
 
         function getStateName(state) {
             switch (state) {
@@ -179,39 +179,42 @@ class PmCaseList extends Component {
 
         dispatch(fetchPmCaseList(queryData)).then((res) => {
             // Toast.info("success");
-            Toast.hide();
-            this.rData = clear ? [] : this.rData;
-            const listdata = res.payload.data || [];
-            listdata.forEach((item) => {
-                this.rData.push(item)
-            });
+            if(!res.error){
+                Toast.hide();
+                this.rData = clear ? [] : this.rData;
 
-            let dataSource = this.state.dataSource.cloneWithRows(this.rData);
+                const listdata = res.payload.data || [];
+                console.log(JSON.stringify(listdata))
+                listdata.forEach((item) => {
+                    this.rData.push(item)
+                });
 
-            this.setState({
-                dataSource,
-                refreshing: false,
-                isLoading: false,
-                hasMore: listdata.length > 0
-            });
+                let dataSource = this.state.dataSource.cloneWithRows(this.rData);
 
-        }, (res) => {
-            if (clear) {
-                let dataSource = this.state.dataSource.cloneWithRows([]);
                 this.setState({
                     dataSource,
                     refreshing: false,
                     isLoading: false,
-                    hasMore: false
+                    hasMore: listdata.length > 0
                 });
-            } else {
-                this.setState({
-                    refreshing: false,
-                    isLoading: false,
-                    hasMore: false
-                });
+            }else{
+                if (clear) {
+                    let dataSource = this.state.dataSource.cloneWithRows([]);
+                    this.setState({
+                        dataSource,
+                        refreshing: false,
+                        isLoading: false,
+                        hasMore: false
+                    });
+                } else {
+                    this.setState({
+                        refreshing: false,
+                        isLoading: false,
+                        hasMore: false
+                    });
+                }
+                Toast.hide()
             }
-            Toast.hide()
         })
 
 
@@ -307,7 +310,7 @@ class PmCaseList extends Component {
                                     />
                                 )}
                                 renderFooter={() => (<div style={{padding: 30, textAlign: 'center'}}>
-                                    {this.state.isLoading ? '加载中...' : (this.state.dataSource.length?'已加载':'暂无数据')}
+                                    {this.state.isLoading ? '加载中...' : (this.state.dataSource.getRowCount()>0?'':'暂无数据')}
                                 </div>)}
                                 renderSeparator={separator}
                                 useBodyScroll={this.state.useBodyScroll}

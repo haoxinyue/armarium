@@ -129,7 +129,7 @@ class BasicLayout extends React.PureComponent {
   getPageTitle() {
     const { routerData, location } = this.props;
     const { pathname } = location;
-    let title = '医疗云';
+    let title = '联智医云';
     let currRouterData = null;
     // match params path
     Object.keys(routerData).forEach(key => {
@@ -138,7 +138,7 @@ class BasicLayout extends React.PureComponent {
       }
     });
     if (currRouterData && currRouterData.name) {
-      title = `${currRouterData.name} - 医疗云`;
+      title = `${currRouterData.name} - 联智医云`;
     }
     return title;
   }
@@ -280,7 +280,7 @@ class BasicLayout extends React.PureComponent {
               }
               copyright={
                 <Fragment>
-                  Copyright <Icon type="copyright" /> 2018 医疗云出品
+                  Copyright <Icon type="copyright" /> 2018 联智医云出品
                 </Fragment>
               }
             />

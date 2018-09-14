@@ -1,7 +1,7 @@
-import React, {PureComponent, Fragment} from 'react';
-import {connect} from 'dva';
-import {Link} from 'dva/router';
-import {routerRedux} from 'dva/router';
+import React, { PureComponent, Fragment } from 'react';
+import { connect } from 'dva';
+import { Link } from 'dva/router';
+import { routerRedux } from 'dva/router';
 import {
   Row,
   Col,
@@ -30,16 +30,15 @@ import styles from './TableList.less';
 import EngineerSelect from '../../components/biz/EngineerSelect';
 
 const FormItem = Form.Item;
-const {Option} = Select;
+const { Option } = Select;
 const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
-const statusMap = {'10': '待巡检', '20': '已取消', '30': '巡检中', '50': '已关闭'};
-
+const statusMap = { '10': '待巡检', '20': '已取消', '30': '巡检中', '50': '已关闭' };
 
 const CreateForm = Form.create()(props => {
-  const {modalVisible, form, handleAdd, handleModalVisible} = props;
+  const { modalVisible, form, handleAdd, handleModalVisible } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -53,27 +52,27 @@ const CreateForm = Form.create()(props => {
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="设备名称">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备名称">
         {form.getFieldDecorator('deviceName', {
-          rules: [{required: true, message: '请输入设备名称...'}],
-        })(<Input placeholder="请输入"/>)}
+          rules: [{ required: true, message: '请输入设备名称...' }],
+        })(<Input placeholder="请输入" />)}
       </FormItem>
 
-      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="所属医院">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="所属医院">
         {form.getFieldDecorator('hospitalId', {
-          rules: [{required: true, message: '请选择医院...'}],
-        })(<HospitalSelect placeholder="请选择医院"/>)}
+          rules: [{ required: true, message: '请选择医院...' }],
+        })(<HospitalSelect placeholder="请选择医院" />)}
       </FormItem>
 
-      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="所属部门">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="所属部门">
         {form.getFieldDecorator('deptId', {
-          rules: [{required: true, message: '请选择所属部门...'}],
-        })(<DepartmentSelect placeholder="请选择所属部门"/>)}
+          rules: [{ required: true, message: '请选择所属部门...' }],
+        })(<DepartmentSelect placeholder="请选择所属部门" />)}
       </FormItem>
-      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="指派给">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="指派给">
         {form.getFieldDecorator('assigneeUserId', {
-          rules: [{required: true, message: '请选择工程师...'}],
-        })(<EngineerSelect placeholder="请选择工程师"/>)}
+          rules: [{ required: true, message: '请选择工程师...' }],
+        })(<EngineerSelect placeholder="请选择工程师" />)}
       </FormItem>
 
       {/*<FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备类型">
@@ -82,25 +81,25 @@ const CreateForm = Form.create()(props => {
         })(<Input placeholder="请输入设备类型" />)}
       </FormItem>*/}
 
-      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="是否需要巡检">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否需要巡检">
         {form.getFieldDecorator('needInspection', {
           initialValue: false,
-          rules: [{required: true}],
-        })(<Checkbox style={{marginLeft: 8}}/>)}
+          rules: [{ required: true }],
+        })(<Checkbox style={{ marginLeft: 8 }} />)}
       </FormItem>
 
-      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="是否需要计量">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否需要计量">
         {form.getFieldDecorator('needMetering', {
           initialValue: false,
-          rules: [{required: true}],
-        })(<Checkbox style={{marginLeft: 8}}/>)}
+          rules: [{ required: true }],
+        })(<Checkbox style={{ marginLeft: 8 }} />)}
       </FormItem>
 
-      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="设备类型">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备类型">
         {form.getFieldDecorator('deviceType', {
-          rules: [{required: true, message: '请设置设备类型...'}],
+          rules: [{ required: true, message: '请设置设备类型...' }],
         })(
-          <Select placeholder="请选择" initialValue="1" style={{width: '100%'}}>
+          <Select placeholder="请选择" initialValue="1" style={{ width: '100%' }}>
             <Option value="1">B超</Option>
             <Option value="2">眼检仪</Option>
             <Option value="0">其他</Option>
@@ -108,28 +107,28 @@ const CreateForm = Form.create()(props => {
         )}
       </FormItem>
 
-      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="期望安装时间">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="期望安装时间">
         {form.getFieldDecorator('expectedTime', {
-          rules: [{required: true, message: '请选择时间...'}],
-        })(<DatePicker showTime format="YYYY-MM-DD HH:mm:ss" placeholder="请选择时间"/>)}
+          rules: [{ required: true, message: '请选择时间...' }],
+        })(<DatePicker showTime format="YYYY-MM-DD HH:mm:ss" placeholder="请选择时间" />)}
       </FormItem>
 
-      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="型号">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="型号">
         {form.getFieldDecorator('deviceModel', {
-          rules: [{required: true, message: '请输入设备型号...'}],
-        })(<Input placeholder="请输入"/>)}
+          rules: [{ required: true, message: '请输入设备型号...' }],
+        })(<Input placeholder="请输入" />)}
       </FormItem>
 
-      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="序列号">
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="序列号">
         {form.getFieldDecorator('serialNumber', {
-          rules: [{required: true, message: '请输入序列号...'}],
-        })(<Input placeholder="请输入序列号"/>)}
+          rules: [{ required: true, message: '请输入序列号...' }],
+        })(<Input placeholder="请输入序列号" />)}
       </FormItem>
     </Modal>
   );
 });
 
-@connect(({inspectionCase, user, loading}) => ({
+@connect(({ inspectionCase, user, loading }) => ({
   inspectionCase,
   currentUser: user.currentUser || {},
   loading: loading.models['inspectionCase/fetch'],
@@ -144,24 +143,24 @@ export default class InspectionCaseList extends PureComponent {
   };
 
   componentDidMount() {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch({
       type: 'inspectionCase/fetch',
     });
   }
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const {dispatch} = this.props;
-    const {formValues} = this.state;
+    const { dispatch } = this.props;
+    const { formValues } = this.state;
 
     const filters = Object.keys(filtersArg).reduce((obj, key) => {
-      const newObj = {...obj};
+      const newObj = { ...obj };
       newObj[key] = getValue(filtersArg[key]);
       return newObj;
     }, {});
 
     const params = {
-      currentPage: pagination.current,
+      pageIndex: pagination.current - 1,
       pageSize: pagination.pageSize,
       ...formValues,
       ...filters,
@@ -177,7 +176,7 @@ export default class InspectionCaseList extends PureComponent {
   };
 
   handleFormReset = () => {
-    const {form, dispatch} = this.props;
+    const { form, dispatch } = this.props;
     form.resetFields();
     this.setState({
       formValues: {},
@@ -189,7 +188,7 @@ export default class InspectionCaseList extends PureComponent {
   };
 
   closeCase(mCase) {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     Modal.confirm({
       title: `确认`,
       content: `确认关闭工单 【${mCase.deviceName}(${mCase.caseId})】?`,
@@ -199,25 +198,24 @@ export default class InspectionCaseList extends PureComponent {
         dispatch({
           type: 'inspectionCase/close',
           payload: {
-            caseId: mCase.caseId
+            caseId: mCase.caseId,
           },
         }).then(res => {
           message.success('关闭成功');
           dispatch({
             type: 'inspectionCase/fetchDetail',
             payload: {
-              caseId: mCase.caseId
+              caseId: mCase.caseId,
             },
           });
         });
       },
-      onCancel() {
-      },
+      onCancel() {},
     });
   }
 
   completeCase(mCase) {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     Modal.confirm({
       title: `确认`,
       content: `确认完成 【${mCase.deviceName}(${mCase.caseId})】?`,
@@ -240,14 +238,13 @@ export default class InspectionCaseList extends PureComponent {
           }
         );
       },
-      onCancel() {
-      },
+      onCancel() {},
     });
   }
 
   handleMenuClick = e => {
-    const {dispatch} = this.props;
-    const {selectedRows} = this.state;
+    const { dispatch } = this.props;
+    const { selectedRows } = this.state;
 
     if (!selectedRows) return;
 
@@ -279,7 +276,7 @@ export default class InspectionCaseList extends PureComponent {
   handleSearch = e => {
     e.preventDefault();
 
-    const {dispatch, form} = this.props;
+    const { dispatch, form } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -316,7 +313,7 @@ export default class InspectionCaseList extends PureComponent {
   };
 
   handleAdd = (fields, form) => {
-    const {currentUser = {}} = this.props;
+    const { currentUser = {} } = this.props;
     let subFields = Object.assign({}, fields);
     subFields.expectedTime = subFields.expectedTime.format('YYYY/MM/DD HH:mm:ss');
     subFields.creater = currentUser.userId;
@@ -349,18 +346,18 @@ export default class InspectionCaseList extends PureComponent {
   };
 
   renderSimpleForm() {
-    const {getFieldDecorator} = this.props.form;
+    const { getFieldDecorator } = this.props.form;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{md: 8, lg: 24, xl: 48}}>
+        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="设备编号">
-              {getFieldDecorator('deviceCode')(<Input placeholder="请输入"/>)}
+              {getFieldDecorator('deviceCode')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="设备名称">
-              {getFieldDecorator('deviceName')(<Input placeholder="请输入"/>)}
+              {getFieldDecorator('deviceName')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -368,7 +365,7 @@ export default class InspectionCaseList extends PureComponent {
               <Button type="primary" htmlType="submit">
                 查询
               </Button>
-              <Button style={{marginLeft: 8}} onClick={this.handleFormReset}>
+              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
               {/*<a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
@@ -386,8 +383,8 @@ export default class InspectionCaseList extends PureComponent {
   }
 
   render() {
-    const {inspectionCase, loading} = this.props;
-    const {selectedRows, modalVisible} = this.state;
+    const { inspectionCase, loading } = this.props;
+    const { selectedRows, modalVisible } = this.state;
     let list = [];
     inspectionCase.list.forEach(id => {
       list.push(inspectionCase.byIds[id]);
@@ -441,20 +438,27 @@ export default class InspectionCaseList extends PureComponent {
         dataIndex: 'inspectionType',
         filters: [
           {
-            text: "巡检",
+            text: '巡检',
             value: 1,
           },
           {
-            text: "强检",
+            text: '强检',
             value: 2,
-          }
+          },
         ],
-        render :(val)=><span>{val===2?"强检":"巡检"}</span>
+        render: val => <span>{val === 2 ? '强检' : '巡检'}</span>,
       },
       {
         title: '巡检描述',
         dataIndex: 'inspectionRemark',
-        render :(val)=><span style={{width:'100%',display:"inline-block",textOverflow:"hidden"}} title={val}>{val}</span>
+        render: val => (
+          <span
+            style={{ width: '100%', display: 'inline-block', textOverflow: 'hidden' }}
+            title={val}
+          >
+            {val}
+          </span>
+        ),
       },
 
       {
@@ -462,7 +466,7 @@ export default class InspectionCaseList extends PureComponent {
         dataIndex: 'inspectionTime',
         sorter: true,
         render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-      }/*,
+      } /*,
       {
         title: '操作',
         render: val => (
@@ -472,7 +476,7 @@ export default class InspectionCaseList extends PureComponent {
             <a onClick={this.closeCase.bind(this, val)}>关闭</a>
           </Fragment>
         ),
-      },*/
+      },*/,
     ];
 
     const menu = (
@@ -496,16 +500,16 @@ export default class InspectionCaseList extends PureComponent {
                 新建
               </Button>*/}
               {false &&
-              selectedRows.length > 0 && (
-                <span>
+                selectedRows.length > 0 && (
+                  <span>
                     <Button>批量操作</Button>
                     <Dropdown overlay={menu}>
                       <Button>
-                        更多操作 <Icon type="down"/>
+                        更多操作 <Icon type="down" />
                       </Button>
                     </Dropdown>
                   </span>
-              )}
+                )}
             </div>
             <StandardTable
               selectedRows={selectedRows}
@@ -518,7 +522,7 @@ export default class InspectionCaseList extends PureComponent {
             />
           </div>
         </Card>
-        <CreateForm {...parentMethods} modalVisible={modalVisible}/>
+        <CreateForm {...parentMethods} modalVisible={modalVisible} />
       </PageHeaderLayout>
     );
   }

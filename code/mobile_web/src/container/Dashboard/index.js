@@ -1,12 +1,12 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Modal, Toast, Badge} from 'antd-mobile'
+import {Modal, Toast, Badge,Button} from 'antd-mobile'
 
 import './dashboard.less'
 
 import {addRippleEffect, runScanner, getLocalPicture} from '../../utils'
 
-import {logout,changeFooterSide,fetchNoticeList} from '../../redux/actions'
+import {logout, changeFooterSide, fetchNoticeList, changeHeaderRight} from '../../redux/actions'
 
 class Dashboard extends Component {
 
@@ -14,6 +14,26 @@ class Dashboard extends Component {
     // cordovaHTTP
     componentDidMount() {
         this.props.dispatch(changeFooterSide('left'))
+
+        const {dispatch} = this.props;
+        dispatch(changeHeaderRight([
+            <Button key="1" size="small" type="primary"  onClick={this.scanDevice.bind(this)}><img style={{height:'70%',marginTop:'15%'}} src={require("../../assets/img/scan.png")} alt=""/></Button>
+        ]))
+    }
+
+    scanDevice(){
+        runScanner().then((result) => {
+                let deviceId = /\[(\S+)\]/.exec(result.text)
+                deviceId = deviceId && deviceId[1]
+                if (deviceId) {
+                    this.props.history.push({pathname: "/deviceDetail/"+deviceId})
+                } else {
+                    // alert('无效的二维码')
+                }
+            }, (error) => {
+                alert("请重新扫描");
+            }
+        )
     }
 
 
@@ -45,7 +65,7 @@ class Dashboard extends Component {
                         func(item) {
                             Modal.operation([
                                 {
-                                    text: '直接填写', onPress: () => {
+                                    text: '填写工单', onPress: () => {
                                         this.props.history.push({pathname: "/repairAdd", query: {}})
                                     }
                                 },
@@ -63,6 +83,11 @@ class Dashboard extends Component {
                                                 alert("请重新扫描");
                                             }
                                         )
+                                    }
+                                },
+                                {
+                                    text: '报修历史', onPress: () => {
+                                        this.props.history.push({pathname: "/repairs", query: {}})
                                     }
                                 },
                             ])
@@ -116,6 +141,11 @@ class Dashboard extends Component {
                         noticeTag: 'installCase'
 
                     },
+                    {
+                        image: require("../../assets/img/hospital/if_2_hospital_2774748.png"),
+                        desc: "我的消息",
+                        link:"/noticeList"
+                    },
 
                 ]
             },
@@ -135,22 +165,46 @@ class Dashboard extends Component {
                     {
                         image: require("../../assets/img/hospital/if_10_hospital_2774741.png"),
                         desc: "文档管理",
-                        link: "/devices"
+                        link1: "/devices",
+                        func(){
+                            Modal.operation([
+                                {
+                                    text: '暂未开放', onPress: () => {
+                                    }
+                                }
+                            ])
+                        }
                     },
                     {
                         image: require("../../assets/img/hospital/if_11_hospital_2774742.png"),
                         desc: "统计报表",
-                        link: "/devices"
+                        link: "/test"
                     },
                     {
                         image: require("../../assets/img/hospital/if_12_hospital_2774743.png"),
                         desc: "不良事件",
-                        link: "/devices"
+                        link1: "/devices",
+                        func(){
+                            Modal.operation([
+                                {
+                                    text: '暂未开放', onPress: () => {
+                                    }
+                                }
+                            ])
+                        }
                     },
                     {
                         image: require("../../assets/img/hospital/if_14_hospital_2774745.png"),
                         desc: "角色设置",
-                        link: "/devices"
+                        link1: "/devices",
+                        func(){
+                            Modal.operation([
+                                {
+                                    text: '暂未开放', onPress: () => {
+                                    }
+                                }
+                            ])
+                        }
                     },
                 ]
             },
@@ -159,15 +213,11 @@ class Dashboard extends Component {
                 items: [
                     {
                         image: require("../../assets/img/hospital/if_2_hospital_2774748.png"),
-                        desc: "我的消息",
-                        link:"/noticeList"
-                    },{
-                        image: require("../../assets/img/hospital/if_2_hospital_2774748.png"),
                         desc: "资产购置",
                         func(){
                             Modal.operation([
                                 {
-                                    text: '敬请期待', onPress: () => {
+                                    text: '暂未开放', onPress: () => {
                                     }
                                 }
                             ])
@@ -178,7 +228,7 @@ class Dashboard extends Component {
                         func(){
                             Modal.operation([
                                 {
-                                    text: '敬请期待', onPress: () => {
+                                    text: '暂未开放', onPress: () => {
                                     }
                                 }
                             ])
@@ -189,7 +239,7 @@ class Dashboard extends Component {
                         func(){
                             Modal.operation([
                                 {
-                                    text: '敬请期待', onPress: () => {
+                                    text: '暂未开放', onPress: () => {
                                     }
                                 }
                             ])
@@ -200,7 +250,7 @@ class Dashboard extends Component {
                         func(){
                             Modal.operation([
                                 {
-                                    text: '敬请期待', onPress: () => {
+                                    text: '暂未开放', onPress: () => {
                                     }
                                 }
                             ])
@@ -211,7 +261,7 @@ class Dashboard extends Component {
                         func(){
                             Modal.operation([
                                 {
-                                    text: '敬请期待', onPress: () => {
+                                    text: '暂未开放', onPress: () => {
                                     }
                                 }
                             ])
@@ -222,7 +272,7 @@ class Dashboard extends Component {
                         func(){
                             Modal.operation([
                                 {
-                                    text: '敬请期待', onPress: () => {
+                                    text: '暂未开放', onPress: () => {
                                     }
                                 }
                             ])

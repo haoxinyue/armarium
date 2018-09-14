@@ -159,7 +159,7 @@ export default class PmCaseList extends PureComponent {
     }, {});
 
     const params = {
-      currentPage: pagination.current,
+      pageIndex: pagination.current - 1,
       pageSize: pagination.pageSize,
       ...formValues,
       ...filters,

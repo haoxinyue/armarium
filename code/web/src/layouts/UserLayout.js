@@ -27,7 +27,7 @@ const links = [
 
 const copyright = (
   <Fragment>
-    Copyright <Icon type="copyright" /> 2018 医疗云
+    Copyright <Icon type="copyright" /> 2018 联智医云
   </Fragment>
 );
 
@@ -35,9 +35,9 @@ class UserLayout extends React.PureComponent {
   getPageTitle() {
     const { routerData, location } = this.props;
     const { pathname } = location;
-    let title = '医疗云';
+    let title = '联智医云';
     if (routerData[pathname] && routerData[pathname].name) {
-      title = `${routerData[pathname].name} - 医疗云`;
+      title = `${routerData[pathname].name} - 联智医云`;
     }
     return title;
   }
@@ -51,7 +51,7 @@ class UserLayout extends React.PureComponent {
               <div className={styles.header}>
                 <Link to="/">
                   <img alt="logo" className={styles.logo} src={logo} />
-                  <span className={styles.title}>医疗云</span>
+                  <span className={styles.title}>联智医云</span>
                 </Link>
               </div>
               <div className={styles.desc}>华南最具影响力的医疗设备管理平台</div>

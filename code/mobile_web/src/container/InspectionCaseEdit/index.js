@@ -213,7 +213,7 @@ class InspectionCaseEdit extends Component {
         dispatch(completeInspectionCaseDetail(this.getSubmitFormValue()))
             .then(res => {
                 console.log(res)
-                if (res.payload.code == 0) {
+                if (!res.error) {
                     Toast.hide();
                     Toast.success("保存成功", 0.5);
                     history.push(`/inspectionCaseList`);

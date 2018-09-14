@@ -20,6 +20,7 @@ import {
   Upload,
   Modal,
   message,
+  Timeline,
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DepartmentSelect from '../../components/biz/DepartmentSelect';
@@ -442,7 +443,6 @@ export default class DeviceEdit extends Component {
                 text: '停用',
               },
             ])}
-
 
             <FormItem {...formItemLayout} label="图片">
               <div className="clearfix">

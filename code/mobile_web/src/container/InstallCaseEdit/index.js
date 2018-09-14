@@ -184,8 +184,7 @@ class DeviceEdit extends Component {
         if (caseId) {
             dispatch(compeleteInstallCaseDetail(this.getSubmitFormValue()))
                 .then(res => {
-                    console.log(res)
-                    if (res.payload.code == 0) {
+                    if (!res.error) {
                         Toast.hide();
                         history.push(`/installCaseList`);
                         Toast.success("保存成功", 0.5);
@@ -212,10 +211,13 @@ class DeviceEdit extends Component {
             dispatch(getInstallCaseDetail({
                 caseId: Number(NextCaseId)
             })).then((res)=>{
-                let deviceId = res && res.deviceId;
-                deviceId && dispatch(getDeviceDetail({
-                    deviceId: Number(deviceId)
-                }))
+                if(!res.error){
+                    let deviceId =  res.payload.data&&res.payload.data.deviceId;
+                    deviceId && dispatch(getDeviceDetail({
+                        deviceId: Number(deviceId)
+                    }))
+                }
+
             });
             return false
         }
@@ -279,13 +281,7 @@ class DeviceEdit extends Component {
             console.log("mount----")
             dispatch(getInstallCaseDetail({
                 caseId: Number(caseId)
-            })).then((res)=>{
-                let deviceId = res.payload.data && res.payload.data.deviceId
-                // let deviceId = res && res.deviceId;
-                deviceId && dispatch(getDeviceDetail({
-                    deviceId: Number(deviceId)
-                }))
-            });;
+            }))
         }
     }
 

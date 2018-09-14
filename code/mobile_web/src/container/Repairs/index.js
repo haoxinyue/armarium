@@ -21,7 +21,7 @@ class Devices extends Component {
             rowHasChanged: (row1, row2) => row1 !== row2,
         });
 
-        this.rData =[];
+        this.rData = [];
 
         this.state = {
             dataSource,
@@ -31,8 +31,8 @@ class Devices extends Component {
             useBodyScroll: false,
             openFilter: false,
             searchValue: '',
-            pageIndex:0,
-            hasMore:false
+            pageIndex: 0,
+            hasMore: false
         }
 
         this.queryPageData = this.queryPageData.bind(this)
@@ -76,51 +76,54 @@ class Devices extends Component {
         this.onRefresh()
     }
 
-    queryPageData(clear){
-        const {dispatch,userInfo} = this.props
-        const nextPage =(clear?0:(this.state.pageIndex+1))
-        this.setState({refreshing: !!clear, pageIndex:nextPage,isLoading: true});
+    queryPageData(clear) {
+        const {dispatch, userInfo} = this.props
+        const nextPage = (clear ? 0 : (this.state.pageIndex + 1))
+        this.setState({refreshing: !!clear, pageIndex: nextPage, isLoading: true});
 
-        dispatch(getRepairList({pageIndex: nextPage,assigneeUserId:userInfo.userId})).then((res) => {
+        dispatch(getRepairList({
+            pageIndex: nextPage,
+            deviceName:this.state.searchValue
+            //todo 暂时不传
+            // assigneeUserId: userInfo.userId
+        })).then((res) => {
             // Toast.info("success")
-            Toast.hide()
-            this.rData =clear?[]:this.rData;
-            const listdata =res.payload.data||[];
-            listdata.forEach((item)=>{
-                this.rData.push(item)
-            });
+            if (!res.error) {
+                Toast.hide()
+                this.rData = clear ? [] : this.rData;
+                const listdata = res.payload.data || [];
+                listdata.forEach((item) => {
+                    this.rData.push(item)
+                });
 
-            let dataSource = this.state.dataSource.cloneWithRows(this.rData);
+                let dataSource = this.state.dataSource.cloneWithRows(this.rData);
 
-            this.setState({
-                dataSource,
-                refreshing: false,
-                isLoading: false,
-                hasMore:listdata.length>0
-            });
-
-        }, (res) => {
-            if (clear){
-                let dataSource = this.state.dataSource.cloneWithRows([]);
                 this.setState({
                     dataSource,
                     refreshing: false,
                     isLoading: false,
-                    hasMore:false
+                    hasMore: listdata.length > 0
                 });
-            }else{
-                this.setState({
-                    refreshing: false,
-                    isLoading: false,
-                    hasMore:false
-                });
+            } else {
+                if (clear) {
+                    let dataSource = this.state.dataSource.cloneWithRows([]);
+                    this.setState({
+                        dataSource,
+                        refreshing: false,
+                        isLoading: false,
+                        hasMore: false
+                    });
+                } else {
+                    this.setState({
+                        refreshing: false,
+                        isLoading: false,
+                        hasMore: false
+                    });
+                }
+
+                Toast.hide()
             }
 
-            // Toast.fail("failed")
-            // setTimeout(() => {
-            //     Toast.fail(JSON.stringify(res))
-            // }, 1000)
-            Toast.hide()
 
         })
     }
@@ -210,7 +213,7 @@ class Devices extends Component {
                                     />
                                 )}
                                 renderFooter={() => (<div style={{padding: 30, textAlign: 'center'}}>
-                                    {this.state.isLoading ? '加载中...' : '已加载'}
+                                    {this.state.isLoading ? '加载中...' : ''}
                                 </div>)}
                                 renderSeparator={separator}
                                 useBodyScroll={this.state.useBodyScroll}

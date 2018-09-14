@@ -93,7 +93,7 @@ class NoticeList extends Component {
                 history.push(`/inspectionCaseList`);
                 break;
             case "pm":
-                history.push(`/PmCaseList`);
+                history.push(`/pmCaseList`);
                 break;
             case "repair":
                 history.push(`/repairs/`);

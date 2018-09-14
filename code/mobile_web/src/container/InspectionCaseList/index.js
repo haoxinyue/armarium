@@ -197,8 +197,27 @@ class InspectionCaseList extends Component {
 
         if (isCaseList){
             dispatch(fetchInspectionCaseList(queryData)).then((res) => {
-                // Toast.info("success");
-                Toast.hide();
+
+                if(res.error){
+                    if (clear) {
+                        let dataSource = this.state.dataSource.cloneWithRows([]);
+                        this.setState({
+                            dataSource,
+                            refreshing: false,
+                            isLoading: false,
+                            hasMore: false
+                        });
+                    } else {
+                        this.setState({
+                            refreshing: false,
+                            isLoading: false,
+                            hasMore: false
+                        });
+                    }
+                    Toast.hide()
+                    return;
+                }
+
                 this.rData = clear ? [] : this.rData;
                 const listdata = res.payload.data || [];
                 listdata.forEach((item) => {
@@ -214,28 +233,29 @@ class InspectionCaseList extends Component {
                     hasMore: listdata.length > 0
                 });
 
-            }, (res) => {
-                if (clear) {
-                    let dataSource = this.state.dataSource.cloneWithRows([]);
-                    this.setState({
-                        dataSource,
-                        refreshing: false,
-                        isLoading: false,
-                        hasMore: false
-                    });
-                } else {
-                    this.setState({
-                        refreshing: false,
-                        isLoading: false,
-                        hasMore: false
-                    });
-                }
-                Toast.hide()
             })
         }else{
             dispatch(fetchToInspectionDeviceList(queryData)).then((res) => {
-                // Toast.info("success");
-                Toast.hide();
+
+                if(res.error){
+                    if (clear) {
+                        let dataSourceDeviceList = this.state.dataSource.cloneWithRows([]);
+                        this.setState({
+                            dataSourceDeviceList,
+                            refreshing: false,
+                            isLoading: false,
+                            hasMore: false
+                        });
+                    } else {
+                        this.setState({
+                            refreshing: false,
+                            isLoading: false,
+                            hasMore: false
+                        });
+                    }
+                    Toast.hide()
+                    return;
+                }
 
                 this.rDeviceData = clear ? [] : this.rDeviceData;
                 const listdata = res.payload.data || [];
@@ -254,23 +274,6 @@ class InspectionCaseList extends Component {
                     hasMore: listdata.length > 0
                 });
 
-            }, (res) => {
-                if (clear) {
-                    let dataSourceDeviceList = this.state.dataSource.cloneWithRows([]);
-                    this.setState({
-                        dataSourceDeviceList,
-                        refreshing: false,
-                        isLoading: false,
-                        hasMore: false
-                    });
-                } else {
-                    this.setState({
-                        refreshing: false,
-                        isLoading: false,
-                        hasMore: false
-                    });
-                }
-                Toast.hide()
             })
         }
 

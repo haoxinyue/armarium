@@ -161,7 +161,7 @@ export default class InstallCaseList extends PureComponent {
     }, {});
 
     const params = {
-      currentPage: pagination.current,
+      pageIndex: pagination.current - 1,
       pageSize: pagination.pageSize,
       ...formValues,
       ...filters,
@@ -199,14 +199,14 @@ export default class InstallCaseList extends PureComponent {
         dispatch({
           type: 'installCase/close',
           payload: {
-            caseId:mCase.caseId
+            caseId: mCase.caseId,
           },
         }).then(res => {
           message.success('关闭成功');
           dispatch({
             type: 'installCase/fetchDetail',
             payload: {
-              caseId:mCase.caseId
+              caseId: mCase.caseId,
             },
           });
         });

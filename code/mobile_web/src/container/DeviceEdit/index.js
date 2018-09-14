@@ -150,20 +150,20 @@ class DeviceEdit extends Component {
 
     getSubmitFormValue() {
 
-        let formData =  {
+        let formData = {
             ...this.state.formValue,
             deviceState: this.state.formValue.deviceState[0],
             deviceType: this.state.formValue.deviceType[0],
             usageState: this.state.formValue.usageState[0]
         }
-        const { match: {params: {deviceId}}} = this.props;
+        const {match: {params: {deviceId}}} = this.props;
 
-        if (this.state.imageFiles&&this.state.imageFiles.length){
-            this.state.imageFiles.forEach((f,i)=>{
-                formData['picture'+(i+1)] = f.url
+        if (this.state.imageFiles && this.state.imageFiles.length) {
+            this.state.imageFiles.forEach((f, i) => {
+                formData['picture' + (i + 1)] = f.url
             })
         }
-        if (deviceId){
+        if (deviceId) {
             formData.deviceId = deviceId
         }
 
@@ -171,7 +171,7 @@ class DeviceEdit extends Component {
     }
 
     save() {
-        const {dispatch,history, match: {params: {deviceId}}} = this.props;
+        const {dispatch, history, match: {params: {deviceId}}} = this.props;
 
         for (let i = 0; i < fields.length; i++) {
             let field = fields[i]
@@ -184,16 +184,15 @@ class DeviceEdit extends Component {
         if (deviceId) {
             dispatch(updateDevice(this.getSubmitFormValue()))
                 .then(res => {
-                    console.log(res)
-                    if (res.payload.code == 0) {
-                        Toast.hide();
-                        Toast.success("保存成功", 0.5);
-                        // dispatch(addDevice())
-                        history.push(`/deviceDetail/${deviceId}`);
-                    } else {
+                    if (res.error) {
                         Toast.hide();
                         Toast.fail("保存失败，请稍后再试", 0.5);
+                        return
                     }
+                    Toast.hide();
+                    Toast.success("保存成功", 0.5);
+                    // dispatch(addDevice())
+                    history.push(`/deviceDetail/${deviceId}`);
                 })
                 .catch(err => {
                     Toast.hide();
@@ -204,7 +203,7 @@ class DeviceEdit extends Component {
 
             dispatch(addDevice(this.getSubmitFormValue()))
                 .then(res => {
-                    if (res.payload.code == 0) {
+                    if (!res.error) {
                         let deviceId = res.payload.data.deviceId;
                         Toast.hide();
                         Toast.success("保存成功", 0.5);

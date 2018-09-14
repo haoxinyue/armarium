@@ -30,10 +30,10 @@ const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
-const statusMap = ['','1', '2'];
-const status = ['','正常', '故障'];
-const usageStatusMap = ['0','1'];
-const usageStatus = ['停用','使用'];
+const statusMap = ['', '1', '2'];
+const status = ['', '正常', '故障'];
+const usageStatusMap = ['0', '1'];
+const usageStatus = ['停用', '使用'];
 
 const CreateForm = Form.create()(props => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
@@ -99,29 +99,34 @@ const CreateForm = Form.create()(props => {
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备状态">
         {form.getFieldDecorator('DeviceState', {
           rules: [{ required: true, message: '请输入设置状态...' }],
-        })(<Select placeholder="请选择"  initialValue="1">
-          <Option value="1">正常</Option>
-          <Option value="2">故障</Option>
-        </Select>)}
+        })(
+          <Select placeholder="请选择" initialValue="1">
+            <Option value="1">正常</Option>
+            <Option value="2">故障</Option>
+          </Select>
+        )}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="使用状态">
         {form.getFieldDecorator('DeviceState', {
           rules: [{ required: true, message: '请输入设置状态...' }],
-        })(<Select placeholder="请选择"  initialValue="1">
-          <Option value="1">使用</Option>
-          <Option value="0">停用</Option>
-        </Select>)}
+        })(
+          <Select placeholder="请选择" initialValue="1">
+            <Option value="1">使用</Option>
+            <Option value="0">停用</Option>
+          </Select>
+        )}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备类型">
         {form.getFieldDecorator('DeviceState', {
           rules: [{ required: true, message: '请输入设置状态...' }],
-        })(<Select placeholder="请选择"  initialValue="1">
-          <Option value="1">B超</Option>
-          <Option value="2">眼检仪</Option>
-          <Option value="0">其他</Option>
-        </Select>)}
+        })(
+          <Select placeholder="请选择" initialValue="1">
+            <Option value="1">B超</Option>
+            <Option value="2">眼检仪</Option>
+            <Option value="0">其他</Option>
+          </Select>
+        )}
       </FormItem>
-
     </Modal>
   );
 });
@@ -157,7 +162,7 @@ export default class DeviceList extends PureComponent {
     }, {});
 
     const params = {
-      currentPage: pagination.current,
+      pageIndex: pagination.current - 1,
       pageSize: pagination.pageSize,
       ...formValues,
       ...filters,
@@ -230,7 +235,7 @@ export default class DeviceList extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue
+        ...fieldsValue,
       };
 
       this.setState({
@@ -412,8 +417,7 @@ export default class DeviceList extends PureComponent {
           {
             text: status[2],
             value: '2',
-
-          }
+          },
         ],
         onFilter: (value, record) => record.DeviceState === value,
         render(val) {
@@ -431,7 +435,7 @@ export default class DeviceList extends PureComponent {
           {
             text: usageStatus[1],
             value: '1',
-          }
+          },
         ],
         onFilter: (value, record) => record.UsageState.toString() === value,
         render(val) {
@@ -449,7 +453,7 @@ export default class DeviceList extends PureComponent {
         render: () => (
           <Fragment>
             <a href="">配置</a>
-           /* <Divider type="vertical" />
+            /* <Divider type="vertical" />
             <a href="">订阅警报</a>*/
           </Fragment>
         ),
@@ -492,7 +496,7 @@ export default class DeviceList extends PureComponent {
               selectedRows={selectedRows}
               loading={loading}
               data={data}
-              rowKey={"DeviceId"}
+              rowKey={'DeviceId'}
               columns={columns}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}

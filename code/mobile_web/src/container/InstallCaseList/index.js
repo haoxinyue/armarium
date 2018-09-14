@@ -23,7 +23,7 @@ class InstallListItem extends Component {
 
     render() {
         const itemData = this.props.list || {};
-        const emptyImage = "";
+        const emptyImage = require("../../assets/img/empty.png");
 
         function getStateName(state) {
             switch (state) {
@@ -160,8 +160,26 @@ class InstallCaseList extends Component {
         }
 
         dispatch(fetchInstallCaseList(queryData)).then((res) => {
-            Toast.info("success");
-            Toast.hide();
+
+            if(res.error){
+                if (clear) {
+                    let dataSource = this.state.dataSource.cloneWithRows([]);
+                    this.setState({
+                        dataSource,
+                        refreshing: false,
+                        isLoading: false,
+                        hasMore: false
+                    });
+                } else {
+                    this.setState({
+                        refreshing: false,
+                        isLoading: false,
+                        hasMore: false
+                    });
+                }
+                Toast.hide()
+                return;
+            }
 
             this.rData = clear ? [] : this.rData;
             const listdata = res.payload.data || [];
@@ -178,23 +196,6 @@ class InstallCaseList extends Component {
                 hasMore: listdata.length > 0
             });
 
-        }, (res) => {
-            if (clear) {
-                let dataSource = this.state.dataSource.cloneWithRows([]);
-                this.setState({
-                    dataSource,
-                    refreshing: false,
-                    isLoading: false,
-                    hasMore: false
-                });
-            } else {
-                this.setState({
-                    refreshing: false,
-                    isLoading: false,
-                    hasMore: false
-                });
-            }
-            Toast.hide()
         })
     }
 

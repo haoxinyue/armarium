@@ -21,7 +21,7 @@ class Devices extends Component {
             rowHasChanged: (row1, row2) => row1 !== row2,
         });
 
-        this.rData =[];
+        this.rData = [];
 
         this.state = {
             dataSource,
@@ -31,8 +31,8 @@ class Devices extends Component {
             useBodyScroll: false,
             openFilter: false,
             searchValue: '',
-            pageIndex:0,
-            hasMore:false
+            pageIndex: 0,
+            hasMore: false
         }
 
         this.queryPageData = this.queryPageData.bind(this)
@@ -76,58 +76,63 @@ class Devices extends Component {
         this.onRefresh()
     }
 
-    queryPageData(clear){
+    queryPageData(clear,resetSearch) {
         const {dispatch} = this.props
-        const nextPage =(clear?0:(this.state.pageIndex+1))
-        this.setState({refreshing: !!clear, pageIndex:nextPage,isLoading: true});
+        const nextPage = (clear ? 0 : (this.state.pageIndex + 1))
+        this.setState({refreshing: !!clear, pageIndex: nextPage, isLoading: true});
 
-        dispatch(fetchDeviceList({pageIndex: nextPage})).then((res) => {
-            Toast.info("success")
-            Toast.hide()
-            this.rData =clear?[]:this.rData;
-            const listdata =res.payload.data||[];
-            listdata.forEach((item)=>{
-                this.rData.push(item)
-            });
+        dispatch(fetchDeviceList({
+            pageIndex: nextPage,
+            deviceName: resetSearch?'':this.state.searchValue
+        })).then((res) => {
+            if (!res.error) {
+                Toast.info("success")
+                Toast.hide()
+                this.rData = clear ? [] : this.rData;
+                const listdata = res.payload.data || [];
+                listdata.forEach((item) => {
+                    this.rData.push(item)
+                });
 
-            let dataSource = this.state.dataSource.cloneWithRows(this.rData);
+                let dataSource = this.state.dataSource.cloneWithRows(this.rData);
 
-            this.setState({
-                dataSource,
-                refreshing: false,
-                isLoading: false,
-                hasMore:listdata.length>0
-            });
-
-        }, (res) => {
-            if (clear){
-                let dataSource = this.state.dataSource.cloneWithRows([]);
                 this.setState({
                     dataSource,
                     refreshing: false,
                     isLoading: false,
-                    hasMore:false
+                    hasMore: listdata.length > 0
                 });
-            }else{
-                this.setState({
-                    refreshing: false,
-                    isLoading: false,
-                    hasMore:false
-                });
-            }
 
-            // Toast.fail("failed")
-            // setTimeout(() => {
-            //     Toast.fail(JSON.stringify(res))
-            // }, 1000)
-            Toast.hide()
+            } else {
+                if (clear) {
+                    let dataSource = this.state.dataSource.cloneWithRows([]);
+                    this.setState({
+                        dataSource,
+                        refreshing: false,
+                        isLoading: false,
+                        hasMore: false
+                    });
+                } else {
+                    this.setState({
+                        refreshing: false,
+                        isLoading: false,
+                        hasMore: false
+                    });
+                }
+
+                // Toast.fail("failed")
+                // setTimeout(() => {
+                //     Toast.fail(JSON.stringify(res))
+                // }, 1000)
+                Toast.hide()
+            }
 
         })
     }
 
 
-    onRefresh = () => {
-        this.queryPageData(true)
+    onRefresh = (reset) => {
+        this.queryPageData(true,reset)
     };
 
 
@@ -181,6 +186,8 @@ class Devices extends Component {
                 </ul>
             </div>;
 
+        var hasData = this.state.dataSource.getRowCount()>0;
+
         return (
             <Drawer
                 className="device-list"
@@ -196,7 +203,9 @@ class Devices extends Component {
 
                     <SearchBar className="search-box" placeholder="请输入设备名称" value={this.state.searchValue}
                                onChange={this.handleChange}
-                               onSubmit={this.handleSubmit}/>
+                               onSubmit={this.handleSubmit}
+                               onClear={this.onRefresh.bind(this,true)}
+                    />
                     <div className="dataList-container" id="J_Scroll">
                         <div className="scroll-hook">
                             <ListView
@@ -212,7 +221,7 @@ class Devices extends Component {
                                     />
                                 )}
                                 renderFooter={() => (<div style={{padding: 30, textAlign: 'center'}}>
-                                    {this.state.isLoading ? '加载中...' : '已加载'}
+                                    {this.state.isLoading ? '加载中...' : (!hasData?'无数据':'')}
                                 </div>)}
                                 renderSeparator={separator}
                                 useBodyScroll={this.state.useBodyScroll}

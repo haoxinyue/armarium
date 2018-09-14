@@ -5,15 +5,15 @@
     <desc>Created with Sketch.</desc>
     <defs>
         <linearGradient x1="62.1023273%" y1="0%" x2="108.19718%" y2="37.8635764%" id="linearGradient-1">
-            <stop stop-color="#4285EB" offset="0%"></stop>
+            <stop stop-color="#ccc" offset="0%"></stop>
             <stop stop-color="#2EC7FF" offset="100%"></stop>
         </linearGradient>
         <linearGradient x1="69.644116%" y1="0%" x2="54.0428975%" y2="108.456714%" id="linearGradient-2">
             <stop stop-color="#29CDFF" offset="0%"></stop>
-            <stop stop-color="#148EFF" offset="37.8600687%"></stop>
+            <stop stop-color="#111" offset="37.8600687%"></stop>
             <stop stop-color="#0A60FF" offset="100%"></stop>
         </linearGradient>
-        <linearGradient x1="69.6908165%" y1="-12.9743587%" x2="16.7228981%" y2="117.391248%" id="linearGradient-3">
+        <linearGradient x1="69.6908165%" y1="-12.9743587%" x2="26.7228981%" y2="117.391248%" id="linearGradient-3">
             <stop stop-color="#FA816E" offset="0%"></stop>
             <stop stop-color="#F74A5C" offset="41.472606%"></stop>
             <stop stop-color="#F51D2C" offset="100%"></stop>
@@ -35,7 +35,8 @@
                         </g>
                         <path d="M153.685633,135.854579 C157.894115,140.0596 164.717412,140.0596 168.925894,135.854579 L195.959977,108.842726 C200.659183,104.147384 200.659183,96.5636133 195.960527,91.8688194 L168.690777,64.7181159 C164.472332,60.5180858 157.646868,60.5241425 153.435895,64.7316526 C149.227413,68.936674 149.227413,75.7543607 153.435895,79.9593821 L171.854035,98.3623765 C173.02366,99.5310396 173.02366,101.304724 171.854035,102.473387 L153.685633,120.626849 C149.47715,124.83187 149.47715,131.649557 153.685633,135.854579 Z" id="Shape" fill="url(#linearGradient-3)"></path>
                     </g>
-                    <ellipse id="Combined-Shape" fill="url(#linearGradient-4)" cx="100.519339" cy="100.436681" rx="23.6001926" ry="23.580786"></ellipse>
+                    <ellipse id="Combined-Shape" fill="url(#linearGradient-4)" cx="100.519339" cy="100.436681" rx="63.6001926" ry="23.580786"></ellipse>
+                  <ellipse id="Combined-Shape" fill="url(#linearGradient-4)" cx="100.519339" cy="100.436681" rx="23.6001926" ry="63.580786"></ellipse>
                 </g>
             </g>
         </g>

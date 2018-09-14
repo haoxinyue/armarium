@@ -77,7 +77,7 @@ export const getRouterData = app => {
     },
     '/dashboard/analysis': {
       component: dynamicWrapper(app, ['chart'], () =>
-        import(/* webpackChunkName: "Analysis" */ '../routes/Dashboard/Analysis')
+        import(/* webpackChunkName: "Analysis" */ '../routes/Dashboard/DemoAnalysis')
       ),
     },
 
@@ -153,8 +153,8 @@ export const getRouterData = app => {
       ),
     },
     '/asset/asset-chart': {
-      component: dynamicWrapper(app, ['device'], () =>
-        import(/* webpackChunkName: "DeviceList" */ '../routes/Device/DeviceList')
+      component: dynamicWrapper(app, ['chart'], () =>
+        import(/* webpackChunkName: "DemoAnalysis" */ '../routes/Dashboard/DemoAnalysis')
       ),
     },
     '/asset/asset-event': {
@@ -175,10 +175,9 @@ export const getRouterData = app => {
       ),
     },
     '/work-order/device-care': {
-      component: dynamicWrapper(app, ['repair', 'engineer', 'device','pmCase'], () =>
-        import(/* webpackChunkName: "RepairList" */ '../routes/PmCase/PmCaseList')
+      component: dynamicWrapper(app, ['repair', 'engineer', 'device', 'pmCase'], () =>
+        import(/* webpackChunkName: "PmCaseList" */ '../routes/PmCase/PmCaseList')
       ),
-
     },
     '/work-order/device-check': {
       component: dynamicWrapper(app, ['repair', 'engineer', 'inspectionCase'], () =>
@@ -187,7 +186,7 @@ export const getRouterData = app => {
     },
     '/work-order/device-add': {
       component: dynamicWrapper(app, ['device', 'hospital', 'department', 'installCase'], () =>
-        import(/* webpackChunkName: "DeviceEdit" */ '../routes/InstallCase/InstallCaseList')
+        import(/* webpackChunkName: "InstallCaseList" */ '../routes/InstallCase/InstallCaseList')
       ),
     },
     '/work-order/device-calc': {

@@ -1,6 +1,7 @@
 import * as numeral from 'numeral';
 export { default as ChartCard } from './ChartCard';
 export { default as Bar } from './Bar';
+export { default as BarCompare } from './BarCompare';
 export { default as Pie } from './Pie';
 export { default as Radar } from './Radar';
 export { default as Gauge } from './Gauge';

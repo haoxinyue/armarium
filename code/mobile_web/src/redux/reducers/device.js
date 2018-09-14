@@ -18,6 +18,11 @@ const footer = (state = {
         state: 0
     }
 }, action) => {
+
+    if(action.error){
+        return state
+    }
+
     switch (action.type) {
 
         case ACTION_TYPES.UPDATE_LIST: {

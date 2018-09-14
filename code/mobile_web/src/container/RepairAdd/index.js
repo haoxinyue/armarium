@@ -16,15 +16,21 @@ import {
     Picker,
     Switch
 } from 'antd-mobile';
+
+import ImageUploadField from '../../components/ImageUploadField';
+
 import {changeHeaderRight, addRepair} from '../../redux/actions'
 
 import './repairAdd.less'
+import api from "../../api";
 
 const fields = [
     // {key: "deviceId", name: "设备ID", desc: "请输入设备ID", type: "text"},
     {key: "deviceId", name: "设备", desc: "请输入设备ID", required: true, type: "text"},
-    {key: "caseRemark", name: "备注", desc: "请输入备注信息", required: true, type: "textArea"},
-
+    {key: "reporterName", name: "报修人", desc: "请输入报修人姓名", required: true, type: "text"},
+    {key: "reporterCompany", name: "报修单位", desc: "请输入报修单位名称", required: true, type: "text"},
+    {key: "reporterMobile", name: "报修手机", desc: "请输入报修手机", required: true, type: "text"},
+    {key: "caseRemark", name: "备注", desc: "请输入备注信息", required: false, type: "textArea"},
 
 ];
 
@@ -39,11 +45,7 @@ class RepairAdd extends Component {
         formValue: {
             deviceId: '',//设备ID
             caseRemark: '',
-            // picture1: '',//设备照片1
-            // picture2: '',//设备照片2
-            // picture3: '',//设备照片3
-            // picture4: '',//设备照片4
-            // picture5: '',//设备照片5
+            caseFilePath: '',
             creater: 0,
             modifier: 0,
         }
@@ -83,9 +85,10 @@ class RepairAdd extends Component {
 
     getSubmitFormValue() {
         const {userInfo} = this.props;
-        let currentUserId =userInfo.userId
+        let currentUserId = userInfo.userId
         return {
             ...this.state.formValue,
+            reporterMobile: this.state.formValue.reporterMobile,//.replace(/\s/g,""),
             reporterUserId: currentUserId,
             creater: currentUserId,
             modifier: currentUserId
@@ -107,15 +110,14 @@ class RepairAdd extends Component {
 
             dispatch(addRepair(this.getSubmitFormValue()))
                 .then(res => {
-                    if (res.payload.code === 0) {
-                        Toast.hide();
-                        Toast.success("保存成功", 0.5);
-                        // dispatch(addDevice())
-                        history.push('/repairs');
-                    } else {
+                    if (res.error) {
                         Toast.hide();
                         Toast.fail("保存失败，请稍后再试", 0.5);
+                        return
                     }
+                    Toast.hide();
+                    Toast.success("保修成功", 1);
+                    history.push('/repairs');
                 })
                 .catch(err => {
                     Toast.hide();
@@ -234,6 +236,35 @@ class RepairAdd extends Component {
             >{field.name}</InputItem>
         }
 
+
+        let uploaderProps = {
+            action: api.baseUrl() + api.fileUpload,
+            // data: { a: 1, b: 2 },
+            // headers: {
+            //     Authorization: 'xxxxxxx',
+            // },
+            name: 'fileUpload',
+            // headers:{
+            //     'Content-type':'multipart/form-data'
+            // },
+            multiple: false,
+            beforeUpload: (file) => {
+                // console.log('beforeUpload', file.name);
+            },
+            onStart: (file) => {
+                // console.log('onStart', file.name);
+            },
+            onSuccess: (res) => {
+
+            },
+            onProgress(step, file) {
+                // console.log('onProgress', Math.round(step.percent), file.name);
+            },
+            onError(err) {
+                // console.log('onError', err);
+            },
+        }
+
         return (
             <div className="device-edit">
                 <Tabs
@@ -264,14 +295,19 @@ class RepairAdd extends Component {
                                     <div className="detail-block">
 
                                         <div className="block-content">
-                                            <ImagePicker
-                                                files={this.state.files}
-                                                onChange={this.onFileChange}
-                                                onImageClick={(index, fs) => console.log(index, fs)}
-                                                selectable={this.state.files.length <= 3}
-                                                accept="image/gif,image/jpeg,image/jpg,image/png"
-                                            />
+                                            <ImageUploadField fieldName={"caseFilePath"}
+                                                              value={this.state.formValue.caseFilePath}
+                                                              onChange={(val) => {
+                                                                  console.log("new caseFilePath: "+val)
+                                                                  this.setState({
+                                                                      formValue: {
+                                                                          ...this.state.formValue,
+                                                                          caseFilePath: val
+                                                                      }
+                                                                  })
+                                                              }}></ImageUploadField>
                                         </div>
+
                                     </div>
 
                                 </li>

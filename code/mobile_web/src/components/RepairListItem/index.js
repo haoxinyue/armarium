@@ -33,7 +33,7 @@ class DeviceListItem extends Component {
 
     render() {
         const itemData = this.props.list||{};
-        const emptyImage="";
+        const emptyImage=require("../../assets/img/empty.png");
         return (
             <li className="repair-list-item"
                 onTouchStart={(e)=>{
@@ -47,7 +47,7 @@ class DeviceListItem extends Component {
                 <div className="item-desc">
                     <div className="item-desc-right">
                         <div className="item-image" style={{
-                            backgroundImage:"url("+(itemData.picture1 || emptyImage)+")"
+                            backgroundImage:"url("+(itemData.caseFilePath || emptyImage)+")"
                         }}>
 
                         </div>

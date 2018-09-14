@@ -72,8 +72,6 @@ const CreateForm = Form.create()(props => {
           rules: [{ required: true, message: '请输入显示名称...' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
-
-
     </Modal>
   );
 });
@@ -109,7 +107,7 @@ export default class UserList extends PureComponent {
     }, {});
 
     const params = {
-      currentPage: pagination.current,
+      pageIndex: pagination.current - 1,
       pageSize: pagination.pageSize,
       ...formValues,
       ...filters,
@@ -182,7 +180,7 @@ export default class UserList extends PureComponent {
       if (err) return;
 
       const values = {
-        ...fieldsValue
+        ...fieldsValue,
       };
 
       this.setState({
@@ -235,14 +233,12 @@ export default class UserList extends PureComponent {
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
-
             </span>
           </Col>
         </Row>
       </Form>
     );
   }
-
 
   renderForm() {
     return this.renderSimpleForm();
@@ -271,9 +267,9 @@ export default class UserList extends PureComponent {
       },
       {
         title: '操作',
-        render: (val) => (
+        render: val => (
           <Fragment>
-            <a href="/device/detail?id=" >详情</a>
+            <a href="/device/detail?id=">详情</a>
           </Fragment>
         ),
       },
@@ -314,7 +310,7 @@ export default class UserList extends PureComponent {
               selectedRows={selectedRows}
               loading={loading}
               data={data}
-              rowKey={"UserId"}
+              rowKey={'UserId'}
               columns={columns}
               onSelectRow={this.handleSelectRows}
               onChange={this.handleStandardTableChange}

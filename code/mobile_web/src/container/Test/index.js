@@ -2,9 +2,10 @@ import React, {Component} from 'react'
 import DepartmentSelector from '../../components/DepartmentSelector'
 import './app.less'
 
-
+const chartImg = require("../../assets/img/chart.png")
 
 class Test extends Component {
+
 
 
 
@@ -12,7 +13,7 @@ class Test extends Component {
         return (
             <div className="test-page">
 
-                <DepartmentSelector/>
+                <img style={{width:'100%'}} src={chartImg} alt=""/>
             </div>
         )
     }

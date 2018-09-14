@@ -1,4 +1,4 @@
-import moment from 'moment';
+const moment = require('moment');
 
 // mock data
 const visitData = [];
@@ -28,6 +28,18 @@ for (let i = 0; i < 12; i += 1) {
     y: Math.floor(Math.random() * 1000) + 200,
   });
 }
+
+const deviceStatData = [];
+const deviceTypes = ['口腔', '超声', '影像', '电子仪器', '内窥', '激光高频', '检验生化'];
+for (let i = 0; i < deviceTypes.length; i += 1) {
+  let y = Math.floor(Math.random() * 1000);
+  deviceStatData.push({
+    x: deviceTypes[i],
+    y,
+    y1: Math.floor(Math.random() * y) * 1.5,
+  });
+}
+
 const searchData = [];
 for (let i = 0; i < 50; i += 1) {
   searchData.push({
@@ -116,18 +128,33 @@ const salesTypeDataOffline = [
 ];
 
 const offlineData = [];
-for (let i = 0; i < 10; i += 1) {
+const depts = [
+  '手术室',
+  '检验科',
+  '内镜中心',
+  '血液透析室',
+  '超声科',
+  '影像科',
+  '病房',
+  '体检中心',
+  '卫生科',
+  '心血管科',
+];
+for (let i = 0; i < depts.length; i += 1) {
   offlineData.push({
-    name: `门店${i}`,
+    name: depts[i], //`门店${i}`,
     cvr: Math.ceil(Math.random() * 9) / 10,
   });
 }
+
 const offlineChartData = [];
 for (let i = 0; i < 20; i += 1) {
   offlineChartData.push({
-    x: new Date().getTime() + 1000 * 60 * 30 * i,
-    y1: Math.floor(Math.random() * 100) + 10,
-    y2: Math.floor(Math.random() * 100) + 10,
+    x: new Date().getTime() + 1000 * 60 * 60 * 24 * 30 * (i - 20),
+    y1: Math.floor(Math.random() * 100),
+    y2: Math.floor(Math.random() * 100),
+    y3: Math.floor(Math.random() * 100),
+    y4: Math.floor(Math.random() * 100),
   });
 }
 
@@ -179,7 +206,25 @@ radarOriginData.forEach(item => {
   });
 });
 
-export const getFakeChartData = {
+// export const getFakeChartData = {
+//   visitData,
+//   visitData2,
+//   salesData,
+//   searchData,
+//   offlineData,
+//   offlineChartData,
+//   salesTypeData,
+//   salesTypeDataOnline,
+//   salesTypeDataOffline,
+//   radarData,
+//   deviceStatData,
+// };
+//
+// export default {
+//   getFakeChartData,
+// };
+
+const getFakeChartData = {
   visitData,
   visitData2,
   salesData,
@@ -190,8 +235,7 @@ export const getFakeChartData = {
   salesTypeDataOnline,
   salesTypeDataOffline,
   radarData,
+  deviceStatData,
 };
 
-export default {
-  getFakeChartData,
-};
+module.exports = { getFakeChartData };

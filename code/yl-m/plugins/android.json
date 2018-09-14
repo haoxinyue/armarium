@@ -7,9 +7,6 @@
     "files": {}
   },
   "installed_plugins": {
-    "cordova-hot-code-push-plugin": {
-      "PACKAGE_NAME": "io.hzly360.amarium"
-    },
     "cordova-plugin-camera": {
       "PACKAGE_NAME": "io.hzly360.amarium"
     },
@@ -23,6 +20,9 @@
       "PACKAGE_NAME": "io.hzly360.amarium"
     },
     "phonegap-plugin-barcodescanner": {
+      "PACKAGE_NAME": "io.hzly360.amarium"
+    },
+    "cordova-plugin-file-transfer": {
       "PACKAGE_NAME": "io.hzly360.amarium"
     }
   },

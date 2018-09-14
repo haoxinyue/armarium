@@ -144,3 +144,6 @@ export function getFormData(params) {
         return data;
     }
 }
+
+
+export const ViewUtil = require("./viewUtils")

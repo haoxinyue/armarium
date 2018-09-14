@@ -34,7 +34,7 @@ function interceptorHttpResponse(response, resolve, reject) {
 }
 
 const http = {
-    get(url, data, config){
+    get(url, data, config) {
 
 
         return new Promise((resolve, reject) => {
@@ -52,8 +52,7 @@ const http = {
                 })
         })
     },
-    post(url, data, config){
-
+    post(url, data, config) {
         return new Promise((resolve, reject) => {
             window.cordovaHTTP.post(
                 parseUrl(url),
@@ -65,6 +64,53 @@ const http = {
                     reject(response);
                 })
         })
+    },
+    uploadFile(url, filePath, params = {}, name = "fileUpload") {
+        let notify = (data) => {
+
+        };
+        let dtd = new Promise((resolve, reject) => {
+            // window.FileTransfer.uploadFile(
+            //     parseUrl(url),
+            //     params,
+            //     filePath,
+            //     name,
+            //     function (response) {
+            //         return interceptorHttpResponse(response, resolve, reject)
+            //     },
+            //     function (response) {
+            //         reject(response);
+            //     })
+
+            var fileUploadOptions = new window.FileUploadOptions();
+            fileUploadOptions.fileKey = name;
+            // fileUploadOptions.fileName = filePath.substr(filePath.lastIndexOf('/') + 1);
+            fileUploadOptions.mimeType = "image/png";
+
+            var fileTransfer = new window.FileTransfer();
+            fileTransfer.onprogress = (res) => {
+                notify({
+                    percent: res.loaded / res.total
+                })
+            };
+            fileTransfer.upload(
+                filePath,
+                url,
+                (response) => {
+                    console.log(JSON.stringify(response),null,4);
+                    return interceptorHttpResponse({data:(response.response)}, resolve, reject)
+                },
+                (response) => {
+                    reject(response);
+                },
+                fileUploadOptions);
+        });
+
+        dtd.onNotify=(cb)=>{
+            notify = cb;
+        };
+
+        return dtd;
     }
 }
 
