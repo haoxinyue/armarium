@@ -1345,8 +1345,8 @@ CREATE TABLE public.tb_stocktaking_case_actual_device
 	id serial NOT NULL,
     case_id integer NOT NULL,
     device_id integer NOT NULL,
-	operation_user_id integer NOT NULL,
-	operation_time timestamp without time zone NOT NULL, 
+	operation_user_id integer,
+	operation_time timestamp without time zone, 
     
     PRIMARY KEY (id)
 )

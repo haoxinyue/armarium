@@ -1,8 +1,11 @@
 INSERT INTO public.tb_setup_case(
 	case_subject, case_remark, case_state, hospital_id, dept_id, expected_time, device_name, device_type, assignee_user_id, setup_time, setup_remark, create_time, creater, modify_time, modifier, setup_begin_time)
-	VALUES ('设备安装', null, 50, 1000003, 260, '2017-09-01', '高频氩气电刀', 9, 10007, '2017-09-01', '成功安装', '2017-09-01', 10003, '2017-09-01', 10003, '2017-09-01');
+	VALUES ('设备安装', null, 50, 1000003, 260, '2017-09-01', 'X光机', 9, 10007, '2017-09-01', '成功安装', '2017-09-01', 10003, '2017-09-01', 10003, '2017-09-01');
 
 select * from tb_setup_case where device_name = '高频氩气电刀';
+
+update tb_device set setup_case_id = 20 where device_id = 100000046;
+
 
 INSERT INTO public.tb_device_timeline(
 	device_id, event_subject, event_type, event_time, event_id, create_time, creater, modify_time, modifier, user_id)
