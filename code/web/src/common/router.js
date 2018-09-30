@@ -143,8 +143,8 @@ export const getRouterData = app => {
       ),
     },
     '/asset/asset-list': {
-      component: dynamicWrapper(app, ['device'], () =>
-        import(/* webpackChunkName: "DeviceList" */ '../routes/Device/DeviceList')
+      component: dynamicWrapper(app, ['department', 'stocktakingCase', 'engineer'], () =>
+        import(/* webpackChunkName: "StocktakingCaseList" */ '../routes/StocktakingCase/StocktakingCaseList')
       ),
     },
     '/asset/asset-doc': {

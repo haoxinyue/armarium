@@ -45,25 +45,62 @@ import styles from './Analysis.less';
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
 
-const rankingListData = [];
+const rankingListData = [
+  {
+    total: 10,
+    price: 980,
+    title: '影像科',
+  },
+  {
+    total: 11,
+    price: 712,
+    title: '超声科',
+  },
+  {
+    total: 5,
+    price: 3012,
+    title: '内镜中心',
+  },
+  {
+    total: 42,
+    price: 986,
+    title: '血液透析室',
+  },
+  {
+    total: 71,
+    price: 1002,
+    title: '检验科',
+  },
+  {
+    total: 146,
+    price: 1489,
+    title: '手术室',
+  },
+  {
+    total: 486,
+    price: 762,
+    title: '病房',
+  },
+];
 const depts = [
-  '手术室',
   '检验科',
   '内镜中心',
   '血液透析室',
   '超声科',
   '影像科',
+  '手术室',
   '病房',
   '体检中心',
   '卫生科',
   '心血管科',
 ];
-for (let i = 0; i < 7; i += 1) {
-  rankingListData.push({
-    title: depts[i],
-    total: Math.ceil(Math.random() * 100),
-  });
-}
+const deptDeviceCount = [];
+// for (let i = 0; i < 7; i += 1) {
+//   rankingListData.push({
+//     title: depts[i],
+//     total: deptDeviceCount[i]
+//   });
+// }
 rankingListData.sort((a, b) => {
   return b.total - a.total;
 });
@@ -298,59 +335,100 @@ export default class DemoAnalysis extends Component {
       },
     };
 
-    let chart_2 = {
+    let chart_3 = {
       height: 280,
       data: [
         {
-          count: 10,
-          price: 1600,
-          weight: 8,
+          count: 19,
+          price: 980,
+          deptName: '影像科',
         },
         {
-          count: 10,
-          price: 2000,
-          weight: 40,
+          count: 6,
+          price: 712,
+          deptName: '超声科',
         },
         {
-          count: 30,
-          price: 6000,
-          weight: 10,
+          count: 11,
+          price: 3012,
+          deptName: '内镜中心',
         },
         {
-          count: 21,
-          price: 3000,
-          weight: 11,
+          count: 31,
+          price: 986,
+          deptName: '血液透析室',
         },
         {
-          count: 40,
-          price: 4000,
-          weight: 30,
+          count: 22,
+          price: 1002,
+          deptName: '检验科',
         },
         {
-          count: 60,
-          price: 1200,
-          weight: 15,
+          count: 70,
+          price: 1489,
+          deptName: '手术室',
         },
         {
-          count: 80,
-          price: 1300,
-          weight: 10,
-        },
-        {
-          count: 2,
-          price: 1600,
-          weight: 1,
+          count: 100,
+          price: 762,
+          deptName: '病房',
         },
       ],
       cols: {
         count: {
           alias: '维修次数（次）',
-          tickInterval: 10,
         },
         price: {
           // type: "pow",
-          alias: '设备价格（元）',
+          alias: '设备总价（万元）',
           tickInterval: 1000,
+        },
+        deptName: {
+          // type: "pow",
+          alias: '部门',
+        },
+      },
+    };
+    //   '检验科',
+    //   '内镜中心',
+    //   '血液透析室',
+    //   '超声科',
+    //   '影像科',
+    //   '手术室',
+    //   '病房',
+    //   '体检中心',
+    //   '卫生科',
+    //   '心血管科',
+
+    let chart_4 = {
+      data: [
+        { type: '成本', price: 12.5, device: '检验科' },
+        { type: '支出', price: 1.5, device: '检验科' },
+        { type: '成本', price: 2.5, device: '内镜中心' },
+        { type: '支出', price: 0.5, device: '内镜中心' },
+        { type: '成本', price: 32.5, device: '血液透析室' },
+        { type: '支出', price: 1.1, device: '血液透析室' },
+        { type: '成本', price: 42.5, device: '超声科' },
+        { type: '支出', price: 2.1, device: '超声科' },
+        { type: '成本', price: 30.5, device: '影像科' },
+        { type: '支出', price: 0.95, device: '影像科' },
+        { type: '成本', price: 42.5, device: '手术室' },
+        { type: '支出', price: 1.1, device: '手术室' },
+        { type: '成本', price: 51.5, device: '病房' },
+        { type: '支出', price: 1, device: '病房' },
+        { type: '成本', price: 22.5, device: '体检中心' },
+        { type: '支出', price: 2.6, device: '体检中心' },
+        { type: '成本', price: 18.5, device: '卫生科' },
+        { type: '支出', price: 1.1, device: '卫生科' },
+      ],
+      cols: {
+        price: {
+          // type: "pow",
+          alias: '金额（万元）',
+        },
+        device: {
+          // type: "pow",
+          alias: '部门',
         },
       },
     };
@@ -490,13 +568,13 @@ export default class DemoAnalysis extends Component {
             <Tabs tabBarExtraContent={salesExtra} size="large" tabBarStyle={{ marginBottom: 24 }}>
               <TabPane tab="设备分布" key="sales">
                 <Chart
-                  height={chart_2.height}
-                  data={chart_2.data}
-                  scale={chart_2.cols}
+                  height={chart_3.height}
+                  data={chart_3.data}
+                  scale={chart_3.cols}
                   padding={[30, 90, 80, 90]}
                   forceFit
                 >
-                  <Tooltip />
+                  <ChartTooltip showTitle={false} crosshairs={false} />
                   <Axis
                     name="count"
                     title={{
@@ -514,22 +592,27 @@ export default class DemoAnalysis extends Component {
                       position: 'end',
                     }}
                   />
+                  <Axis
+                    name="deptName"
+                    title={{
+                      position: 'end',
+                    }}
+                  />
+
+                  <Geom
+                    type="interval"
+                    position="deptName*price"
+                    tooltip="deptName*price"
+                    label={v => v}
+                    opacity={0.65}
+                  />
+                  <Geom type="line" position="deptName*count" size={2} shape={'smooth'} />
                   <Geom
                     type="point"
-                    position="count*price"
-                    tooltip="price*count"
-                    opacity={0.65}
-                    shape="circle"
-                    size={['weight', [4, 20]]}
-                    style={[
-                      'continent',
-                      {
-                        lineWidth: 1,
-                        strokeOpacity: 1,
-                        fillOpacity: 0.3,
-                        opacity: 0.65,
-                      },
-                    ]}
+                    position="deptName*count"
+                    size={4}
+                    shape={'circle'}
+                    style={{ lineWidth: 1 }}
                   />
                 </Chart>
               </TabPane>
@@ -537,7 +620,29 @@ export default class DemoAnalysis extends Component {
                 <Row>
                   <Col xl={16} lg={12} md={12} sm={24} xs={24}>
                     <div className={styles.salesBar}>
-                      <BarCompare height={292} title="设备绩效统计" data={deviceStatData} />
+                      {/*<BarCompare height={292} title="设备绩效统计" data={deviceStatData} />*/}
+                      <Chart height={292} data={chart_4.data} scale={chart_4.cols} forceFit>
+                        <Legend />
+                        <Axis
+                          name="price"
+                          title={{
+                            position: 'end',
+                          }}
+                        />
+                        <Axis
+                          name="device"
+                          title={{
+                            position: 'end',
+                          }}
+                        />
+                        <ChartTooltip />
+                        <Geom
+                          type="intervalStack"
+                          color={'type'}
+                          position="device*price"
+                          style={{ stroke: '#fff', lineWidth: 1 }}
+                        />
+                      </Chart>
                     </div>
                   </Col>
                   <Col xl={8} lg={12} md={12} sm={24} xs={24}>

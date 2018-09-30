@@ -13,6 +13,7 @@ import {ACTION_TYPES as DEVICE} from "../reducers/device";
 import {ACTION_TYPES as INSTALL_CASE} from "../reducers/installCase";
 import {ACTION_TYPES as NOTICE} from "../reducers/notice";
 import {ACTION_TYPES as INSPECTION_CASE} from "../reducers/inspectionCase";
+import {ACTION_TYPES as STOCKTAKING_CASE} from "../reducers/stocktakingCase";
 import {ACTION_TYPES as PM_CASE} from "../reducers/pmCase";
 import {ACTION_TYPES as AUTH} from "../reducers/auth";
 import {ACTION_TYPES as FOOTER} from "../reducers/footer";
@@ -163,6 +164,25 @@ export const completeInspectionCaseDetail = createAction(INSPECTION_CASE.SAVE,
     //     ...params
     // })).then((res) => (res.data))
 )
+/* ******************************************************** */
+export const fetchStocktakingCaseList = createAction(STOCKTAKING_CASE.UPDATE_LIST,
+    (params) =>
+        doPostQuery(api.stocktakingCaseListGet, {...params})
+    // axios.http.post(api.inspectionCaseListGet, getFormData({
+    //     ...params
+    // })).then((res) => (res.data))
+)
+
+export const getStocktakingCaseDetail = createAction(STOCKTAKING_CASE.SAVE,
+    (params) =>
+        doPostQuery(api.stocktakingCaseGet, {...params})
+)
+
+export const completeStocktakingCaseDetail = createAction(STOCKTAKING_CASE.SAVE,
+    (params) =>
+        doPostQuery(api.stocktakingCaseComplete, {...params})
+)
+
 
 /* ******************************************************** */
 export const fetchPmCaseList = createAction(PM_CASE.UPDATE_LIST,
@@ -219,6 +239,8 @@ function getUserNoticeFetch(userId) {
             // })),
 
             doPostQuery(api.noticeRepairCaseGet, {assigneeUserId: userId}),
+
+            doPostQuery(api.noticeStocktakingCaseGet, {assigneeUserId: userId}),
             // axios.http.post(api.noticeRepairCaseGet, getFormData({
             //     assigneeUserId: userId
             // })),
@@ -230,8 +252,8 @@ function getUserNoticeFetch(userId) {
                 code: 0,
                 data: []
             };
-            const typeList = ["install", "inspection", "pm", "repair"];
-            const typeNameList = ["安装工单", "巡检工单", "保养工单", "保修工单"];
+            const typeList = ["install", "inspection", "pm", "repair","stocktaking"];
+            const typeNameList = ["安装工单", "巡检工单", "保养工单", "保修工单", "盘点工单"];
             resList.forEach((r, i) => {
                 let rData = r.data;
                 if (rData) {

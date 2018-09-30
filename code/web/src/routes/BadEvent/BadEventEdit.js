@@ -247,7 +247,7 @@ export default class BadEventEdit extends Component {
 
     return (
       <PageHeaderLayout
-        title={isEditMode ? `安装工单 [${params.eventId}]` : '安装工单新增'}
+        title={isEditMode ? `不良事件 [${params.eventId}]` : '不良事件新增'}
         content=""
       >
         <Card bordered={false}>

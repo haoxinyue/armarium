@@ -19,14 +19,14 @@ import {
 
 import ImageUploadField from '../../components/ImageUploadField';
 
-import {changeHeaderRight, addRepair} from '../../redux/actions'
+import {changeHeaderRight, addRepair, getDeviceDetail} from '../../redux/actions'
 
 import './repairAdd.less'
-import api from "../../api";
 
 const fields = [
     // {key: "deviceId", name: "设备ID", desc: "请输入设备ID", type: "text"},
-    {key: "deviceId", name: "设备", desc: "请输入设备ID", required: true, type: "text"},
+    {key: "deviceId", name: "设备", desc: "请输入设备ID", required: true, type: "text", props: {}},
+    {key: "deviceName", name: "设备名称", desc: "", required: false, type: "text", editable: false},
     {key: "reporterName", name: "报修人", desc: "请输入报修人姓名", required: true, type: "text"},
     {key: "reporterCompany", name: "报修单位", desc: "请输入报修单位名称", required: true, type: "text"},
     {key: "reporterMobile", name: "报修手机", desc: "请输入报修手机", required: true, type: "text"},
@@ -56,16 +56,6 @@ class RepairAdd extends Component {
     }
 
     onChange = (field, value) => {
-        // if (value.replace(/\s/g, '').length < 11) {
-        //     this.setState({
-        //         hasError: true,
-        //     });
-        // } else {
-        //     this.setState({
-        //         hasError: false,
-        //     });
-        // }
-
         let formValue = this.state.formValue
 
         formValue[field.key] = value
@@ -74,6 +64,13 @@ class RepairAdd extends Component {
         this.setState({
             formValue
         });
+
+        if (field.key === "deviceId" && value) {
+            clearTimeout(this._lastDeviceUpdate);
+            this._lastDeviceUpdate = setTimeout(() => {
+                this.updateDeviceById(value);
+            }, 600)
+        }
     }
 
     onFileChange = (files, type, index) => {
@@ -146,11 +143,43 @@ class RepairAdd extends Component {
 
     }
 
+    updateDeviceById(deviceId) {
+        const {dispatch} = this.props;
+        dispatch(getDeviceDetail({
+            deviceId: Number(deviceId)
+        })).then((res) => {
+            if (!res.error) {
+                this.setState({
+                    formValue: {
+                        ...this.state.formValue,
+                        deviceName: res.payload.data.deviceName
+                    }
+                });
+            }else{
+                this.setState({
+                    formValue: {
+                        ...this.state.formValue,
+                        deviceName: ''
+                    }
+                });
+            }
+        },()=>{
+            this.setState({
+                formValue: {
+                    ...this.state.formValue,
+                    deviceName: ''
+                }
+            });
+        })
+    }
+
     componentDidMount() {
         const {dispatch} = this.props;
         dispatch(changeHeaderRight([
             <Button key="0" size="small" type="primary" onClick={this.save.bind(this)}>保存</Button>
-        ]))
+        ]));
+
+        this.updateDeviceById = this.updateDeviceById.bind(this);
 
         let deviceId = this.props.location.query && this.props.location.query.deviceId;
         if (deviceId) {
@@ -158,8 +187,12 @@ class RepairAdd extends Component {
                 formValue: {
                     deviceId
                 }
-            })
+            });
+
+            this.updateDeviceById(deviceId)
+
         }
+
 
         // alert(this.props.location.query.deviceId);
     }
@@ -227,6 +260,7 @@ class RepairAdd extends Component {
             return <InputItem
                 className="field-item"
                 type={field.type}
+                editable={field.editable}
                 // labelNumber={labelLength}
                 placeholder={field.desc}
                 error={this.state.hasError[field.key]}
@@ -236,34 +270,6 @@ class RepairAdd extends Component {
             >{field.name}</InputItem>
         }
 
-
-        let uploaderProps = {
-            action: api.baseUrl() + api.fileUpload,
-            // data: { a: 1, b: 2 },
-            // headers: {
-            //     Authorization: 'xxxxxxx',
-            // },
-            name: 'fileUpload',
-            // headers:{
-            //     'Content-type':'multipart/form-data'
-            // },
-            multiple: false,
-            beforeUpload: (file) => {
-                // console.log('beforeUpload', file.name);
-            },
-            onStart: (file) => {
-                // console.log('onStart', file.name);
-            },
-            onSuccess: (res) => {
-
-            },
-            onProgress(step, file) {
-                // console.log('onProgress', Math.round(step.percent), file.name);
-            },
-            onError(err) {
-                // console.log('onError', err);
-            },
-        }
 
         return (
             <div className="device-edit">
@@ -298,7 +304,7 @@ class RepairAdd extends Component {
                                             <ImageUploadField fieldName={"caseFilePath"}
                                                               value={this.state.formValue.caseFilePath}
                                                               onChange={(val) => {
-                                                                  console.log("new caseFilePath: "+val)
+                                                                  console.log("new caseFilePath: " + val)
                                                                   this.setState({
                                                                       formValue: {
                                                                           ...this.state.formValue,

@@ -142,9 +142,13 @@ export default class PmCaseList extends PureComponent {
   };
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    const { dispatch, pmCase } = this.props;
     dispatch({
       type: 'pmCase/fetch',
+      payload: {
+        pageIndex: 0,
+        pageSize: 10,
+      },
     });
   }
 

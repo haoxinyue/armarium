@@ -8,15 +8,22 @@ const { TreeNode } = TreeSelect;
   loading: loading.effects['department/fetchTree'],
 }))
 class DepartmentSelect extends Component {
+  state = {};
+
   constructor(props) {
     super(props);
   }
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    const { dispatch, hospitalId } = this.props;
+    let payload = {};
+    if (hospitalId) {
+      payload.hospitalId = hospitalId;
+    }
     dispatch({
       type: 'department/fetch',
       cache: true,
+      payload,
     });
   }
 
@@ -34,8 +41,42 @@ class DepartmentSelect extends Component {
     });
   };
 
+  // shouldComponentUpdate(nextProps){
+  // const { dispatch ,hospitalId} = nextProps;
+  // const { hospitalId:lastHospitalId} = this.props;
+  //
+  // if(hospitalId && hospitalId!=lastHospitalId){
+  //   let payload ={};
+  //   payload.hospitalId = hospitalId;
+  //   dispatch({
+  //     type: 'department/fetch',
+  //     cache: true,
+  //     payload
+  //   });
+  //   return true
+  // }
+  //
+  // return false;
+
+  // }
+
+  componentWillReceiveProps(nextProps) {
+    const { dispatch, hospitalId } = nextProps;
+    const { hospitalId: lastHospitalId } = this.props;
+
+    if (hospitalId && hospitalId != lastHospitalId) {
+      let payload = {};
+      payload.hospitalId = hospitalId;
+      dispatch({
+        type: 'department/fetch',
+        cache: true,
+        payload,
+      });
+    }
+  }
+
   render() {
-    const { department: { tree } } = this.props;
+    const { department: { tree, treeByHospitalIds }, hospitalId } = this.props;
     const defaultProps = {
       showSearch: true,
       placeholder: '请选择',
@@ -48,10 +89,13 @@ class DepartmentSelect extends Component {
         return treeNode.props.title.includes(inputValue);
       },
     };
-    if (tree && tree.length) {
+
+    const treeData = hospitalId ? treeByHospitalIds[hospitalId] : tree;
+
+    if (treeData && treeData.length) {
       return (
         <TreeSelect {...defaultProps} {...this.props} style={{ width: '100%' }}>
-          {this.renderTreeNodes(tree)}
+          {this.renderTreeNodes(treeData)}
         </TreeSelect>
       );
     } else {

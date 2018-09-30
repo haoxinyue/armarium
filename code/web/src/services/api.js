@@ -9,11 +9,11 @@ export const httpDomain_TEST = '/api';
 export const uploadUrl = `${httpDomain}/accessory/fileUpload`;
 
 export function getFormData(params) {
-  let data = new FormData();
-  for (let key in params) {
-    data.append(key, params[key]);
-  }
-  return data;
+  // let data = new FormData();
+  // for (let key in params) {
+  //   data.append(key, params[key]);
+  // }
+  return params;
 }
 
 /* user */

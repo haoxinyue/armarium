@@ -28,6 +28,10 @@ export default {
     inspectionCaseListGet: 'insp_case/getInspCaseList',
     inspectionCaseDeviceListGet: 'insp_case/getInspDevices',
 
+    stocktakingCaseComplete: 'stock_tk_case/updStockTKCase',
+    stocktakingCaseGet: 'stock_tk_case/getStockTKInfo',
+    stocktakingCaseListGet: 'stock_tk_case/getStockTKList',
+
     depTreeGet: 'dept/getDeptTree',
     depGet: 'dept/getDept',
     depAdd: 'dept/addDept',
@@ -48,6 +52,7 @@ export default {
     noticeInstallCaseGet: 'install_case/rotateInsCaseState',
     noticeInspectionCaseGet: 'insp_case/rotateInspCaseState',
     noticePmCaseGet: 'pm_case/rotatePmCaseState',
+    noticeStocktakingCaseGet: 'stock_tk_case/rotateTKCaseState',
 
 
 }

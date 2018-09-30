@@ -96,7 +96,10 @@ class NoticeList extends Component {
                 history.push(`/pmCaseList`);
                 break;
             case "repair":
-                history.push(`/repairs/`);
+                history.push(`/repairs`);
+                break;
+            case "stocktaking":
+                history.push(`/stocktakingCaseList`);
                 break;
         }
 
@@ -115,9 +118,9 @@ class NoticeList extends Component {
 
     queryPageData(clear) {
         const {dispatch, userInfo} = this.props
-        dispatch(fetchNoticeList({
-            userId: userInfo.userId
-        }))
+        // dispatch(fetchNoticeList({
+        //     userId: userInfo.userId
+        // }))
 
     }
 

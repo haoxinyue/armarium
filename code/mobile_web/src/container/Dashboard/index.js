@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Modal, Toast, Badge,Button} from 'antd-mobile'
+import {Modal, Toast, Badge, Button} from 'antd-mobile'
 
 import './dashboard.less'
 
@@ -17,16 +17,78 @@ class Dashboard extends Component {
 
         const {dispatch} = this.props;
         dispatch(changeHeaderRight([
-            <Button key="1" size="small" type="primary"  onClick={this.scanDevice.bind(this)}><img style={{height:'70%',marginTop:'15%'}} src={require("../../assets/img/scan.png")} alt=""/></Button>
+            <Button key="1" size="small" type="primary" onClick={this.scanDevice.bind(this)}><img
+                style={{height: '70%', marginTop: '15%'}} src={require("../../assets/img/scan.png")} alt=""/></Button>
         ]))
+
+        this.clearBackListen = this.initBack()
+
+
+        this.updateNotice.bind(this)();
+
     }
 
-    scanDevice(){
+    updateNotice() {
+        const {notice, dispatch, userInfo} = this.props;
+        let now = new Date().getTime();
+        let last = notice.lastFetchTime;
+        //3个小时获取一次通知信息
+        if (!last || now - last > 1000 * 60 * 60 * 3) {
+            dispatch(fetchNoticeList({
+                userId: userInfo.userId
+            }))
+        }
+
+    }
+
+    initBack() {
+        document.addEventListener("deviceready", onDeviceReady, false);
+
+        function onDeviceReady() {
+            //navigator.splashscreen.hide();
+            document.addEventListener("backbutton", onBackKeyDown, false);
+        }
+
+        var intervalID;
+
+        function onBackKeyDown() {
+            Toast.info('再点击一次退出!');
+            document.removeEventListener("backbutton", onBackKeyDown, false); // 注销返回键
+            document.addEventListener("backbutton", exitApp, false);//绑定退出事件
+            // 3秒后重新注册
+            intervalID = window.setInterval(function () {
+                window.clearInterval(intervalID);
+                document.removeEventListener("backbutton", exitApp, false); // 注销返回键
+                document.addEventListener("backbutton", onBackKeyDown, false); // 返回键
+            }, 3000);
+        }
+
+        function exitApp() {
+            navigator.app.exitApp();
+        }
+
+        function clearBackListen() {
+            console.log("clearBackListen")
+            clearInterval(intervalID);
+            document.removeEventListener("backbutton", exitApp, false);
+            document.removeEventListener("deviceready", onDeviceReady, false)
+            document.removeEventListener("backbutton", onBackKeyDown, false);
+        }
+
+        return clearBackListen
+
+    }
+
+    componentWillUnmount() {
+        this.clearBackListen && this.clearBackListen()
+    }
+
+    scanDevice() {
         runScanner().then((result) => {
                 let deviceId = /\[(\S+)\]/.exec(result.text)
                 deviceId = deviceId && deviceId[1]
                 if (deviceId) {
-                    this.props.history.push({pathname: "/deviceDetail/"+deviceId})
+                    this.props.history.push({pathname: "/deviceDetail/" + deviceId})
                 } else {
                     // alert('无效的二维码')
                 }
@@ -46,7 +108,7 @@ class Dashboard extends Component {
     }
 
     render() {
-        const {dispatch, userToken, history, notice} = this.props;
+        const { notice} = this.props;
 
         const blocks = [
             {
@@ -144,7 +206,8 @@ class Dashboard extends Component {
                     {
                         image: require("../../assets/img/hospital/if_2_hospital_2774748.png"),
                         desc: "我的消息",
-                        link:"/noticeList"
+                        link: "/noticeList",
+                        noticeTag: 'noticeIndex'
                     },
 
                 ]
@@ -160,13 +223,13 @@ class Dashboard extends Component {
                     {
                         image: require("../../assets/img/hospital/if_8_hospital_2774754.png"),
                         desc: "资产盘点",
-                        link: "/devices"
+                        link: "/stocktakingCase"
                     },
                     {
                         image: require("../../assets/img/hospital/if_10_hospital_2774741.png"),
                         desc: "文档管理",
                         link1: "/devices",
-                        func(){
+                        func() {
                             Modal.operation([
                                 {
                                     text: '暂未开放', onPress: () => {
@@ -184,7 +247,7 @@ class Dashboard extends Component {
                         image: require("../../assets/img/hospital/if_12_hospital_2774743.png"),
                         desc: "不良事件",
                         link1: "/devices",
-                        func(){
+                        func() {
                             Modal.operation([
                                 {
                                     text: '暂未开放', onPress: () => {
@@ -197,7 +260,7 @@ class Dashboard extends Component {
                         image: require("../../assets/img/hospital/if_14_hospital_2774745.png"),
                         desc: "角色设置",
                         link1: "/devices",
-                        func(){
+                        func() {
                             Modal.operation([
                                 {
                                     text: '暂未开放', onPress: () => {
@@ -214,7 +277,7 @@ class Dashboard extends Component {
                     {
                         image: require("../../assets/img/hospital/if_2_hospital_2774748.png"),
                         desc: "资产购置",
-                        func(){
+                        func() {
                             Modal.operation([
                                 {
                                     text: '暂未开放', onPress: () => {
@@ -222,10 +285,10 @@ class Dashboard extends Component {
                                 }
                             ])
                         }
-                    },{
+                    }, {
                         image: require("../../assets/img/hospital/if_3_hospital_2774749.png"),
                         desc: "供应商管理",
-                        func(){
+                        func() {
                             Modal.operation([
                                 {
                                     text: '暂未开放', onPress: () => {
@@ -233,10 +296,10 @@ class Dashboard extends Component {
                                 }
                             ])
                         }
-                    },{
+                    }, {
                         image: require("../../assets/img/hospital/if_4_hospital_2774750.png"),
                         desc: "远程监控",
-                        func(){
+                        func() {
                             Modal.operation([
                                 {
                                     text: '暂未开放', onPress: () => {
@@ -244,10 +307,10 @@ class Dashboard extends Component {
                                 }
                             ])
                         }
-                    },{
+                    }, {
                         image: require("../../assets/img/hospital/if_7_hospital_2774753.png"),
                         desc: "绩效管理",
-                        func(){
+                        func() {
                             Modal.operation([
                                 {
                                     text: '暂未开放', onPress: () => {
@@ -255,10 +318,10 @@ class Dashboard extends Component {
                                 }
                             ])
                         }
-                    },{
+                    }, {
                         image: require("../../assets/img/hospital/if_8_hospital_2774754.png"),
                         desc: "故障预警",
-                        func(){
+                        func() {
                             Modal.operation([
                                 {
                                     text: '暂未开放', onPress: () => {
@@ -266,10 +329,10 @@ class Dashboard extends Component {
                                 }
                             ])
                         }
-                    },{
+                    }, {
                         image: require("../../assets/img/hospital/if_10_hospital_2774741.png"),
                         desc: "借用调拨",
-                        func(){
+                        func() {
                             Modal.operation([
                                 {
                                     text: '暂未开放', onPress: () => {
@@ -325,7 +388,7 @@ class Dashboard extends Component {
 
         const getItem = (info) => {
 
-            let hasNotice = info.noticeTag && notice[info.noticeTag]
+            let hasNotice = info.noticeTag && notice.byTypes[info.noticeTag];
 
             return <li key={info.desc} className="item am-list-item" onTouchStart={(e) => {
                 // addRippleEffect(e.currentTarget, e.pageX, e.pageY)
@@ -341,11 +404,10 @@ class Dashboard extends Component {
                 }
             }}>
 
-
                 {
 
 
-                    hasNotice ? <Badge dot>
+                    hasNotice ? <Badge text={hasNotice}>
                             <img src={info.image} alt=""/>
                             <p className="desc">{info.desc}</p>
                         </Badge> :
@@ -381,9 +443,10 @@ class Dashboard extends Component {
 }
 
 const mapStateToProps = (state) => {
-    const {token} = state.auth
-    const {notice} = state.app
+    const {token, userInfo} = state.auth;
+    const notice = state.notice;
     return {
+        userInfo,
         userToken: token,
         notice
     }

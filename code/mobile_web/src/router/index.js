@@ -109,6 +109,24 @@ export const routes = [
             visible: true,
             left: "back"
         }
+    },{
+        path: '/stocktakingCase',
+        component: loadComponent('StocktakingCaseList'),
+        exact: true,
+        header: {
+            title: '盘点工单',
+            visible: true,
+            left: "back"
+        }
+    }, {
+        path: '/stocktakingCaseEdit/:deviceId',
+        component: loadComponent('StocktakingCaseEdit'),
+        exact: true,
+        header: {
+            title: '保养工单',
+            visible: true,
+            left: "back"
+        }
     }, {
         path: '/devices',
         component: loadComponent('Devices'),

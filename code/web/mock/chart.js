@@ -32,11 +32,14 @@ for (let i = 0; i < 12; i += 1) {
 const deviceStatData = [];
 const deviceTypes = ['口腔', '超声', '影像', '电子仪器', '内窥', '激光高频', '检验生化'];
 for (let i = 0; i < deviceTypes.length; i += 1) {
-  let y = Math.floor(Math.random() * 1000);
+  let y = Math.floor(Math.random() * 30);
+  if (y < 5) {
+    y = Math.floor(Math.random() * 30);
+  }
   deviceStatData.push({
     x: deviceTypes[i],
-    y,
-    y1: Math.floor(Math.random() * y) * 1.5,
+    y: y,
+    y1: Math.floor(Math.random() * y),
   });
 }
 
@@ -140,10 +143,13 @@ const depts = [
   '卫生科',
   '心血管科',
 ];
+
+const percents = [0.9, 0.81, 0.73, 0.6, 0.7, 0.8, 0.81, 0.84, 0.6, 0.73, 0.82];
 for (let i = 0; i < depts.length; i += 1) {
   offlineData.push({
     name: depts[i], //`门店${i}`,
-    cvr: Math.ceil(Math.random() * 9) / 10,
+    // cvr: Math.ceil((Math.random() * 0.4 +0.6)*10) / 10,
+    cvr: percents[i],
   });
 }
 

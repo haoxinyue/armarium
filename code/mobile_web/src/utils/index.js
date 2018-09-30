@@ -134,15 +134,17 @@ export const getLocalPicture = (fromCamera,options) => {
 }
 
 export function getFormData(params) {
-    if (window && window.cordovaHTTP){
-        return params;
-    }else{
-        let data = new FormData();
-        for (let key in params){
-            data.append(key,params[key])
-        }
-        return data;
-    }
+    // if (window && window.cordovaHTTP){
+    //     return params;
+    // }else{
+    //     let data = new FormData();
+    //     for (let key in params){
+    //         data.append(key,params[key])
+    //     }
+    //     return data;
+    // }
+
+    return params
 }
 
 

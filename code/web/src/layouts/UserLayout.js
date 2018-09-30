@@ -54,7 +54,7 @@ class UserLayout extends React.PureComponent {
                   <span className={styles.title}>联智医云</span>
                 </Link>
               </div>
-              <div className={styles.desc}>华南最具影响力的医疗设备管理平台</div>
+              <div className={styles.desc}>华东最具影响力的医疗设备管理平台</div>
             </div>
             <Switch>
               {getRoutes(match.path, routerData).map(item => (

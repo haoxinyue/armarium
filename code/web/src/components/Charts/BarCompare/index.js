@@ -113,6 +113,8 @@ class BarCompare extends Component {
               tickLine={autoHideXLabels ? false : {}}
             />
             <Axis name="y" min={0} />
+            <Axis name="y1" min={0} />
+
             <Tooltip showTitle={false} crosshairs={false} />
             <Geom type="interval" position="x*y" color={color} tooltip={tooltip} />
             <Geom type="interval" position="x*y1" color={color1} tooltip={tooltip1} />

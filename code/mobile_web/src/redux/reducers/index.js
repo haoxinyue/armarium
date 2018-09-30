@@ -13,6 +13,7 @@ import installCase from './installCase'
 import pmCase from './pmCase'
 import notice from './notice'
 import inspectionCase from './inspectionCase'
+import stocktakingCase from './stocktakingCase'
 
 const rootReducer = combineReducers({
 	app,
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
     device,
     installCase,
     inspectionCase,
+    stocktakingCase,
     pmCase,
     header,
     notice,

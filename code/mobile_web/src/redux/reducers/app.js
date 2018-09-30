@@ -11,9 +11,7 @@ export const ACTION_TYPES = {
 const app = (state = {
     metaData: [],
     listData: {},
-    users: [],
-    notice: {
-    }
+    users: []
 }, action) => {
     switch (action.type) {
 
