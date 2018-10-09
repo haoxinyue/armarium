@@ -148,6 +148,10 @@ export default class DeviceList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'device/fetch',
+      payload:{
+        pageIndex:0,
+        pageSize:10
+      }
     });
   }
 
@@ -185,7 +189,10 @@ export default class DeviceList extends PureComponent {
     });
     dispatch({
       type: 'device/fetch',
-      payload: {},
+      payload: {
+        pageIndex: 0,
+        pageSize: 10,
+      },
     });
   };
 

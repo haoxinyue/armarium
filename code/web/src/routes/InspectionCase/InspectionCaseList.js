@@ -146,6 +146,10 @@ export default class InspectionCaseList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'inspectionCase/fetch',
+      payload:{
+        pageIndex: 0,
+        pageSize: 10,
+      }
     });
   }
 
@@ -183,7 +187,10 @@ export default class InspectionCaseList extends PureComponent {
     });
     dispatch({
       type: 'inspectionCase/fetch',
-      payload: {},
+      payload: {
+        pageIndex: 0,
+        pageSize: 10,
+      },
     });
   };
 
@@ -334,6 +341,10 @@ export default class InspectionCaseList extends PureComponent {
             form.resetFields();
             this.props.dispatch({
               type: 'inspectionCase/fetch',
+              payload:{
+                pageIndex: 0,
+                pageSize: 10,
+              }
             });
           } else {
             message.error('操作失败，请稍后再试');

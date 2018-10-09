@@ -186,7 +186,10 @@ export default class PmCaseList extends PureComponent {
     });
     dispatch({
       type: 'pmCase/fetch',
-      payload: {},
+      payload: {
+        pageIndex: 0,
+        pageSize: 10,
+      },
     });
   };
 
@@ -284,6 +287,10 @@ export default class PmCaseList extends PureComponent {
             form.resetFields();
             this.props.dispatch({
               type: 'pmCase/fetch',
+              payload:{
+                pageIndex: 0,
+                pageSize: 10,
+              }
             });
           } else {
             message.error('操作失败，请稍后再试');

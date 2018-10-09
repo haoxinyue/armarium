@@ -222,6 +222,8 @@ export default class RepairList extends PureComponent {
       type: 'repair/fetch',
       payload: {
         assigneeUserId: user.currentUser.userId,
+        pageIndex: 0,
+        pageSize: 10,
       },
     });
   };
@@ -296,6 +298,8 @@ export default class RepairList extends PureComponent {
             type: 'repair/fetch',
             payload: {
               assigneeUserId: user.currentUser.userId,
+              pageIndex: 0,
+              pageSize: 10,
             },
           });
         } else {

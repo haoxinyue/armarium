@@ -11,7 +11,7 @@ export const ACTION_TYPES = {
 
 const repair = (state = {
     byIds: {},
-    devices: [],
+    list: [],
     filter: {
         pageIndex: 0,
         searchWord: '',

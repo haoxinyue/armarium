@@ -266,13 +266,7 @@ export default class DeviceDetail extends Component {
                 <Description term="设备产地">{currentDetail.producingPlace}</Description>
                 <Description term="设备附件">{currentDetail.accessory}</Description>
               </DescriptionList>
-              {/*<DescriptionList size="large" style={{marginBottom: 12}}>
-                <Description term="创建时间">{currentDetail.createTime}</Description>
-                <Description term="创建人">{currentDetail.creater}</Description>
-                <Description term="最后修改时间">{currentDetail.modifyTime}</Description>
-                <Description term="最后修改人">{currentDetail.modifier}</Description>
-              </DescriptionList>*/}
-              {/*<Divider style={{marginBottom: 32}}/>*/}
+
             </Card>
           </TabPane>
           <TabPane tab="历史事件" key="2">
@@ -280,14 +274,6 @@ export default class DeviceDetail extends Component {
               <Timeline mode={'alternate'}>
                 {currentDetail.timeline &&
                   currentDetail.timeline.map(lineData => this.getLineView(lineData))}
-                {/*<Timeline.Item>设备安装 2018-02-02</Timeline.Item>
-                <Timeline.Item color="green">设备保养 2018-03-02</Timeline.Item>
-                <Timeline.Item dot={<Icon type="clock-circle-o" style={{ fontSize: '16px' }} />}>设备保修 2018-02-02</Timeline.Item>
-                <Timeline.Item color="red">设备维修完成 2018-02-02</Timeline.Item>
-                <Timeline.Item>设备巡检 2018-02-02</Timeline.Item>
-                <Timeline.Item dot={<Icon type="clock-circle-o" style={{ fontSize: '16px' }} />}>设备保修 2018-02-02</Timeline.Item>
-                <Timeline.Item color="red">设备维修完成 2018-02-02</Timeline.Item>
-                <Timeline.Item dot={<Icon type="clock-circle-o" style={{ fontSize: '16px' }} />} color="red">设备等待保养  2018-02-02</Timeline.Item>*/}
               </Timeline>
             </Card>
           </TabPane>

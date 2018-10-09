@@ -24,6 +24,7 @@ import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DepartmentSelect from '../../components/biz/DepartmentSelect';
 import HospitalSelect from '../../components/biz/HospitalSelect';
+import moment from 'moment';
 
 import styles from './TableList.less';
 import EngineerSelect from '../../components/biz/EngineerSelect';
@@ -34,9 +35,7 @@ const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
-const statusMap = { '10': '安装中', '20': '已取消', '50': '已关闭' };
-
-const caseStatus = ['安装中', '已取消', '已关闭'];
+const statusMap = { '10': '待巡检', '20': '已取消', '30': '巡检中', '50': '已关闭' };
 
 const CreateForm = Form.create()(props => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
@@ -129,13 +128,13 @@ const CreateForm = Form.create()(props => {
   );
 });
 
-@connect(({ installCase, user, loading }) => ({
-  installCase,
+@connect(({ inspectionCase, user, loading }) => ({
+  inspectionCase,
   currentUser: user.currentUser || {},
-  loading: loading.models['installCase/fetch'],
+  loading: loading.models['inspectionCase/fetch'],
 }))
 @Form.create()
-export default class InstallCaseList extends PureComponent {
+export default class MeterCaseList extends PureComponent {
   state = {
     modalVisible: false,
     expandForm: false,
@@ -146,11 +145,7 @@ export default class InstallCaseList extends PureComponent {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch({
-      type: 'installCase/fetch',
-      payload:{
-        pageIndex: 0,
-        pageSize: 10,
-      }
+      type: 'inspectionCase/fetch',
     });
   }
 
@@ -175,7 +170,7 @@ export default class InstallCaseList extends PureComponent {
     }
 
     dispatch({
-      type: 'installCase/fetch',
+      type: 'inspectionCase/fetch',
       payload: params,
     });
   };
@@ -187,11 +182,8 @@ export default class InstallCaseList extends PureComponent {
       formValues: {},
     });
     dispatch({
-      type: 'installCase/fetch',
-      payload: {
-        pageIndex: 0,
-        pageSize: 10,
-      },
+      type: 'inspectionCase/fetch',
+      payload: {},
     });
   };
 
@@ -204,14 +196,14 @@ export default class InstallCaseList extends PureComponent {
       cancelText: '取消',
       onOk() {
         dispatch({
-          type: 'installCase/close',
+          type: 'inspectionCase/close',
           payload: {
             caseId: mCase.caseId,
           },
         }).then(res => {
           message.success('关闭成功');
           dispatch({
-            type: 'installCase/fetchDetail',
+            type: 'inspectionCase/fetchDetail',
             payload: {
               caseId: mCase.caseId,
             },
@@ -231,13 +223,13 @@ export default class InstallCaseList extends PureComponent {
       cancelText: '取消',
       onOk() {
         dispatch({
-          type: 'installCase/close',
+          type: 'inspectionCase/close',
           payload: mCase,
         }).then(
           res => {
             message.success('操作成功');
             dispatch({
-              type: 'installCase/fetchDetail',
+              type: 'inspectionCase/fetchDetail',
               payload: mCase,
             });
           },
@@ -306,7 +298,7 @@ export default class InstallCaseList extends PureComponent {
       }
 
       dispatch({
-        type: 'device/fetch',
+        type: 'inspectionCase/fetch',
         payload,
       });
     });
@@ -326,12 +318,10 @@ export default class InstallCaseList extends PureComponent {
     subFields.expectedTime = subFields.expectedTime.format('YYYY/MM/DD HH:mm:ss');
     subFields.creater = currentUser.userId;
     subFields.modifier = currentUser.userId;
-    subFields.needInspection = currentUser.needInspection ? 1 : 0;
-    subFields.needMetering = currentUser.needMetering ? 1 : 0;
 
     this.props
       .dispatch({
-        type: 'installCase/add',
+        type: 'inspectionCase/add',
         payload: subFields,
       })
       .then(
@@ -343,11 +333,7 @@ export default class InstallCaseList extends PureComponent {
             });
             form.resetFields();
             this.props.dispatch({
-              type: 'installCase/fetch',
-              payload:{
-                pageIndex: 0,
-                pageSize: 10,
-              }
+              type: 'inspectionCase/fetch',
             });
           } else {
             message.error('操作失败，请稍后再试');
@@ -397,15 +383,15 @@ export default class InstallCaseList extends PureComponent {
   }
 
   render() {
-    const { installCase, loading } = this.props;
+    const { inspectionCase, loading } = this.props;
     const { selectedRows, modalVisible } = this.state;
     let list = [];
-    installCase.list.forEach(id => {
-      list.push(installCase.byIds[id]);
+    inspectionCase.list.forEach(id => {
+      list.push(inspectionCase.byIds[id]);
     });
     let data = {
       list,
-      pagination: installCase.pagination,
+      pagination: inspectionCase.pagination,
     };
 
     const columns = [
@@ -417,53 +403,80 @@ export default class InstallCaseList extends PureComponent {
         title: '设备名称',
         dataIndex: 'deviceName',
       },
+      // {
+      //   title: '工单状态',
+      //   dataIndex: 'caseState',
+      //   filters: [
+      //     {
+      //       text: statusMap['10'],
+      //       value: 10,
+      //     },
+      //     {
+      //       text: statusMap['20'],
+      //       value: 20,
+      //     },
+      //     {
+      //       text: statusMap['30'],
+      //       value: 30,
+      //     },
+      //     {
+      //       text: statusMap['50'],
+      //       value: 50,
+      //     },
+      //   ],
+      //   onFilter: (value, record) => record.caseState == value,
+      //   render(val) {
+      //     return <Badge status={val} text={statusMap[val]}/>;
+      //   },
+      // },
       {
-        title: '工单状态',
-        dataIndex: 'caseState',
-        filters: [
-          {
-            text: statusMap['10'],
-            value: 10,
-          },
-          {
-            text: statusMap['20'],
-            value: 20,
-          },
-          {
-            text: statusMap['50'],
-            value: 50,
-          },
-        ],
-        onFilter: (value, record) => record.caseState == value,
-        render(val) {
-          return <Badge status={val} text={statusMap[val]} />;
-        },
-      },
-      {
-        title: '安装人员',
+        title: '巡检人员',
         dataIndex: 'assigneeUserName',
       },
       {
-        title: '期望安装时间',
-        dataIndex: 'expectedTime',
+        title: '巡检类型',
+        dataIndex: 'inspectionType',
+        filters: [
+          {
+            text: '巡检',
+            value: 1,
+          },
+          {
+            text: '强检',
+            value: 2,
+          },
+        ],
+        render: val => <span>{val === 2 ? '强检' : '巡检'}</span>,
+      },
+      {
+        title: '巡检描述',
+        dataIndex: 'inspectionRemark',
+        render: val => (
+          <span
+            style={{ width: '100%', display: 'inline-block', textOverflow: 'hidden' }}
+            title={val}
+          >
+            {val}
+          </span>
+        ),
       },
 
-      // {
-      //   title: '更新时间',
-      //   dataIndex: 'updatedAt',
-      //   sorter: true,
-      //   render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-      // },
+      {
+        title: '巡检时间',
+        dataIndex: 'inspectionTime',
+        sorter: true,
+        render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
+      } /*,
       {
         title: '操作',
         render: val => (
           <Fragment>
             <Link to={'/install-case/case-edit/' + val.caseId}>详情</Link>
-            {/*&nbsp;
-            <a onClick={this.closeCase.bind(this, val)}>关闭</a>*/}
+            &nbsp;
+            <a onClick={this.closeCase.bind(this, val)}>关闭</a>
           </Fragment>
         ),
-      },
+      },*/,
     ];
 
     const menu = (
@@ -483,9 +496,9 @@ export default class InstallCaseList extends PureComponent {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
+              {/*<Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
                 新建
-              </Button>
+              </Button>*/}
               {false &&
                 selectedRows.length > 0 && (
                   <span>

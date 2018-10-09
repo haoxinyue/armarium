@@ -62,7 +62,7 @@ class CreateForm extends PureComponent {
     };
 
     const disableEndDate = endValue => {
-      const startValue = form.getFieldValue('planStartTime');
+      const startValue = form.getFieldValue('planBeginTime');
       if (!endValue || !startValue) {
         return false;
       }
@@ -113,7 +113,7 @@ class CreateForm extends PureComponent {
         </FormItem>
 
         <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="计划开始时间">
-          {form.getFieldDecorator('planStartTime', {
+          {form.getFieldDecorator('planBeginTime', {
             onChange: onStartTimeChange,
             rules: [{ required: true, message: '请选择时间...' }],
           })(<DatePicker format="YYYY/MM/DD" placeholder="请选择时间" />)}
@@ -156,6 +156,8 @@ export default class StocktakingCaseList extends PureComponent {
       type: 'stocktakingCase/fetch',
       payload: {
         assigneeUserId: 10003,
+        pageIndex: 0,
+        pageSize: 10,
       },
     });
   }
@@ -277,7 +279,8 @@ export default class StocktakingCaseList extends PureComponent {
   handleAdd = (fields, form) => {
     const { currentUser = {} } = this.props;
     let subFields = Object.assign({}, fields);
-    subFields.planTime = subFields.planTime.format('YYYY/MM/DD HH:mm:ss');
+    subFields.planBeginTime = subFields.planBeginTime.format('YYYY/MM/DD HH:mm:ss');
+    subFields.planEndTime = subFields.planEndTime.format('YYYY/MM/DD HH:mm:ss');
     subFields.creater = currentUser.userId;
     subFields.modifier = currentUser.userId;
 

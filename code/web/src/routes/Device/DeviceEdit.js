@@ -366,8 +366,8 @@ export default class DeviceEdit extends Component {
       <PageHeaderLayout title={isEditMode ? '设备编辑' : '设备新增'} content="">
         <Card bordered={false}>
           <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
-            {getInputFieldNode('deviceCode', '设备编号', true)}
-            {getInputFieldNode('deviceName', '设备名称', true)}
+            {getInputFieldNode('deviceCode', '设备编号', false)}
+            {getInputFieldNode('deviceName', '设备名称', false)}
 
             {getSelectFieldNode(
               'hospitalId',
@@ -391,23 +391,23 @@ export default class DeviceEdit extends Component {
             </FormItem>
 
             {getInputFieldNode('assetNo', '设备资产编号', false)}
-            {getInputFieldNode('deviceModel', '设备型号', true)}
-            {getInputFieldNode('serialNumber', '设备序列号', true)}
+            {getInputFieldNode('deviceModel', '设备型号', false)}
+            {getInputFieldNode('serialNumber', '设备序列号', false)}
 
-            {getInputFieldNode('deviceOwner', '设备负责人', true)}
-            {getInputFieldNode('purchaseAmount', '采购金额', true, {
+            {getInputFieldNode('deviceOwner', '设备负责人', false)}
+            {getInputFieldNode('purchaseAmount', '采购金额', false, {
               isNumber: true,
               formatter: value => `\¥${value}`,
               parser: value => value.replace('¥', ''),
             })}
 
-            {getDateFieldNode('maintenanceEndDate', '保修期结束时间', true)}
+            {getDateFieldNode('maintenanceEndDate', '保修期结束时间', false)}
 
             {getInputFieldNode('manufacturer', '设备厂家', false)}
             {getInputFieldNode('producingPlace', '设备产地', false)}
 
-            {getTextFieldNode('deviceDesc', '设备描述', true)}
-            {getTextFieldNode('accessory', '设备附件', true)}
+            {getTextFieldNode('deviceDesc', '设备描述', false)}
+            {getTextFieldNode('accessory', '设备附件', false)}
 
             {getSelectFieldNode('deviceType', '设备类型', true, [
               {
