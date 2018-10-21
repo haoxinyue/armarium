@@ -97,9 +97,7 @@ export default class BadEventList extends PureComponent {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'badEvent/fetch',
-    });
+    this.handleSearch();
   }
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
@@ -165,9 +163,11 @@ export default class BadEventList extends PureComponent {
   };
 
   handleSearch = e => {
-    e.preventDefault();
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
 
-    const { dispatch, form } = this.props;
+    const { dispatch, form, badEvent } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -180,7 +180,10 @@ export default class BadEventList extends PureComponent {
         formValues: values,
       });
 
-      let payload = {};
+      let payload = {
+        pageIndex: badEvent.pagination.current - 1,
+        pageSize: badEvent.pagination.pageSize,
+      };
 
       for (let k in values) {
         if (values[k] !== undefined) {
@@ -222,9 +225,7 @@ export default class BadEventList extends PureComponent {
           this.setState({
             modalVisible: false,
           });
-          this.props.dispatch({
-            type: 'badEvent/fetch',
-          });
+          this.handleSearch();
         } else {
           message.error('添加失败');
         }
@@ -343,7 +344,7 @@ export default class BadEventList extends PureComponent {
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
                 新建
               </Button>
-              {selectedRows.length > 0 && (
+              {/*{selectedRows.length > 0 && (
                 <span>
                   <Button>批量操作</Button>
                   <Dropdown overlay={menu}>
@@ -352,7 +353,7 @@ export default class BadEventList extends PureComponent {
                     </Button>
                   </Dropdown>
                 </span>
-              )}
+              )}*/}
             </div>
             <StandardTable
               selectedRows={selectedRows}

@@ -151,7 +151,7 @@ export default class BadEventEdit extends Component {
     let isEditMode = params.eventId != null;
 
     function getDateFieldNode(fieldName, title, isRequired, options = {}) {
-      const dateFormat = options.format || 'YYYY/MM/DD HH:mm:ss';
+      const dateFormat = options.format || 'YYYY/MM/DD HH:mm';
 
       return (
         <FormItem {...formItemLayout} label={(isRequired ? '*' : '') + title}>
@@ -247,8 +247,15 @@ export default class BadEventEdit extends Component {
 
     return (
       <PageHeaderLayout
-        title={isEditMode ? `不良事件 [${params.eventId}]` : '不良事件新增'}
-        content=""
+        title={isEditMode ? `不良事件详情` : '不良事件新增'}
+        content={
+          <div>
+            {' '}
+            <Link to={'/asset/asset-event/'}>
+              <Button>返回列表</Button>
+            </Link>
+          </div>
+        }
       >
         <Card bordered={false}>
           <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
@@ -262,7 +269,11 @@ export default class BadEventEdit extends Component {
 
             {getTextFieldNode('eventRemark', '事件描述', true)}
 
-            {getDateFieldNode('eventTime', '事件时间', true)}
+            {getDateFieldNode('eventTime', '事件时间', true, {
+              style: {
+                minWidth: 300,
+              },
+            })}
 
             {getInputFieldNode('eventId', '编号', false, { hidden: true })}
 

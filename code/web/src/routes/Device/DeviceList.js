@@ -24,16 +24,14 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './TableList.less';
 
+import { UsageStateNames, DeviceStateNames } from '../../utils/constants';
+
 const FormItem = Form.Item;
 const { Option } = Select;
 const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
-const statusMap = ['', '1', '2'];
-const status = ['未知', '正常', '故障'];
-const usageStatusMap = ['0', '1'];
-const usageStatus = ['停用', '使用'];
 
 const CreateForm = Form.create()(props => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
@@ -148,10 +146,10 @@ export default class DeviceList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'device/fetch',
-      payload:{
-        pageIndex:0,
-        pageSize:10
-      }
+      payload: {
+        pageIndex: 0,
+        pageSize: 10,
+      },
     });
   }
 
@@ -203,26 +201,26 @@ export default class DeviceList extends PureComponent {
   };
 
   deleteDevice(device) {
-    const { dispatch } = this.props;
+    const { dispatch, device: deviceState } = this.props;
     Modal.confirm({
       title: `确认`,
       content: `确认删除 【${device.deviceName}(${device.deviceId})】?`,
       okText: '确认',
       cancelText: '取消',
-      onOk() {
+      onOk: () => {
         dispatch({
           type: 'device/remove',
           payload: device,
-          callback(res) {
-            if (res.success) {
-              message.success('删除成功');
-            } else {
-              message.error('删除失败');
-            }
-          },
+        }).then(res => {
+          if (res.success) {
+            message.success('删除成功');
+            this.handleSearch();
+          } else {
+            message.error('删除失败');
+          }
         });
       },
-      onCancel() {},
+      onCancel: () => {},
     });
   }
 
@@ -239,11 +237,16 @@ export default class DeviceList extends PureComponent {
           payload: {
             deviceId: selectedRows.map(row => row.deviceId).join(','),
           },
-          callback: () => {
+        }).then(res => {
+          if (res.success) {
+            message.success('删除成功');
+            this.handleSearch();
             this.setState({
               selectedRows: [],
             });
-          },
+          } else {
+            message.error('删除失败');
+          }
         });
         break;
       default:
@@ -258,9 +261,11 @@ export default class DeviceList extends PureComponent {
   };
 
   handleSearch = e => {
-    e.preventDefault();
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
 
-    const { dispatch, form } = this.props;
+    const { dispatch, form, device } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -273,7 +278,10 @@ export default class DeviceList extends PureComponent {
         formValues: values,
       });
 
-      let payload = {};
+      let payload = {
+        pageIndex: device.pagination.current - 1,
+        pageSize: device.pagination.pageSize,
+      };
 
       for (let k in values) {
         if (values[k] !== undefined) {
@@ -375,37 +383,25 @@ export default class DeviceList extends PureComponent {
       {
         title: '设备状态',
         dataIndex: 'deviceState',
-        filters: [
-          {
-            text: status[1],
-            value: 1,
-          },
-          {
-            text: status[2],
-            value: 2,
-          },
-        ],
+        filters: Object.keys(DeviceStateNames).map(d => ({
+          text: DeviceStateNames[d],
+          value: d,
+        })),
         onFilter: (value, record) => record.deviceState == value,
         render(val) {
-          return <Badge status={statusMap[val]} text={status[val]} />;
+          return <span title={DeviceStateNames[val]}>{DeviceStateNames[val]}</span>;
         },
       },
       {
         title: '使用状态',
         dataIndex: 'usageState',
-        filters: [
-          {
-            text: usageStatus[0],
-            value: '0',
-          },
-          {
-            text: usageStatus[1],
-            value: '1',
-          },
-        ],
+        filters: Object.keys(UsageStateNames).map(d => ({
+          text: UsageStateNames[d],
+          value: d,
+        })),
         onFilter: (value, record) => record.usageState.toString() === value,
         render(val) {
-          return <Badge status={usageStatusMap[val]} text={usageStatus[val]} />;
+          return <span title={UsageStateNames[val]}>{UsageStateNames[val]}</span>;
         },
       },
       // {

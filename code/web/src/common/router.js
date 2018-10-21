@@ -139,7 +139,7 @@ export const getRouterData = app => {
 
     '/asset/asset-add': {
       component: dynamicWrapper(app, ['device', 'hospital', 'department'], () =>
-        import(/* webpackChunkName: "DeviceEdit" */ '../routes/Device/DeviceEdit')
+        import(/* webpackChunkName: "DeviceEdit" */ '../routes/Device/DeviceList')
       ),
     },
     '/asset/asset-list': {
@@ -190,8 +190,8 @@ export const getRouterData = app => {
       ),
     },
     '/work-order/device-calc': {
-      component: dynamicWrapper(app, ['repair', 'engineer', 'device'], () =>
-        import(/* webpackChunkName: "RepairList" */ '../routes/Repair/RepairList')
+      component: dynamicWrapper(app, ['meterCase', 'engineer', 'device'], () =>
+        import(/* webpackChunkName: "MeterCaseList" */ '../routes/MeterCase/MeterCaseList')
       ),
     },
     '/work-order/order-dispatch': {

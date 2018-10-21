@@ -1,7 +1,7 @@
 import React, { PureComponent, Fragment } from 'react';
+import moment from 'moment';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
-import { routerRedux } from 'dva/router';
+import { Link, routerRedux } from 'dva/router';
 import {
   Row,
   Col,
@@ -16,122 +16,116 @@ import {
   InputNumber,
   DatePicker,
   Modal,
-  Checkbox,
   message,
   Badge,
+  Divider,
 } from 'antd';
+
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
-import DepartmentSelect from '../../components/biz/DepartmentSelect';
-import HospitalSelect from '../../components/biz/HospitalSelect';
-import moment from 'moment';
 
 import styles from './TableList.less';
 import EngineerSelect from '../../components/biz/EngineerSelect';
 
+const { TextArea } = Input;
+
 const FormItem = Form.Item;
-const { Option } = Select;
 const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
-const statusMap = { '10': '待巡检', '20': '已取消', '30': '巡检中', '50': '已关闭' };
 
-const CreateForm = Form.create()(props => {
-  const { modalVisible, form, handleAdd, handleModalVisible } = props;
+const OperationForm = Form.create()(props => {
+  const {
+    modalVisible,
+    form,
+    handleModalVisible,
+    currentCase,
+    toState = '',
+    dispatch,
+    user,
+  } = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      handleAdd(fieldsValue, form);
+
+      let payload = {
+        reporterUserId: user.currentUser.userId,
+        caseState: toState,
+        caseId: currentCase.caseId,
+        modifier: user.currentUser.userId,
+      };
+
+      if (fieldsValue.assigneeUserId) {
+        payload.assigneeUserId = fieldsValue.assigneeUserId;
+      }
+
+      dispatch({
+        type: 'meterCase/changeState',
+        payload,
+        callback: success => {
+          if (success) {
+            message.success('操作成功');
+            handleModalVisible(false);
+            dispatch({
+              type: 'meterCase/fetch',
+              payload: {
+                assigneeUserId: user.currentUser.userId,
+              },
+            });
+          } else {
+            message.error('操作失败');
+          }
+        },
+      });
     });
   };
+
+  let title = '操作';
+
+  switch (toState) {
+    case 20:
+      title += ` - 取消工单【${currentCase.caseId}】`;
+      break;
+    case 30:
+      title += ` - 分配工单【${currentCase.caseId}】给工程师`;
+      break;
+    case 40:
+      title += ` - 完成工单【${currentCase.caseId}】`;
+      break;
+  }
+
+  let needSelectEngineer = toState == 30;
+
   return (
     <Modal
-      title="新建工单"
+      title={title}
       visible={modalVisible}
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备名称">
-        {form.getFieldDecorator('deviceName', {
-          rules: [{ required: true, message: '请输入设备名称...' }],
-        })(<Input placeholder="请输入" />)}
-      </FormItem>
+      {needSelectEngineer && (
+        <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="分配工程师">
+          {form.getFieldDecorator('assigneeUserId', {
+            rules: [{ required: true, message: '请选择工程师...' }],
+          })(<EngineerSelect placeholder="请选择工程师" />)}
+        </FormItem>
+      )}
 
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="所属医院">
-        {form.getFieldDecorator('hospitalId', {
-          rules: [{ required: true, message: '请选择医院...' }],
-        })(<HospitalSelect placeholder="请选择医院" />)}
-      </FormItem>
-
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="所属部门">
-        {form.getFieldDecorator('deptId', {
-          rules: [{ required: true, message: '请选择所属部门...' }],
-        })(<DepartmentSelect placeholder="请选择所属部门" />)}
-      </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="指派给">
-        {form.getFieldDecorator('assigneeUserId', {
-          rules: [{ required: true, message: '请选择工程师...' }],
-        })(<EngineerSelect placeholder="请选择工程师" />)}
-      </FormItem>
-
-      {/*<FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备类型">
-        {form.getFieldDecorator('deviceType', {
-          rules: [{ required: true, message: '请输入设备类型...' }],
-        })(<Input placeholder="请输入设备类型" />)}
-      </FormItem>*/}
-
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否需要巡检">
-        {form.getFieldDecorator('needInspection', {
-          initialValue: false,
-          rules: [{ required: true }],
-        })(<Checkbox style={{ marginLeft: 8 }} />)}
-      </FormItem>
-
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="是否需要计量">
-        {form.getFieldDecorator('needMetering', {
-          initialValue: false,
-          rules: [{ required: true }],
-        })(<Checkbox style={{ marginLeft: 8 }} />)}
-      </FormItem>
-
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备类型">
-        {form.getFieldDecorator('deviceType', {
-          rules: [{ required: true, message: '请设置设备类型...' }],
-        })(
-          <Select placeholder="请选择" initialValue="1" style={{ width: '100%' }}>
-            <Option value="1">B超</Option>
-            <Option value="2">眼检仪</Option>
-            <Option value="0">其他</Option>
-          </Select>
-        )}
-      </FormItem>
-
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="期望安装时间">
-        {form.getFieldDecorator('expectedTime', {
-          rules: [{ required: true, message: '请选择时间...' }],
-        })(<DatePicker showTime format="YYYY-MM-DD HH:mm:ss" placeholder="请选择时间" />)}
-      </FormItem>
-
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="型号">
-        {form.getFieldDecorator('deviceModel', {
-          rules: [{ required: true, message: '请输入设备型号...' }],
-        })(<Input placeholder="请输入" />)}
-      </FormItem>
-
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="序列号">
-        {form.getFieldDecorator('serialNumber', {
-          rules: [{ required: true, message: '请输入序列号...' }],
-        })(<Input placeholder="请输入序列号" />)}
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="描述信息">
+        {form.getFieldDecorator('caseRemark', {
+          rules: [{ required: true, message: '请输入描述信息' }],
+        })(<TextArea style={{ minHeight: 32 }} placeholder="请输入描述信息" rows={4} />)}
       </FormItem>
     </Modal>
   );
 });
+//
 
-@connect(({ inspectionCase, user, loading }) => ({
-  inspectionCase,
-  currentUser: user.currentUser || {},
-  loading: loading.models['inspectionCase/fetch'],
+@connect(({ meterCase, loading, user }) => ({
+  meterCase,
+  user,
+  loading: loading.models['meterCase/fetch'],
 }))
 @Form.create()
 export default class MeterCaseList extends PureComponent {
@@ -140,12 +134,23 @@ export default class MeterCaseList extends PureComponent {
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    operation: {
+      currentCase: null,
+      modalVisible: false,
+      formValues: {},
+      toState: 0,
+    },
   };
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    const { dispatch, user } = this.props;
     dispatch({
-      type: 'inspectionCase/fetch',
+      type: 'meterCase/fetch',
+      payload: {
+        assigneeUserId: user.currentUser.userId,
+        pageIndex: 0,
+        pageSize: 10,
+      },
     });
   }
 
@@ -170,101 +175,27 @@ export default class MeterCaseList extends PureComponent {
     }
 
     dispatch({
-      type: 'inspectionCase/fetch',
-      payload: params,
+      type: 'meterCase/fetch',
+      payload: {
+        ...params,
+      },
     });
   };
 
   handleFormReset = () => {
-    const { form, dispatch } = this.props;
+    const { form, dispatch, user } = this.props;
     form.resetFields();
     this.setState({
       formValues: {},
     });
     dispatch({
-      type: 'inspectionCase/fetch',
-      payload: {},
-    });
-  };
-
-  closeCase(mCase) {
-    const { dispatch } = this.props;
-    Modal.confirm({
-      title: `确认`,
-      content: `确认关闭工单 【${mCase.deviceName}(${mCase.caseId})】?`,
-      okText: '确认',
-      cancelText: '取消',
-      onOk() {
-        dispatch({
-          type: 'inspectionCase/close',
-          payload: {
-            caseId: mCase.caseId,
-          },
-        }).then(res => {
-          message.success('关闭成功');
-          dispatch({
-            type: 'inspectionCase/fetchDetail',
-            payload: {
-              caseId: mCase.caseId,
-            },
-          });
-        });
+      type: 'meterCase/fetch',
+      payload: {
+        assigneeUserId: user.currentUser.userId,
+        pageIndex: 0,
+        pageSize: 10,
       },
-      onCancel() {},
     });
-  }
-
-  completeCase(mCase) {
-    const { dispatch } = this.props;
-    Modal.confirm({
-      title: `确认`,
-      content: `确认完成 【${mCase.deviceName}(${mCase.caseId})】?`,
-      okText: '确认',
-      cancelText: '取消',
-      onOk() {
-        dispatch({
-          type: 'inspectionCase/close',
-          payload: mCase,
-        }).then(
-          res => {
-            message.success('操作成功');
-            dispatch({
-              type: 'inspectionCase/fetchDetail',
-              payload: mCase,
-            });
-          },
-          () => {
-            message.info('操作失败，请稍后再试');
-          }
-        );
-      },
-      onCancel() {},
-    });
-  }
-
-  handleMenuClick = e => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
-
-    if (!selectedRows) return;
-
-    switch (e.key) {
-      case 'remove':
-        dispatch({
-          type: 'device/remove',
-          payload: {
-            deviceId: selectedRows.map(row => row.deviceId).join(','),
-          },
-          callback: () => {
-            this.setState({
-              selectedRows: [],
-            });
-          },
-        });
-        break;
-      default:
-        break;
-    }
   };
 
   handleSelectRows = rows => {
@@ -276,7 +207,7 @@ export default class MeterCaseList extends PureComponent {
   handleSearch = e => {
     e.preventDefault();
 
-    const { dispatch, form } = this.props;
+    const { dispatch, form, user } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -289,7 +220,9 @@ export default class MeterCaseList extends PureComponent {
         formValues: values,
       });
 
-      let payload = {};
+      let payload = {
+        assigneeUserId: user.currentUser.userId,
+      };
 
       for (let k in values) {
         if (values[k] !== undefined) {
@@ -298,51 +231,10 @@ export default class MeterCaseList extends PureComponent {
       }
 
       dispatch({
-        type: 'inspectionCase/fetch',
+        type: 'meterCase/fetch',
         payload,
       });
     });
-  };
-
-  handleModalVisible = flag => {
-    // const {dispatch} = this.props
-    // dispatch(routerRedux.push('/device/device-add'))
-    this.setState({
-      modalVisible: !!flag,
-    });
-  };
-
-  handleAdd = (fields, form) => {
-    const { currentUser = {} } = this.props;
-    let subFields = Object.assign({}, fields);
-    subFields.expectedTime = subFields.expectedTime.format('YYYY/MM/DD HH:mm:ss');
-    subFields.creater = currentUser.userId;
-    subFields.modifier = currentUser.userId;
-
-    this.props
-      .dispatch({
-        type: 'inspectionCase/add',
-        payload: subFields,
-      })
-      .then(
-        success => {
-          if (success) {
-            message.success('添加成功');
-            this.setState({
-              modalVisible: false,
-            });
-            form.resetFields();
-            this.props.dispatch({
-              type: 'inspectionCase/fetch',
-            });
-          } else {
-            message.error('操作失败，请稍后再试');
-          }
-        },
-        () => {
-          message.error('操作失败，请稍后再试');
-        }
-      );
   };
 
   renderSimpleForm() {
@@ -351,13 +243,9 @@ export default class MeterCaseList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
-            <FormItem label="设备编号">
-              {getFieldDecorator('deviceCode')(<Input placeholder="请输入" />)}
-            </FormItem>
-          </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="设备名称">
-              {getFieldDecorator('deviceName')(<Input placeholder="请输入" />)}
+            <FormItem label="设备ID">
+              {getFieldDecorator('deviceId')(<Input placeholder="请输入" />)}
+              {/*{getFieldDecorator('deviceId')(<DeviceSelect placeholder="请输入" />)}*/}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -382,16 +270,92 @@ export default class MeterCaseList extends PureComponent {
     return this.renderSimpleForm();
   }
 
+  changeCaseState(caseInfo, toState) {
+    const { dispatch, user } = this.props;
+
+    this.setState({
+      operation: {
+        ...this.state.operation,
+        currentCase: caseInfo,
+        modalVisible: true,
+        toState: toState,
+      },
+    });
+  }
+
+  getCaseStateName(state) {
+    const Names = {
+      10: '新报修',
+      20: '已取消',
+      30: '维修中',
+      40: '已完成',
+      50: '已关闭',
+    };
+
+    return Names[state] || '未知';
+  }
+
+  getOperation(caseInfo, role) {
+    let ops = [];
+    if (caseInfo && role && caseInfo.caseState) {
+      switch (caseInfo.caseState) {
+        case 10:
+          if (role === '调度') {
+            ops.push(<Divider type={'vertical'} />);
+            ops.push(
+              <a onClick={this.changeCaseState.bind(this, caseInfo, 20)} title="取消工单">
+                取消
+              </a>
+            );
+            ops.push(<Divider type={'vertical'} />);
+            ops.push(
+              <a onClick={this.changeCaseState.bind(this, caseInfo, 30)} title="分配给工程师">
+                分配
+              </a>
+            );
+          }
+          break;
+        case 20:
+          break;
+        case 30:
+          if (role === '驻场工程师') {
+            ops.push(<Divider type={'vertical'} />);
+            ops.push(
+              <a onClick={this.changeCaseState.bind(this, caseInfo, 40)} title="完成维修">
+                完成
+              </a>
+            );
+          }
+          break;
+        case 40:
+          if (role === '主管') {
+            ops.push(<Divider type={'vertical'} />);
+            ops.push(
+              <a onClick={this.changeCaseState.bind(this, caseInfo, 50)} title="关闭">
+                关闭
+              </a>
+            );
+          }
+          break;
+        case 50:
+          break;
+      }
+    }
+
+    return ops;
+  }
+
   render() {
-    const { inspectionCase, loading } = this.props;
-    const { selectedRows, modalVisible } = this.state;
+    const { meterCase, loading, user, dispatch } = this.props;
+    const { selectedRows, operation } = this.state;
+    const roleName = user.currentUser.roleName;
     let list = [];
-    inspectionCase.list.forEach(id => {
-      list.push(inspectionCase.byIds[id]);
+    meterCase.list.forEach(id => {
+      list.push(meterCase.byIds[id]);
     });
     let data = {
       list,
-      pagination: inspectionCase.pagination,
+      pagination: meterCase.pagination,
     };
 
     const columns = [
@@ -400,116 +364,65 @@ export default class MeterCaseList extends PureComponent {
         dataIndex: 'caseId',
       },
       {
-        title: '设备名称',
-        dataIndex: 'deviceName',
+        title: '设备ID',
+        dataIndex: 'deviceId',
+      },
+      {
+        title: '计量描述',
+        dataIndex: 'caseRemark',
       },
       // {
-      //   title: '工单状态',
-      //   dataIndex: 'caseState',
-      //   filters: [
-      //     {
-      //       text: statusMap['10'],
-      //       value: 10,
-      //     },
-      //     {
-      //       text: statusMap['20'],
-      //       value: 20,
-      //     },
-      //     {
-      //       text: statusMap['30'],
-      //       value: 30,
-      //     },
-      //     {
-      //       text: statusMap['50'],
-      //       value: 50,
-      //     },
-      //   ],
-      //   onFilter: (value, record) => record.caseState == value,
-      //   render(val) {
-      //     return <Badge status={val} text={statusMap[val]}/>;
-      //   },
+      //   title: '所属医院',
+      //   dataIndex: 'hospital',
       // },
       {
-        title: '巡检人员',
+        title: '计量处理人',
         dataIndex: 'assigneeUserName',
       },
       {
-        title: '巡检类型',
-        dataIndex: 'inspectionType',
-        filters: [
-          {
-            text: '巡检',
-            value: 1,
-          },
-          {
-            text: '强检',
-            value: 2,
-          },
-        ],
-        render: val => <span>{val === 2 ? '强检' : '巡检'}</span>,
+        title: '状态',
+        dataIndex: 'caseState',
+        render: val => this.getCaseStateName.bind(this)(val, meterCase),
       },
       {
-        title: '巡检描述',
-        dataIndex: 'inspectionRemark',
-        render: val => (
-          <span
-            style={{ width: '100%', display: 'inline-block', textOverflow: 'hidden' }}
-            title={val}
-          >
-            {val}
-          </span>
-        ),
-      },
-
-      {
-        title: '巡检时间',
-        dataIndex: 'inspectionTime',
-        sorter: true,
+        title: '计量时间',
+        dataIndex: 'createTime',
+        // sorter: true,
         render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
-      } /*,
+      },
       {
         title: '操作',
-        render: val => (
-          <Fragment>
-            <Link to={'/install-case/case-edit/' + val.caseId}>详情</Link>
-            &nbsp;
-            <a onClick={this.closeCase.bind(this, val)}>关闭</a>
-          </Fragment>
-        ),
-      },*/,
+        render: val => <Fragment>{this.getOperation.bind(this)(val, roleName)}</Fragment>,
+      },
     ];
 
-    const menu = (
-      <Menu onClick={this.handleMenuClick} selectedKeys={[]}>
-        <Menu.Item key="remove">删除</Menu.Item>
-      </Menu>
-    );
-
-    const parentMethods = {
-      handleAdd: this.handleAdd,
-      handleModalVisible: this.handleModalVisible,
+    const opMethods = {
+      handleModalVisible: flag => {
+        this.setState({
+          operation: {
+            ...this.state.operation,
+            modalVisible: !!flag,
+          },
+        });
+      },
     };
 
     return (
-      <PageHeaderLayout title="">
+      <PageHeaderLayout className={'MeterCaseList'} title="">
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              {/*<Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
-                新建
-              </Button>*/}
-              {false &&
-                selectedRows.length > 0 && (
-                  <span>
-                    <Button>批量操作</Button>
-                    <Dropdown overlay={menu}>
-                      <Button>
-                        更多操作 <Icon type="down" />
-                      </Button>
-                    </Dropdown>
-                  </span>
-                )}
+              {selectedRows.length > 0 && (
+                <span>
+                  <Button>批量操作</Button>
+                  {/* <Dropdown overlay={menu}>
+                    <Button>
+                      更多操作 <Icon type="down" />
+                    </Button>
+                  </Dropdown>*/}
+                </span>
+              )}
             </div>
             <StandardTable
               selectedRows={selectedRows}
@@ -522,7 +435,14 @@ export default class MeterCaseList extends PureComponent {
             />
           </div>
         </Card>
-        <CreateForm {...parentMethods} modalVisible={modalVisible} />
+        <OperationForm
+          {...opMethods}
+          dispatch={dispatch}
+          user={user}
+          currentCase={operation.currentCase}
+          toState={operation.toState}
+          modalVisible={operation.modalVisible}
+        />
       </PageHeaderLayout>
     );
   }

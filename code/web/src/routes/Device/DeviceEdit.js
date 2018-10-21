@@ -21,6 +21,7 @@ import {
   Modal,
   message,
   Timeline,
+  Checkbox,
 } from 'antd';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DepartmentSelect from '../../components/biz/DepartmentSelect';
@@ -191,6 +192,7 @@ export default class DeviceEdit extends Component {
         }
       }
       setFieldsValue(data);
+      // setFields(data);
     }.bind(this);
 
     if (deviceId) {
@@ -267,6 +269,17 @@ export default class DeviceEdit extends Component {
       </div>
     );
 
+    function getCheckFieldNode(fieldName, title, isRequired, meta) {
+      return (
+        <FormItem {...formItemLayout} label={(isRequired ? '*' : '') + title}>
+          {getFieldDecorator(fieldName, {
+            initialValue: getFieldValue(fieldName) || meta.initialValue,
+            rules: [],
+          })(<Checkbox {...meta} />)}
+        </FormItem>
+      );
+    }
+
     function getDateFieldNode(fieldName, title, isRequired) {
       const dateFormat = 'YYYY/MM/DD';
 
@@ -290,7 +303,7 @@ export default class DeviceEdit extends Component {
         return (
           <FormItem {...formItemLayout} label={(isRequired ? '*' : '') + title}>
             {getFieldDecorator(fieldName, {
-              initialValue: getFieldValue(fieldName),
+              initialValue: getFieldValue(fieldName) || meta.initialValue,
               rules: [
                 {
                   required: isRequired,
@@ -463,6 +476,38 @@ export default class DeviceEdit extends Component {
             </FormItem>
 
             {getInputFieldNode('deviceId', '设备编号', false, { hidden: true })}
+
+            {getCheckFieldNode('needInspection', '是否需要巡检', false, { hidden: true })}
+            {getFieldValue('needInspection') &&
+              getInputFieldNode('inspectionInterval', '巡检间隔', false, {
+                isNumber: true,
+                min: 1,
+                initialValue: 30,
+                formatter: value => `${value}天`,
+                parser: value => value.replace('天', ''),
+                className: ['input-number-right'],
+              })}
+
+            {getCheckFieldNode('needMaintain', '是否需要保养', false, { hidden: true })}
+            {getFieldValue('needMaintain') &&
+              getInputFieldNode('maintenanceInterval', '保养间隔', false, {
+                isNumber: true,
+                min: 1,
+                precision: 0,
+                initialValue: 30,
+                formatter: value => `${value}天`,
+                parser: value => value.replace('天', ''),
+              })}
+
+            {getCheckFieldNode('needMetering', '是否需要计量', false, { hidden: true })}
+            {getFieldValue('needMetering') &&
+              getInputFieldNode('meteringInterval', '计量间隔', false, {
+                isNumber: true,
+                min: 1,
+                initialValue: 30,
+                formatter: value => `${value}天`,
+                parser: value => value.replace('天', ''),
+              })}
 
             {getInputFieldNode('picture1', '', false, { hidden: true })}
             {getInputFieldNode('picture2', '', false, { hidden: true })}

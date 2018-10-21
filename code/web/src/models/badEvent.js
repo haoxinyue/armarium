@@ -11,7 +11,10 @@ export default {
 
   state: {
     list: [],
-    pagination: {},
+    pagination: {
+      current: 1,
+      pageSize: 10,
+    },
     byIds: {},
     currentDetail: null,
   },
@@ -21,7 +24,14 @@ export default {
       const response = yield call(queryBadEventList, payload);
       yield put({
         type: 'save',
-        payload: response,
+        payload: {
+          ...response,
+          pagination: {
+            current: payload.pageIndex == null ? 1 : payload.pageIndex + 1,
+            pageSize: payload.pageSize || 10,
+            total: response.recordCount || 0,
+          },
+        },
       });
     },
     *fetchDetail({ payload, callback }, { call, put }) {
@@ -96,9 +106,7 @@ export default {
       return {
         ...state,
         list,
-        pagination: {
-          total: action.payload.recordCount,
-        },
+        pagination: action.payload.pagination,
         byIds,
       };
     },

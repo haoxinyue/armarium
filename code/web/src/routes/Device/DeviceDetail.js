@@ -7,6 +7,8 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../Profile/BasicProfile.less';
 import styles_1 from './DeviceDetail.less';
 
+import { UsageStateNames, DeviceStateNames } from '../../utils/constants';
+
 import QRCode from 'qrcode.react';
 import moment from 'moment';
 
@@ -188,10 +190,10 @@ export default class DeviceDetail extends Component {
               <Divider style={{ marginBottom: 32 }} />
               <DescriptionList size="large" title="状态" style={{ marginBottom: 32 }}>
                 <Description term="设备状态">
-                  {currentDetail.deviceState == '1' ? '正常' : '故障'}
+                  {DeviceStateNames[currentDetail.deviceState]}
                 </Description>
                 <Description term="使用状态">
-                  {currentDetail.usageState == '1' ? '正常' : '故障'}
+                  {UsageStateNames[currentDetail.usageState]}
                 </Description>
               </DescriptionList>
               <Divider style={{ marginBottom: 32 }} />
@@ -266,7 +268,6 @@ export default class DeviceDetail extends Component {
                 <Description term="设备产地">{currentDetail.producingPlace}</Description>
                 <Description term="设备附件">{currentDetail.accessory}</Description>
               </DescriptionList>
-
             </Card>
           </TabPane>
           <TabPane tab="历史事件" key="2">

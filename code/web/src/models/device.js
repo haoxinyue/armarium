@@ -12,21 +12,35 @@ export default {
 
   state: {
     list: [],
-    pagination: {},
+    pagination: {
+      current: 1,
+      pageSize: 10,
+    },
     byIds: {},
     selectData: {
       list: [],
       byIds: {},
-      pagination: {},
+      pagination: {
+        current: 1,
+        pageSize: 10,
+      },
     },
   },
 
   effects: {
     *fetch({ payload }, { call, put }) {
       const response = yield call(queryDevices, payload);
+
       yield put({
         type: 'save',
-        payload: response,
+        payload: {
+          ...response,
+          pagination: {
+            current: payload.pageIndex == null ? 1 : payload.pageIndex + 1,
+            pageSize: payload.pageSize || 10,
+            total: response.recordCount || 0,
+          },
+        },
       });
     },
     *fetchDetail({ payload, callback }, { call, put }) {
@@ -76,8 +90,14 @@ export default {
           success,
           message: response.message,
         });
+      const result = {
+        deviceId: payload.deviceId,
+        success,
+        message: response.message,
+      };
+      return result;
     },
-    *remove({ payload, callback }, { call, put }) {
+    *remove({ payload }, { call, put }) {
       const response = yield call(removeDevice, {
         deviceId: Number(payload.deviceId),
       });
@@ -90,12 +110,12 @@ export default {
           },
         });
       }
-      if (callback)
-        callback({
-          deviceId: payload.deviceId,
-          success,
-          message: response.message,
-        });
+      const result = {
+        deviceId: payload.deviceId,
+        success,
+        message: response.message,
+      };
+      return result;
     },
     *updateDetail({ payload, callback }, { call, put }) {
       const response = yield call(updateDevice, payload);
@@ -106,19 +126,26 @@ export default {
           payload: response.data,
         });
       }
-      if (callback)
-        callback({
-          deviceId: payload.deviceId,
-          success,
-          message: response.message,
-        });
+      const result = {
+        deviceId: payload.deviceId,
+        success,
+        message: response.message,
+      };
+      return result;
     },
 
     *fetchSelectList({ payload }, { call, put }) {
       const response = yield call(queryDevices, payload);
       yield put({
         type: 'saveSelectData',
-        payload: response,
+        payload: {
+          ...response,
+          pagination: {
+            current: payload.pageIndex == null ? 1 : payload.pageIndex + 1,
+            pageSize: payload.pageSize || 10,
+            total: response.recordCount || 0,
+          },
+        },
       });
     },
   },
@@ -142,9 +169,7 @@ export default {
         ...state,
         selectData: {
           list,
-          pagination: {
-            total: action.payload.recordCount,
-          },
+          pagination: action.payload.pagination,
           byIds,
         },
       };
@@ -167,9 +192,7 @@ export default {
       return {
         ...state,
         list,
-        pagination: {
-          total: action.payload.recordCount,
-        },
+        pagination: action.payload.pagination,
         byIds,
       };
     },

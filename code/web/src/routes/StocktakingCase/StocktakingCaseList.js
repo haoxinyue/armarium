@@ -155,7 +155,7 @@ export default class StocktakingCaseList extends PureComponent {
     dispatch({
       type: 'stocktakingCase/fetch',
       payload: {
-        assigneeUserId: 10003,
+        // assigneeUserId: 10003,
         pageIndex: 0,
         pageSize: 10,
       },
@@ -365,17 +365,17 @@ export default class StocktakingCaseList extends PureComponent {
         dataIndex: 'deptName',
       },
       {
-        title: '计划时间',
-        dataIndex: 'planTime',
-        sorter: true,
-        render: val => <span>{moment(val).format('YYYY-MM-DD')}</span>,
+        title: '计划开始时间',
+        dataIndex: 'planBeginTime',
+        // sorter: true,
+        render: val => <span>{val ? moment(val).format('YYYY-MM-DD') : '--'}</span>,
       },
 
       {
-        title: '实际时间',
+        title: '实际盘点时间',
         dataIndex: 'actualTime',
-        sorter: true,
-        render: val => <span>{moment(val).format('YYYY-MM-DD')}</span>,
+        // sorter: true,
+        render: val => <span>{val ? moment(val).format('YYYY-MM-DD') : '--'}</span>,
       },
       {
         title: '工单状态',

@@ -1,7 +1,12 @@
-import { queryPmCaseDetail, queryPmCaseList, compeletePmCase } from '../services/pmCase';
+import {
+  queryMeterCaseDetail,
+  queryMeterCaseList,
+  completeMeterCase,
+  updAssignPersonMeterCase,
+} from '../services/meterCase';
 
 export default {
-  namespace: 'pmCase',
+  namespace: 'meterCase',
 
   state: {
     list: [],
@@ -12,14 +17,14 @@ export default {
 
   effects: {
     *fetch({ payload }, { call, put }) {
-      const response = yield call(queryPmCaseList, payload);
+      const response = yield call(queryMeterCaseList, payload);
       yield put({
         type: 'save',
         payload: response,
       });
     },
     *fetchDetail({ payload, callback }, { call, put }) {
-      const response = yield call(queryPmCaseDetail, {
+      const response = yield call(queryMeterCaseDetail, {
         caseId: Number(payload.caseId),
       });
 
@@ -35,8 +40,17 @@ export default {
       if (callback) callback(response.data);
     },
 
+    *changeState({ payload, callback }, { call, put }) {
+      const response = yield call(updAssignPersonMeterCase, payload) || {};
+      yield put({
+        type: 'saveCurrent',
+        payload: response.data,
+      });
+      if (callback) callback(response.code === 0);
+    },
+
     *complete({ payload, callback }, { call, put }) {
-      const response = yield call(compeletePmCase, payload) || {};
+      const response = yield call(completeMeterCase, payload) || {};
       yield put({
         type: 'saveCurrent',
         payload: response.data,
