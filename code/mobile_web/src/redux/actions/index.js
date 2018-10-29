@@ -165,9 +165,35 @@ export const completeInspectionCaseDetail = createAction(INSPECTION_CASE.SAVE,
     // })).then((res) => (res.data))
 )
 /* ******************************************************** */
+
+export const fetchMeterCaseList = createAction(STOCKTAKING_CASE.UPDATE_LIST,
+    (params) =>
+        doPostQuery(api.meterCaseListGet, {...params})
+)
+
+export const getMeterCaseDetail = createAction(STOCKTAKING_CASE.SAVE,
+    (params) =>
+        doPostQuery(api.meterCaseGet, {...params})
+)
+
+export const completeMeterCase = createAction(STOCKTAKING_CASE.SAVE,
+    (params) =>
+        doPostQuery(api.meterCaseComplete, {...params})
+)
+
+
+/* ******************************************************** */
 export const fetchStocktakingCaseList = createAction(STOCKTAKING_CASE.UPDATE_LIST,
     (params) =>
         doPostQuery(api.stocktakingCaseListGet, {...params})
+    // axios.http.post(api.inspectionCaseListGet, getFormData({
+    //     ...params
+    // })).then((res) => (res.data))
+)
+
+export const fetchStocktakingCaseDEviceList = createAction(STOCKTAKING_CASE.UPDATE_DEVICE_LIST,
+    (params) =>
+        doPostQuery(api.stocktakingCaseDeviceListGet, {...params})
     // axios.http.post(api.inspectionCaseListGet, getFormData({
     //     ...params
     // })).then((res) => (res.data))
@@ -178,7 +204,7 @@ export const getStocktakingCaseDetail = createAction(STOCKTAKING_CASE.SAVE,
         doPostQuery(api.stocktakingCaseGet, {...params})
 )
 
-export const completeStocktakingCaseDetail = createAction(STOCKTAKING_CASE.SAVE,
+export const completeStocktakingCase = createAction(STOCKTAKING_CASE.SAVE,
     (params) =>
         doPostQuery(api.stocktakingCaseComplete, {...params})
 )
@@ -218,7 +244,7 @@ function getUserNoticeFetch(userId) {
         if (userId == null) {
             reject({
                 code: -1,
-                message: "userId not be null"
+                message: "userId can not be null"
             })
             return
         }

@@ -25,7 +25,7 @@ class DepartmentDeviceListItem extends Component {
 
     // 查看详情
     goDetail = (list) => {
-        // this.props.history.push(`/deviceDetail/${list.deviceId}`)
+
     };
 
     loadMoreDevice(itemData) {
@@ -45,12 +45,12 @@ class DepartmentDeviceListItem extends Component {
                 let touch = e.touches[0]
                 addRippleEffect(e.currentTarget, touch.pageX, touch.pageY)
             }}>
-            <Flex.Item>{itemData.deptName}</Flex.Item>
+            <Flex.Item>{itemData.caseSubject||'无主题'}</Flex.Item>
             <Flex.Item>{itemData.status}</Flex.Item>
         </Flex>;
         return (
             <li className="dept-device-list-item">
-                <Accordion defaultActiveKey="0" className="my-accordion" onChange={this.onChange}>
+                <Accordion  className="my-accordion" onChange={this.onChange}>
                     <Accordion.Panel header={header}>
                         <List className="my-list">
 
@@ -83,10 +83,10 @@ class DepartmentDeviceListItem extends Component {
                                     </WingBlank>
                                 </List.Item>)
                             }
-                            <List.Item>ttttttt</List.Item>
-                            <List.Item>ttttttt</List.Item>
-                            <List.Item style={{textAlign:'center' }} ><Button
-                                onClick={this.loadMoreDevice.bind(this, itemData)}>{this.state.loading?"加载中...":"加载更多"}</Button></List.Item>
+
+                            {this.state.hasMore && <List.Item style={{textAlign:'center' }} ><Button
+                                onClick={this.loadMoreDevice.bind(this, itemData)}>{this.state.loading?"加载中...":"加载更多"}</Button></List.Item>}
+
                         </List>
                     </Accordion.Panel>
                 </Accordion>

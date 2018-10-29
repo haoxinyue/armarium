@@ -79,7 +79,7 @@ export default class PmCaseEdit extends Component {
             if (v.success) {
               message.success('保存成功');
               dispatch({
-                type: 'installCase/fetchDetail',
+                type: 'pmCase/fetchDetail',
                 payload: {
                   caseId: fData.caseId,
                 },
@@ -99,7 +99,7 @@ export default class PmCaseEdit extends Component {
     const { match: { params: { caseId: NextCaseId } } } = nextProps;
     if (NextCaseId && NextCaseId !== caseId) {
       dispatch({
-        type: 'installCase/fetchDetail',
+        type: 'pmCase/fetchDetail',
         payload: { caseId: NextCaseId },
       });
       return true;
@@ -131,7 +131,7 @@ export default class PmCaseEdit extends Component {
 
     if (caseId) {
       dispatch({
-        type: 'installCase/fetchDetail',
+        type: 'pmCase/fetchDetail',
         payload: {
           caseId,
         },

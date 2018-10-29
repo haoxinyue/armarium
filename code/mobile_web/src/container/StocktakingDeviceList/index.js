@@ -5,7 +5,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {
     changeHeaderRight,
-    fetchStocktakingCaseList,
+    fetchStocktakingCaseDEviceList,
 } from '../../redux/actions'
 import {PullToRefresh, ListView, SearchBar, Drawer, Tabs, Toast, WingBlank, Button} from 'antd-mobile'
 import RadioGroup from '../../components/RadioGroup'
@@ -14,13 +14,13 @@ import './listItem.less'
 import {addRippleEffect, runScanner} from "../../utils";
 
 
-class MeterCaseItem extends Component {
+class StocktakingDeviceItem extends Component {
 
 
 
     // 查看详情
     goDetail = (list) => {
-        this.props.history.push(`/stocktakingCaseDevice/${list.caseId}`)
+        // this.props.history.push(`/deviceDetail/${list.deviceId}`)
     }
 
     render() {
@@ -159,7 +159,7 @@ class StocktakingCaseList extends Component {
     }
 
     queryPageData(clear, tabIndex) {
-        const {dispatch, userInfo} = this.props
+        const {dispatch, userInfo,match:{params}} = this.props
         const {searchValue} = this.state
         const nextPage = (clear ? 0 : (this.state.pageIndex + 1))
         this.setState({refreshing: !!clear, pageIndex: nextPage, isLoading: true});
@@ -167,14 +167,15 @@ class StocktakingCaseList extends Component {
         let queryData = {
             pageIndex: nextPage,
             pageSize:this.state.pageSize,
-            assigneeUserId: userInfo.userId
+            caseId:Number(params.caseId)
+            // assigneeUserId: userInfo.userId
         };
         if (searchValue) {
             queryData.deviceName = searchValue
         }
 
 
-        dispatch(fetchStocktakingCaseList(queryData)).then((res) => {
+        dispatch(fetchStocktakingCaseDEviceList(queryData)).then((res) => {
 
             if (res.error) {
                 if (clear) {
@@ -288,9 +289,9 @@ class StocktakingCaseList extends Component {
 
                 <section className="dataList-wrap">
 
-                    {/*<SearchBar className="search-box" placeholder="请输入设备名称" value={this.state.searchValue}
+                    <SearchBar className="search-box" placeholder="请输入设备名称" value={this.state.searchValue}
                                onChange={this.handleChange}
-                               onSubmit={this.handleSubmit}/>*/}
+                               onSubmit={this.handleSubmit}/>
                     <div className="dataList-container2" id="J_Scroll">
                         <div className="scroll-hook">
                             <ListView
@@ -300,7 +301,7 @@ class StocktakingCaseList extends Component {
                                 dataSource={this.state.dataSource}
 
                                 renderRow={(rowData, sectionID, rowID) => (
-                                    <MeterCaseItem key={sectionID + '_' + rowID}
+                                    <StocktakingDeviceItem key={sectionID + '_' + rowID}
                                                               history={this.props.history}
                                                               onClick={this.props.onDeviceClick}
                                                               list={rowData}
@@ -321,7 +322,7 @@ class StocktakingCaseList extends Component {
                                     onRefresh={this.onRefresh}
                                 />}
                                 onEndReached={this.onEndReached}
-                                pageSize={10}
+                                pageSize={this.state.pageSize}
                             />
 
                         </div>

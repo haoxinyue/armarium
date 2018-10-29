@@ -6,7 +6,9 @@
 
 const cordovaHTTP = window.cordovaHTTP;
 
-const baseUrl = "http://47.100.198.255:8080/"
+
+
+const baseUrl = "http://47.100.198.255:8080/";
 
 function parseUrl(url) {
     if (url.startsWith("http")) {
@@ -57,7 +59,9 @@ const http = {
             window.cordovaHTTP.post(
                 parseUrl(url),
                 data,
-                Object.assign({}, config || {}),
+                Object.assign({
+                    'Content-Type':'application/json'
+                }, config || {}),
                 function (response) {
                     return interceptorHttpResponse(response, resolve, reject)
                 }, function (response) {

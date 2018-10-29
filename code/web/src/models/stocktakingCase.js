@@ -3,6 +3,7 @@ import {
   queryStocktakingCaseList,
   addStocktaking,
   compeleteStocktaking,
+  queryStocktakingDeviceList,
 } from '../services/stocktakingCase.js';
 
 export default {
@@ -28,9 +29,15 @@ export default {
         caseId: Number(payload.caseId),
       });
 
+      const response2 = yield call(queryStocktakingDeviceList, {
+        caseId: Number(payload.caseId),
+      });
+
       const data = {
         ...response.data,
+        devices: response2.data || [],
       };
+
       yield put({
         type: 'saveCurrent',
         payload: {

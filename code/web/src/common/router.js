@@ -147,6 +147,11 @@ export const getRouterData = app => {
         import(/* webpackChunkName: "StocktakingCaseList" */ '../routes/StocktakingCase/StocktakingCaseList')
       ),
     },
+    '/asset/asset-case/:caseId': {
+      component: dynamicWrapper(app, ['department', 'stocktakingCase', 'engineer'], () =>
+        import(/* webpackChunkName: "StocktakingCaseList" */ '../routes/StocktakingCase/StocktakingCaseDetail')
+      ),
+    },
     '/asset/asset-doc': {
       component: dynamicWrapper(app, ['device'], () =>
         import(/* webpackChunkName: "DeviceList" */ '../routes/Device/DeviceList')

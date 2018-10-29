@@ -17,7 +17,7 @@ import {
     Switch,
     Progress
 } from 'antd-mobile';
-import {changeHeaderRight, completePmCaseDetail, getDeviceDetail, getPmCaseDetail} from '../../redux/actions'
+import {changeHeaderRight, completeStocktakingCase, getDeviceDetail} from '../../redux/actions'
 
 import Upload from 'rc-upload';
 import moment from 'moment'
@@ -31,7 +31,7 @@ const fields = [
     {key: "remark", name: "备注", desc: "请输入备注", required: true, type: "textarea"},
 ];
 
-class PmCaseEdit extends Component {
+class StocktakingCaseEdit extends Component {
 
     state = {
         hasError: {},
@@ -70,11 +70,9 @@ class PmCaseEdit extends Component {
 
         formValue[field.key] = value
 
-
         this.setState({
             formValue
         });
-
 
         if (field.key === "deviceId" && value) {
             clearTimeout(this._lastDeviceUpdate);
@@ -92,11 +90,59 @@ class PmCaseEdit extends Component {
             ...this.state.formValue,
             creater: userInfo.userId,
             modifier: userInfo.userId,
-            actualUserId: userInfo.userId,
-            actualTime: moment().format("YYYY-MM-DD HH:mm:ss"),
+            operationUserId: userInfo.userId,
+            operationTime: moment().format("YYYY-MM-DD HH:mm:ss"),
         }
 
         return formData
+    }
+
+    save() {
+        const {dispatch, history} = this.props;
+
+        for (let i = 0; i < fields.length; i++) {
+            let field = fields[i];
+            if (field.required && !this.state.formValue[field.key]) {
+                Toast.info(field.desc, 1);
+                return
+            }
+        }
+
+        dispatch(completeStocktakingCase(this.getSubmitFormValue()))
+            .then(res => {
+                if (!res.error) {
+                    Toast.hide();
+                    Toast.success("保存成功", 0.5);
+                    history.replace(`/stocktakingCase`);
+                } else {
+                    Toast.hide();
+                    Toast.fail("保存失败，请稍后再试", 0.5);
+                }
+            })
+            .catch(err => {
+                Toast.hide();
+                Toast.fail("保存失败，请稍后再试:" + JSON.stringify(err), 0.5);
+            })
+
+    }
+
+
+    componentWillReceiveProps(nextProps, nextState) {
+        const { match: {params: {deviceId}}} = this.props;
+
+            this.setState({
+                formValue:{
+                    ...this.state.formValue,
+                    deviceId
+                }
+            })
+
+
+        return true
+    }
+
+    componentWillUpdate() {
+
     }
 
     updateDeviceById(deviceId) {
@@ -129,51 +175,6 @@ class PmCaseEdit extends Component {
         })
     }
 
-    save() {
-        const {dispatch, history} = this.props;
-
-        for (let i = 0; i < fields.length; i++) {
-            let field = fields[i];
-            if (field.required && !this.state.formValue[field.key]) {
-                Toast.info(field.desc, 1);
-                return
-            }
-        }
-
-        dispatch(completePmCaseDetail(this.getSubmitFormValue()))
-            .then(res => {
-                if (!res.error) {
-                    Toast.hide();
-                    Toast.success("保存成功", 0.5);
-                    history.push(`/pmCaseList`);
-                } else {
-                    Toast.hide();
-                    Toast.fail("保存失败，请稍后再试", 0.5);
-                }
-            })
-            .catch(err => {
-                Toast.hide();
-                Toast.fail("保存失败，请稍后再试:" + JSON.stringify(err), 0.5);
-            })
-
-    }
-
-
-    componentWillReceiveProps(nextProps, nextState) {
-        const { match: {params: {deviceId}}} = this.props;
-            this.setState({
-                formValue:{
-                    ...this.state.formValue,
-                    deviceId
-                }
-            })
-        return true
-    }
-
-    componentWillUpdate() {
-
-    }
-
     componentDidMount() {
 
         this.updateDeviceById = this.updateDeviceById.bind(this);
@@ -183,12 +184,6 @@ class PmCaseEdit extends Component {
             <Button key="0" size="small" type="primary" onClick={this.save.bind(this)}>保存</Button>
         ]))
 
-        if (caseId) {
-            console.log("mount----")
-            dispatch(getPmCaseDetail({
-                caseId: Number(caseId)
-            }))
-        }
 
         if (deviceId) {
             this.setState({
@@ -201,6 +196,7 @@ class PmCaseEdit extends Component {
             })
 
             this.updateDeviceById(deviceId)
+
         }
     }
 
@@ -233,7 +229,7 @@ class PmCaseEdit extends Component {
                     title={field.name}
                     cascade={false}
                     extra={field.desc}
-
+                    editable={field.editable}
                     value={value}
                     onChange={this.onChange.bind(this, field)}
                     onOk={this.onChange.bind(this, field)}
@@ -247,6 +243,7 @@ class PmCaseEdit extends Component {
                 return <TextareaItem
                     className="field-item"
                     type={field.text}
+                    editable={field.editable}
                     // labelNumber={labelLength}
                     placeholder={field.desc}
                     rows={5}
@@ -262,6 +259,7 @@ class PmCaseEdit extends Component {
             return <InputItem
                 className="field-item"
                 type={field.text}
+                editable={field.editable}
                 // labelNumber={labelLength}
                 placeholder={field.desc}
                 error={this.state.hasError[field.key]}
@@ -318,55 +316,6 @@ class PmCaseEdit extends Component {
                         </WingBlank>
 
                     </List>
-                    <List className="field-list" renderHeader={() => '附件上传'}>
-                        <div className="block-content">
-                            <WingBlank size="sm" style={{paddingTop: 30}}>
-
-                                <div className="am-list-item am-input-item am-list-item-middle field-item">
-                                    <div className="am-list-line">
-                                        <div className="am-input-label am-input-label-5">附件</div>
-                                        <div className="am-input-control">
-                                            {this.state.formValue.pmFile && <span className="am-input-extra">
-                                            <a href={this.state.formValue.pmFile}>{this.state.formValue.pmFileName || '点击下载'}</a></span>
-                                            }
-                                            <Upload
-                                                {...uploaderProps}
-                                                className={"am-flexbox am-flexbox-align-center"}
-                                                component="div"
-                                                style={{
-                                                    display: this.state.formValue.pmFile ? 'none' : 'inline-block',
-                                                }}
-                                            >
-                                                <Button style={{marginLeft: 40,color:'white'}} type="primary" size="small"  inline>{this.state.fileProgress==-2?'上传失败，重新上传':'上传'}</Button>
-                                            </Upload>
-                                        </div>
-
-
-                                    </div>
-                                </div>
-
-                                {this.state.fileProgress >= 0 &&
-                                <div className="am-list-item am-input-item am-list-item-middle field-item">
-                                    <div className="am-list-line">
-                                        <div className="am-input-label am-input-label-5">上传中({this.state.fileProgress}%)</div>
-                                        <div className="am-input-control"><Progress percent={this.state.fileProgress} position="normal" unfilled={false} appearTransition></Progress>
-                                        </div>
-                                    </div>
-                                </div>
-                                }
-
-
-
-
-                                {getFieldEle.bind(this)({
-                                    key: "accessoryInfo",
-                                    name: "保养文件描述",
-                                    desc: "请输入保养文件描述",
-                                    type: "textarea"
-                                })}
-                            </WingBlank>
-                        </div>
-                    </List>
                 </div>
 
 
@@ -386,4 +335,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(PmCaseEdit)
+export default connect(mapStateToProps)(StocktakingCaseEdit)

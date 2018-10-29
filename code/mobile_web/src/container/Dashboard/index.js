@@ -193,7 +193,7 @@ class Dashboard extends Component {
                     {
                         image: require("../../assets/img/hospital/if_8_hospital_2774754.png"),
                         desc: "设备计量",
-                        link: "/devices",
+                        link: "/meterCaseList",
 
                     },
                     {
@@ -218,7 +218,7 @@ class Dashboard extends Component {
                     {
                         image: require("../../assets/img/hospital/if_13_hospital_2774744.png"),
                         desc: "添加资产",
-                        link: "/deviceAdd"
+                        link: "/devices"
                     },
                     {
                         image: require("../../assets/img/hospital/if_8_hospital_2774754.png"),

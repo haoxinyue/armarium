@@ -3,8 +3,6 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
 
-import { uploadUrl } from '../../services/api';
-
 import {
   Form,
   Input,
@@ -63,7 +61,8 @@ export default class InstallCaseEdit extends Component {
       if (!err) {
         let fData = {
           ...values,
-          expectedTime: moment(values.expectedTime).format('YYYY/MM/DD'),
+          expectedTime: values.expectedTime && moment(values.expectedTime).format('YYYY/MM/DD'),
+          setupTime: values.setupTime && moment(values.setupTime).format('YYYY/MM/DD'),
           creater: currentUser.userId,
           modifier: currentUser.userId,
         };
@@ -122,7 +121,7 @@ export default class InstallCaseEdit extends Component {
           data[k] = d[k];
         }
 
-        if (k === 'expectedTime') {
+        if (k === 'expectedTime' || k === 'setupTime') {
           data[k] = moment(data[k]);
         }
       }
@@ -178,7 +177,7 @@ export default class InstallCaseEdit extends Component {
     }
 
     function getDateFieldNode(fieldName, title, isRequired, options = {}) {
-      const dateFormat = options.format || 'YYYY/MM/DD HH:mm:ss';
+      const dateFormat = options.format || 'YYYY/MM/DD';
 
       return (
         <FormItem {...formItemLayout} label={(isRequired ? '*' : '') + title}>

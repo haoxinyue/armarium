@@ -30,7 +30,14 @@ export default {
 
     stocktakingCaseComplete: 'stock_tk_case/updStockTKCase',
     stocktakingCaseGet: 'stock_tk_case/getStockTKInfo',
-    stocktakingCaseListGet: 'stock_tk_case/getStockTKList',
+    stocktakingCaseListGet: 'stock_tk_case/getStockTKCaseList',
+    stocktakingCaseDeviceListGet: 'stock_tk_case/getStockTKDeviceList',
+
+
+
+    meterCaseComplete: 'meter_case/completeMeterCase',
+    meterCaseGet: 'meter_case/getStockTKInfo',
+    meterCaseListGet: 'meter_case/getMeterCaseInfos',
 
     depTreeGet: 'dept/getDeptTree',
     depGet: 'dept/getDept',

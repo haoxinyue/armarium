@@ -11,8 +11,6 @@ import {addRippleEffect} from '../../utils'
 
 class DeviceListItem extends Component {
 
-
-
     // 查看详情
     goDetail = (list) => {
         this.props.history.push(`/deviceDetail/${list.deviceId}`)

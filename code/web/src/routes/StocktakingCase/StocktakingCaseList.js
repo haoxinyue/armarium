@@ -197,7 +197,7 @@ export default class StocktakingCaseList extends PureComponent {
     dispatch({
       type: 'stocktakingCase/fetch',
       payload: {
-        pageIndex: this.state.pagination.current + 1,
+        pageIndex: this.state.pagination.current,
         pageSize: this.state.pagination.pageSize,
       },
     });
@@ -240,7 +240,7 @@ export default class StocktakingCaseList extends PureComponent {
       });
 
       let payload = {
-        pageIndex: this.state.pagination.current + 1,
+        pageIndex: this.state.pagination.current,
         pageSize: this.state.pagination.pageSize,
       };
 
@@ -267,7 +267,7 @@ export default class StocktakingCaseList extends PureComponent {
     const { dispatch, form } = this.props;
     form.resetFields();
     let payload = {
-      pageIndex: this.state.pagination.current + 1,
+      pageIndex: this.state.pagination.current,
       pageSize: this.state.pagination.pageSize,
     };
     dispatch({
@@ -392,7 +392,7 @@ export default class StocktakingCaseList extends PureComponent {
         title: '操作',
         render: val => (
           <Fragment>
-            <Link to={'/stocktaking-case/case-detail/' + val.caseId}>详情</Link>
+            <Link to={'/asset/asset-case/' + val.caseId}>详情</Link>
           </Fragment>
         ),
       },

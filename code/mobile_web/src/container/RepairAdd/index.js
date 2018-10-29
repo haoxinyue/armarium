@@ -114,7 +114,7 @@ class RepairAdd extends Component {
                     }
                     Toast.hide();
                     Toast.success("保修成功", 1);
-                    history.push('/repairs');
+                    history.replace('/repairs');
                 })
                 .catch(err => {
                     Toast.hide();

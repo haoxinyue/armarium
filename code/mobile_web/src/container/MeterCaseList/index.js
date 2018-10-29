@@ -5,7 +5,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {
     changeHeaderRight,
-    fetchStocktakingCaseList,
+    fetchMeterCaseList,
 } from '../../redux/actions'
 import {PullToRefresh, ListView, SearchBar, Drawer, Tabs, Toast, WingBlank, Button} from 'antd-mobile'
 import RadioGroup from '../../components/RadioGroup'
@@ -16,11 +16,9 @@ import {addRippleEffect, runScanner} from "../../utils";
 
 class MeterCaseItem extends Component {
 
-
-
     // 查看详情
     goDetail = (list) => {
-        this.props.history.push(`/stocktakingCaseDevice/${list.caseId}`)
+        this.props.history.push(`/meterCaseEdit/${list.deviceId}`)
     }
 
     render() {
@@ -35,27 +33,23 @@ class MeterCaseItem extends Component {
                 }}
                 onClick={onClick.bind(this, itemData)}>
                 <WingBlank>
-                    <div className="item-name"> <span className="icon-device"></span> <span style={{verticalAlign:"middle"}}>{itemData.caseSubject||'无主题'}</span></div>
+                    <div className="item-name"> <span className="icon-device"></span> <span style={{verticalAlign:"middle"}}>{itemData.deviceName||''}</span></div>
 
                     <div className="item-desc">
 
                         <div className="item-desc-left">
 
                             <div>
-                                <span className="key">计划盘点人</span>：
+                                <span className="key">委派人</span>：
                                 <span className="value">{itemData.assigneeUserName}</span>
                             </div>
                             <div>
-                                <span className="key">盘点科室</span>：
-                                <span className="value">{itemData.depts}</span>
+                                <span className="key">计量数据</span>：
+                                <span className="value warning">{itemData.meteringData}</span>
                             </div>
                             <div>
-                                <span className="key">计划盘点时间</span>：
-                                <span className="value warning">{itemData.planBeginTime}</span>
-                            </div>
-                            <div>
-                                <span className="key">盘点状态</span>：
-                                <span className="value warning">{itemData.actualTime?`已盘点 (${itemData.actualTime})`:'待盘点'}</span>
+                                <span className="key">计量状态</span>：
+                                <span className="value warning">{itemData.meteringTime?`已关闭 (${itemData.meteringTime})`:'待计量'}</span>
                             </div>
                         </div>
 
@@ -68,7 +62,7 @@ class MeterCaseItem extends Component {
 }
 
 
-class StocktakingCaseList extends Component {
+class MeterCaseList extends Component {
     constructor(props) {
         super(props)
 
@@ -103,13 +97,13 @@ class StocktakingCaseList extends Component {
     createNewCase(deviceId) {
         // this.props.history.push({pathname: "/inspectionCaseEdit/123"})
         if (deviceId) {
-            this.props.history.push({pathname: `/stocktakingCaseEdit/${deviceId}`})
+            this.props.history.push({pathname: `/meterCaseEdit/${deviceId}`})
         } else {
             runScanner().then((result) => {
                     let deviceId = /\[(\S+)\]/.exec(result.text)
                     deviceId = deviceId && deviceId[1]
                     if (deviceId) {
-                        this.props.history.push({pathname: `/stocktakingCaseEdit/${deviceId}`})
+                        this.props.history.push({pathname: `/meterCaseEdit/${deviceId}`})
                     } else {
                         // alert('无效的二维码')
                     }
@@ -126,7 +120,7 @@ class StocktakingCaseList extends Component {
     componentDidMount() {
         const {dispatch} = this.props;
         dispatch(changeHeaderRight([
-            <Button key="0" size="small" type="primary" onClick={this.createNewCase.bind(this, null)}>开始巡检</Button>
+            <Button key="0" size="small" type="primary" onClick={this.createNewCase.bind(this, null)}>开始计量</Button>
         ]))
 
 
@@ -167,14 +161,14 @@ class StocktakingCaseList extends Component {
         let queryData = {
             pageIndex: nextPage,
             pageSize:this.state.pageSize,
-            assigneeUserId: userInfo.userId
+            // assigneeUserId: userInfo.userId
         };
         if (searchValue) {
             queryData.deviceName = searchValue
         }
 
 
-        dispatch(fetchStocktakingCaseList(queryData)).then((res) => {
+        dispatch(fetchMeterCaseList(queryData)).then((res) => {
 
             if (res.error) {
                 if (clear) {
@@ -337,12 +331,10 @@ class StocktakingCaseList extends Component {
 }
 
 const mapStateToProps = (state) => {
-    const {filter} = state.stocktakingCase;
     const {userInfo} = state.auth;
     return {
-        searchWord: filter.searchWord,
         userInfo
     }
 }
 
-export default connect(mapStateToProps)(StocktakingCaseList)
+export default connect(mapStateToProps)(MeterCaseList)

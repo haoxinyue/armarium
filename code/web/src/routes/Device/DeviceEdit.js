@@ -86,6 +86,9 @@ export default class DeviceEdit extends Component {
         let fData = {
           ...values,
           maintenanceEndDate: moment(values.maintenanceEndDate).format('YYYY/MM/DD'),
+          needInspection: values.needInspection ? 1 : 0,
+          needMaintain: values.needMaintain ? 1 : 0,
+          needMetering: values.needMetering ? 1 : 0,
           creater: currentUser.userId,
           modifier: currentUser.userId,
         };

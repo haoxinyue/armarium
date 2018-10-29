@@ -110,6 +110,24 @@ export const routes = [
             left: "back"
         }
     },{
+        path: '/meterCaseList',
+        component: loadComponent('MeterCaseList'),
+        exact: true,
+        header: {
+            title: '计量工单列表',
+            visible: true,
+            left: "back"
+        }
+    }, {
+        path: '/meterCaseEdit/:deviceId',
+        component: loadComponent('MeterCaseEdit'),
+        exact: true,
+        header: {
+            title: '计量工单',
+            visible: true,
+            left: "back"
+        }
+    },{
         path: '/stocktakingCase',
         component: loadComponent('StocktakingCaseList'),
         exact: true,
@@ -118,12 +136,21 @@ export const routes = [
             visible: true,
             left: "back"
         }
+    },{
+        path: '/stocktakingCaseDevice/:caseId',
+        component: loadComponent('StocktakingDeviceList'),
+        exact: true,
+        header: {
+            title: '盘点设备列表',
+            visible: true,
+            left: "back"
+        }
     }, {
         path: '/stocktakingCaseEdit/:deviceId',
         component: loadComponent('StocktakingCaseEdit'),
         exact: true,
         header: {
-            title: '保养工单',
+            title: '盘点设备',
             visible: true,
             left: "back"
         }
