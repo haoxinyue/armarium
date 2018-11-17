@@ -18,7 +18,7 @@ const menuData = [
     path: 'asset',
     children: [
       {
-        name: '添加资产',
+        name: '设备管理',
         path: 'asset-add',
       },
       {
@@ -94,7 +94,7 @@ const menuData = [
         path: 'department-tree',
       },
     ],
-  }/*,
+  } /*,
   {
     name: '用户',
     icon: 'team',
@@ -105,7 +105,7 @@ const menuData = [
         path: 'user-list',
       },
     ],
-  } *//*,
+  } */ /*,
   {
     name: '列表信息',
     icon: 'table',

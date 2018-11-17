@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
-import QRCode from 'qrcode.react';
 
 import { uploadUrl } from '../../services/api';
 
@@ -22,7 +21,10 @@ import {
   message,
   Timeline,
   Checkbox,
+  Tabs,
 } from 'antd';
+const TabPane = Tabs.TabPane;
+
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DepartmentSelect from '../../components/biz/DepartmentSelect';
 import styles from '../Forms/style.less';
@@ -100,15 +102,15 @@ export default class DeviceEdit extends Component {
         dispatch({
           type: isEditMode ? 'device/updateDetail' : 'device/add',
           payload: fData,
-          callback(v) {
-            if (v.success) {
-              message.success('保存成功');
-              dispatch(routerRedux.push(`/device/device-detail/${v.deviceId}`));
-            } else {
-              message.error('保存失败');
-            }
+        }).then(
+          res => {
+            message.success('保存成功');
+            dispatch(routerRedux.push(`/device/device-detail/${res.deviceId}`));
           },
-        });
+          () => {
+            message.error('保存失败');
+          }
+        );
       }
     });
   };
@@ -245,7 +247,7 @@ export default class DeviceEdit extends Component {
     const formItemLayout = {
       labelCol: {
         xs: { span: 24 },
-        sm: { span: 7 },
+        sm: { span: 3 },
       },
       wrapperCol: {
         xs: { span: 24 },
@@ -382,143 +384,152 @@ export default class DeviceEdit extends Component {
       <PageHeaderLayout title={isEditMode ? '设备编辑' : '设备新增'} content="">
         <Card bordered={false}>
           <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
-            {getInputFieldNode('deviceCode', '设备编号', false)}
-            {getInputFieldNode('deviceName', '设备名称', false)}
+            <Tabs defaultActiveKey="1" type="card" mode={'left'}>
+              <TabPane tab="基本信息" key="1">
+                {getInputFieldNode('deviceCode', '设备编号', false)}
+                {getInputFieldNode('deviceName', '设备名称', false)}
 
-            {getSelectFieldNode(
-              'hospitalId',
-              '所属医院',
-              true,
-              hospital.list.map(hid => {
-                let h = hospital.byIds[hid];
-                return { value: h.hospitalId, text: h.hospitalName };
-              })
-            )}
+                {getSelectFieldNode(
+                  'hospitalId',
+                  '所属医院',
+                  true,
+                  hospital.list.map(hid => {
+                    let h = hospital.byIds[hid];
+                    return { value: h.hospitalId, text: h.hospitalName };
+                  })
+                )}
 
-            <FormItem {...formItemLayout} label="*所属部门">
-              {getFieldDecorator('departmentId', {
-                rules: [
+                <FormItem {...formItemLayout} label="*所属部门">
+                  {getFieldDecorator('departmentId', {
+                    rules: [
+                      {
+                        required: true,
+                        message: '请选择所属部门',
+                      },
+                    ],
+                  })(<DepartmentSelect placeholder="请选择所属部门" />)}
+                </FormItem>
+                {getSelectFieldNode('deviceType', '设备类型', true, [
                   {
-                    required: true,
-                    message: '请选择所属部门',
+                    value: 1,
+                    text: 'B超',
                   },
-                ],
-              })(<DepartmentSelect placeholder="请选择所属部门" />)}
-            </FormItem>
+                  {
+                    value: 2,
+                    text: 'MR',
+                  },
+                  {
+                    value: 3,
+                    text: '普放',
+                  },
+                ])}
+                {getSelectFieldNode('deviceState', '设备状态', true, [
+                  {
+                    value: 1,
+                    text: '正常',
+                  },
+                  {
+                    value: 2,
+                    text: '故障',
+                  },
+                ])}
+                {getSelectFieldNode('usageState', '使用状态', true, [
+                  {
+                    value: 1,
+                    text: '使用',
+                  },
+                  {
+                    value: 0,
+                    text: '停用',
+                  },
+                ])}
 
-            {getInputFieldNode('assetNo', '设备资产编号', false)}
-            {getInputFieldNode('deviceModel', '设备型号', false)}
-            {getInputFieldNode('serialNumber', '设备序列号', false)}
+                {getInputFieldNode('deviceId', '设备编号', false, { hidden: true })}
 
-            {getInputFieldNode('deviceOwner', '设备负责人', false)}
-            {getInputFieldNode('purchaseAmount', '采购金额', false, {
-              isNumber: true,
-              formatter: value => `\¥${value}`,
-              parser: value => value.replace('¥', ''),
-            })}
+                {getInputFieldNode('picture1', '', false, { hidden: true })}
+                {getInputFieldNode('picture2', '', false, { hidden: true })}
+                {getInputFieldNode('picture3', '', false, { hidden: true })}
+                {getInputFieldNode('picture4', '', false, { hidden: true })}
+                {getInputFieldNode('picture5', '', false, { hidden: true })}
 
-            {getDateFieldNode('maintenanceEndDate', '保修期结束时间', false)}
+                {/* ================================== */}
+              </TabPane>
 
-            {getInputFieldNode('manufacturer', '设备厂家', false)}
-            {getInputFieldNode('producingPlace', '设备产地', false)}
+              <TabPane tab="资产信息" key="2">
+                {getInputFieldNode('assetNo', '设备资产编号', false)}
+                {getInputFieldNode('deviceModel', '设备型号', false)}
+                {getInputFieldNode('serialNumber', '设备序列号', false)}
 
-            {getTextFieldNode('deviceDesc', '设备描述', false)}
-            {getTextFieldNode('accessory', '设备附件', false)}
+                {getInputFieldNode('deviceOwner', '设备负责人', false)}
+                {getInputFieldNode('purchaseAmount', '采购金额', false, {
+                  isNumber: true,
+                  formatter: value => `\¥${value}`,
+                  parser: value => value.replace('¥', ''),
+                })}
 
-            {getSelectFieldNode('deviceType', '设备类型', true, [
-              {
-                value: 1,
-                text: 'B超',
-              },
-              {
-                value: 2,
-                text: 'MR',
-              },
-              {
-                value: 3,
-                text: '普放',
-              },
-            ])}
-            {getSelectFieldNode('deviceState', '设备状态', true, [
-              {
-                value: 1,
-                text: '正常',
-              },
-              {
-                value: 2,
-                text: '故障',
-              },
-            ])}
-            {getSelectFieldNode('usageState', '使用状态', true, [
-              {
-                value: 1,
-                text: '使用',
-              },
-              {
-                value: 0,
-                text: '停用',
-              },
-            ])}
+                {getDateFieldNode('maintenanceEndDate', '保修期结束时间', false)}
 
-            <FormItem {...formItemLayout} label="图片">
-              <div className="clearfix">
-                <Upload
-                  action={uploadUrl}
-                  listType="picture-card"
-                  fileList={fileList}
-                  onPreview={this.handlePreview}
-                  onChange={this.handleChange}
-                  name={'fileUpload'}
-                >
-                  {fileList.length >= 5 ? null : uploadButton}
-                </Upload>
-                <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-                  <img alt="device-preview" style={{ width: '100%' }} src={previewImage} />
-                </Modal>
-              </div>
-            </FormItem>
+                {getInputFieldNode('manufacturer', '设备厂家', false)}
+                {getInputFieldNode('producingPlace', '设备产地', false)}
 
-            {getInputFieldNode('deviceId', '设备编号', false, { hidden: true })}
+                {getTextFieldNode('deviceDesc', '设备描述', false)}
+                {getTextFieldNode('accessory', '设备附件', false)}
+              </TabPane>
 
-            {getCheckFieldNode('needInspection', '是否需要巡检', false, { hidden: true })}
-            {getFieldValue('needInspection') &&
-              getInputFieldNode('inspectionInterval', '巡检间隔', false, {
-                isNumber: true,
-                min: 1,
-                initialValue: 30,
-                formatter: value => `${value}天`,
-                parser: value => value.replace('天', ''),
-                className: ['input-number-right'],
-              })}
+              <TabPane tab="图片信息" key="3">
+                <FormItem {...formItemLayout} label="图片">
+                  <div className="clearfix">
+                    <Upload
+                      action={uploadUrl}
+                      listType="picture-card"
+                      fileList={fileList}
+                      onPreview={this.handlePreview}
+                      onChange={this.handleChange}
+                      name={'fileUpload'}
+                    >
+                      {fileList.length >= 5 ? null : uploadButton}
+                    </Upload>
+                    <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+                      <img alt="device-preview" style={{ width: '100%' }} src={previewImage} />
+                    </Modal>
+                  </div>
+                </FormItem>
+              </TabPane>
 
-            {getCheckFieldNode('needMaintain', '是否需要保养', false, { hidden: true })}
-            {getFieldValue('needMaintain') &&
-              getInputFieldNode('maintenanceInterval', '保养间隔', false, {
-                isNumber: true,
-                min: 1,
-                precision: 0,
-                initialValue: 30,
-                formatter: value => `${value}天`,
-                parser: value => value.replace('天', ''),
-              })}
+              <TabPane tab="检测设置" key="4">
+                {getCheckFieldNode('needInspection', '是否需要巡检', false, { hidden: true })}
+                {getFieldValue('needInspection') &&
+                  getInputFieldNode('inspectionInterval', '巡检间隔', false, {
+                    isNumber: true,
+                    min: 1,
+                    initialValue: 30,
+                    formatter: value => `${value}天`,
+                    parser: value => value.replace('天', ''),
+                    className: ['input-number-right'],
+                  })}
 
-            {getCheckFieldNode('needMetering', '是否需要计量', false, { hidden: true })}
-            {getFieldValue('needMetering') &&
-              getInputFieldNode('meteringInterval', '计量间隔', false, {
-                isNumber: true,
-                min: 1,
-                initialValue: 30,
-                formatter: value => `${value}天`,
-                parser: value => value.replace('天', ''),
-              })}
+                {getCheckFieldNode('needMaintain', '是否需要保养', false, { hidden: true })}
+                {getFieldValue('needMaintain') &&
+                  getInputFieldNode('maintenanceInterval', '保养间隔', false, {
+                    isNumber: true,
+                    min: 1,
+                    precision: 0,
+                    initialValue: 30,
+                    formatter: value => `${value}天`,
+                    parser: value => value.replace('天', ''),
+                  })}
 
-            {getInputFieldNode('picture1', '', false, { hidden: true })}
-            {getInputFieldNode('picture2', '', false, { hidden: true })}
-            {getInputFieldNode('picture3', '', false, { hidden: true })}
-            {getInputFieldNode('picture4', '', false, { hidden: true })}
-            {getInputFieldNode('picture5', '', false, { hidden: true })}
-
-            {/* ================================== */}
+                {getCheckFieldNode('needMetering', '是否需要计量', false, { hidden: true })}
+                {getFieldValue('needMetering') &&
+                  getInputFieldNode('meteringInterval', '计量间隔', false, {
+                    isNumber: true,
+                    min: 1,
+                    initialValue: 30,
+                    formatter: value => `${value}天`,
+                    parser: value => value.replace('天', ''),
+                  })}
+              </TabPane>
+            </Tabs>
 
             <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
               <Button type="primary" htmlType="submit" loading={submitting}>

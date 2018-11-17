@@ -28,6 +28,8 @@ import styles from './TableList.less';
 import DeviceSelect from '../../components/biz/DeviceSelect';
 import EngineerSelect from '../../components/biz/EngineerSelect';
 
+const statusMap = { '10': '待维修', '20': '已取消', '30': '维修中', '50': '已完成' };
+
 const { TextArea } = Input;
 
 const FormItem = Form.Item;
@@ -84,6 +86,7 @@ const OperationForm = Form.create()(props => {
         caseState: toState,
         caseId: currentRepair.caseId,
         modifier: user.currentUser.userId,
+        deviceId: currentRepair.deviceId,
       };
       if (fieldsValue.assigneeUserId) {
         payload.assigneeUserId = fieldsValue.assigneeUserId;
@@ -322,6 +325,35 @@ export default class RepairList extends PureComponent {
               {/*{getFieldDecorator('deviceId')(<DeviceSelect placeholder="请输入" />)}*/}
             </FormItem>
           </Col>
+          <Col md={8} sm={24}>
+            <FormItem label="状态">
+              {getFieldDecorator('caseState')(
+                <Select placeholder={`工单状态`}>
+                  <Option key={-1} value={''}>
+                    全部
+                  </Option>
+                  {Object.keys(statusMap).map(op => (
+                    <Option key={op} value={Number(op)}>
+                      {statusMap[op]}
+                    </Option>
+                  ))}
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          {/*<Col md={8} sm={24}>
+            <FormItem label="设备状态">
+              {getFieldDecorator('deviceState')(<Select placeholder={`设备状态`}>
+                <Option key={-1} value={''}>
+                  全部
+                </Option>
+                <Option value="1">正常</Option>
+                <Option value="2">故障</Option>
+              </Select>)}
+            </FormItem>
+
+          </Col>*/}
+
           <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">

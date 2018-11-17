@@ -75,7 +75,10 @@ const CreateForm = Form.create()(props => {
         {form.getFieldDecorator('eventTime', {
           initialValue: moment(),
           rules: [{ required: true, message: '请设置事件时间...' }],
-        })(<DatePicker format={'YYYY/MM/DD HH:mm:ss'} placeholder="请选择" />)}
+          style: {
+            width: 300,
+          },
+        })(<DatePicker format={'YYYY/MM/DD HH:mm'} placeholder="请选择" />)}
       </FormItem>
     </Modal>
   );

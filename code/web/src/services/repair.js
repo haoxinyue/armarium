@@ -44,6 +44,14 @@ export async function updateMtCase(params) {
     }),
   });
 }
+export async function closeMtCase(params) {
+  return request(`${httpDomain}/case/closeMtCase`, {
+    method: 'POST',
+    body: getFormData({
+      ...params,
+    }),
+  });
+}
 
 export async function queryMtCaseDetail(params) {
   return request(`${httpDomain}/case/getMtCaseInfo`, {

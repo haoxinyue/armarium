@@ -20,6 +20,8 @@ import {
   message,
   Badge,
 } from 'antd';
+
+const { RangePicker } = DatePicker;
 import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import HospitalSelect from '../../components/biz/HospitalSelect';
@@ -35,6 +37,8 @@ const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
+
+const statusMap = { '10': '待盘点', '20': '已取消', '30': '盘点中', '50': '已完成' };
 
 @Form.create()
 class CreateForm extends PureComponent {
@@ -246,7 +250,18 @@ export default class StocktakingCaseList extends PureComponent {
 
       for (let k in values) {
         if (values[k] !== undefined) {
-          payload[k] = values[k];
+          if (k === 'planBeginTimeRange') {
+            let times = values[k].map(
+              (d, i) =>
+                i === 0
+                  ? moment(d).format('YYYY/MM/DD 00:00:00')
+                  : moment(d).format('YYYY/MM/DD 23:59:59')
+            );
+            payload.planBeginTimeFrom = times[0];
+            payload.planBeginTimeTo = times[1];
+          } else {
+            payload[k] = values[k];
+          }
         }
       }
 
@@ -313,17 +328,30 @@ export default class StocktakingCaseList extends PureComponent {
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
-          <Col md={8} sm={24}>
-            <FormItem label="设备编号">
-              {getFieldDecorator('deviceCode')(<Input placeholder="请输入" />)}
+          <Col md={10} sm={24}>
+            <FormItem label="计划时间">
+              {getFieldDecorator('planBeginTimeRange')(
+                <RangePicker format={'YYYY/MM/DD'} placeholder={['开始时间', '结束时间']} />
+              )}
             </FormItem>
           </Col>
-          <Col md={8} sm={24}>
-            <FormItem label="设备名称">
-              {getFieldDecorator('deviceName')(<Input placeholder="请输入" />)}
+          <Col md={6} sm={24}>
+            <FormItem label="设备状态">
+              {getFieldDecorator('caseState')(
+                <Select placeholder={`请选择设备状态`}>
+                  <Option key={-1} value={''}>
+                    全部
+                  </Option>
+                  {Object.keys(statusMap).map(op => (
+                    <Option key={op} value={op}>
+                      {statusMap[op]}
+                    </Option>
+                  ))}
+                </Select>
+              )}
             </FormItem>
           </Col>
-          <Col md={8} sm={24}>
+          <Col md={6} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">
                 查询
@@ -343,7 +371,6 @@ export default class StocktakingCaseList extends PureComponent {
   }
 
   render() {
-    const statusMap = { '10': '待盘点', '20': '已取消', '30': '盘点中', '50': '已完成' };
     const { stocktakingCase, loading } = this.props;
     const { selectedRows, modalVisible } = this.state;
     let list = [];
@@ -416,7 +443,7 @@ export default class StocktakingCaseList extends PureComponent {
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true)}>
-                新建盘点
+                新建
               </Button>
               {false &&
                 selectedRows.length > 0 && (

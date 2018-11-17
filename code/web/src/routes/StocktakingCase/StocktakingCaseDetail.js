@@ -69,12 +69,12 @@ export default class StocktakingCaseDetail extends Component {
 
     return (
       <PageHeaderLayout title="">
-        <Tabs defaultActiveKey="1" type="card1">
+        <Tabs defaultActiveKey="1" type="card" mode={'left'}>
           <TabPane tab="基本信息" key="1">
             <Card bordered={false} style={{ position: 'relative', padding: 0 }}>
               <DescriptionList size="large" title="基本信息" style={{ marginBottom: 32 }}>
                 <Description term="工单ID">{currentDetail.caseId}</Description>
-                <Description term="所属科室">{currentDetail.deptName}</Description>
+                <Description term="所属科室">{currentDetail.deptNameArr}</Description>
               </DescriptionList>
 
               <Divider style={{ marginBottom: 32 }} />

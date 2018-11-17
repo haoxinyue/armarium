@@ -46,7 +46,8 @@ export default class BadEventEdit extends Component {
       if (!err) {
         let fData = {
           ...values,
-          eventTime: moment(values.eventTime).format('YYYY/MM/DD'),
+          eventTime: moment(values.eventTime).format('YYYY/MM/DD HH:mm:ss'),
+          solveTime: moment(values.solveTime).format('YYYY/MM/DD HH:mm:ss'),
           creater: currentUser.userId,
           modifier: currentUser.userId,
         };
@@ -104,7 +105,7 @@ export default class BadEventEdit extends Component {
           data[k] = d[k];
         }
 
-        if (k === 'eventTime') {
+        if (k === 'eventTime' || k === 'solveTime') {
           data[k] = moment(data[k]);
         }
       }
@@ -276,6 +277,14 @@ export default class BadEventEdit extends Component {
             })}
 
             {getInputFieldNode('eventId', '编号', false, { hidden: true })}
+
+            {getDateFieldNode('solveTime', '解决时间', false, {
+              style: {
+                minWidth: 300,
+              },
+            })}
+
+            {getTextFieldNode('solveResult', '解决结果', false)}
 
             {/* ================================== */}
 
