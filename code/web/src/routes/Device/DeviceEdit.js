@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
+import React, {Component} from 'react';
+import {connect} from 'dva';
+import {routerRedux} from 'dva/router';
 import moment from 'moment';
 
-import { uploadUrl } from '../../services/api';
+import {uploadUrl} from '../../services/api';
 
 import {
   Form,
@@ -11,6 +11,7 @@ import {
   DatePicker,
   Select,
   Button,
+  Divider,
   Card,
   InputNumber,
   Radio,
@@ -23,6 +24,7 @@ import {
   Checkbox,
   Tabs,
 } from 'antd';
+
 const TabPane = Tabs.TabPane;
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
@@ -30,11 +32,11 @@ import DepartmentSelect from '../../components/biz/DepartmentSelect';
 import styles from '../Forms/style.less';
 
 const FormItem = Form.Item;
-const { Option } = Select;
-const { RangePicker } = DatePicker;
-const { TextArea } = Input;
+const {Option} = Select;
+const {RangePicker} = DatePicker;
+const {TextArea} = Input;
 
-@connect(({ device, hospital, user, loading }) => ({
+@connect(({device, hospital, user, loading}) => ({
   device,
   hospital,
   currentUser: user.currentUser || {},
@@ -48,7 +50,7 @@ export default class DeviceEdit extends Component {
     fileList: [],
   };
 
-  handleCancel = () => this.setState({ previewVisible: false });
+  handleCancel = () => this.setState({previewVisible: false});
 
   handlePreview = file => {
     this.setState({
@@ -57,9 +59,9 @@ export default class DeviceEdit extends Component {
     });
   };
 
-  handleChange = ({ fileList }) => {
-    const { setFieldsValue } = this.props.form;
-    this.setState({ fileList });
+  handleChange = ({fileList}) => {
+    const {setFieldsValue} = this.props.form;
+    this.setState({fileList});
     let files = {
       picture1: '',
       picture2: '',
@@ -81,7 +83,7 @@ export default class DeviceEdit extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    const { dispatch, match: { params }, currentUser } = this.props;
+    const {dispatch, match: {params}, currentUser} = this.props;
     let isEditMode = params.deviceId != null;
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
@@ -126,8 +128,8 @@ export default class DeviceEdit extends Component {
 
   componentWillReceiveProps(nextProps) {
     console.log('==componentWillReceiveProps==');
-    const { device, match: { params: { deviceId } } } = this.props;
-    const { device: nextDevice, match: { params: { deviceId: nextDeviceId } } } = nextProps;
+    const {device, match: {params: {deviceId}}} = this.props;
+    const {device: nextDevice, match: {params: {deviceId: nextDeviceId}}} = nextProps;
     const info = device.byIds[nextDeviceId];
     const nextInfo = nextDevice.byIds[nextDeviceId];
     if (
@@ -136,12 +138,7 @@ export default class DeviceEdit extends Component {
       (!info || JSON.stringify(info) !== JSON.stringify(nextInfo))
     ) {
       let fileList = [];
-      // fileList.push({
-      //   uid: 1,
-      //   name: 'xxx.png',
-      //   status: 'done',
-      //   url: "http://47.100.198.255:8080/accessory/queryPic?fileName=if_hospital_308245.png"
-      // });
+
       if (nextInfo && nextInfo.picture1) {
         fileList.push(this.getFileInfo(nextInfo.picture1, 'pic1'));
       }
@@ -165,12 +162,12 @@ export default class DeviceEdit extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const { dispatch, match: { params: { deviceId } } } = this.props;
-    const { match: { params: { deviceId: NextDeviceId } } } = nextProps;
+    const {dispatch, match: {params: {deviceId}}} = this.props;
+    const {match: {params: {deviceId: NextDeviceId}}} = nextProps;
     if (NextDeviceId && NextDeviceId !== deviceId) {
       dispatch({
         type: 'device/fetchDetail',
-        payload: { deviceId: NextDeviceId },
+        payload: {deviceId: NextDeviceId},
       });
       return true;
     }
@@ -178,13 +175,13 @@ export default class DeviceEdit extends Component {
   }
 
   componentDidMount() {
-    const { dispatch, form, match } = this.props;
+    const {dispatch, form, match} = this.props;
 
-    const { params: { deviceId } } = match;
+    const {params: {deviceId}} = match;
 
-    const callback = function(d) {
-      const { form } = this.props;
-      const { setFieldsInitialValue, setFieldsValue } = form;
+    const callback = function (d) {
+      const {form} = this.props;
+      const {setFieldsInitialValue, setFieldsValue} = form;
 
       let data = {};
       for (var k in d) {
@@ -208,77 +205,50 @@ export default class DeviceEdit extends Component {
         },
         callback,
       });
-    } else {
-      // let i = 18;
-      // setFieldsInitialValue({
-      //   deviceId: i,
-      //   deviceCode: "code_" + i,
-      //   deviceName: "设备" + i,
-      //   hospitalId: 1,
-      //   departmentId: 2,
-      //   assetNo: "an_" + i,
-      //   deviceModel: "设备型号xxx",
-      //   deviceDesc: "设备描述xxx",
-      //   deviceState: Math.random() > 0.5 ? 1 : 2,
-      //   deviceType: Math.floor(Math.random() * 10) % 3,
-      //   serialNumber: "序列号xxx",
-      //   usageState: Math.random() > 0.5 ? 1 : 0,
-      //   qRCode: "qr_" + i,
-      //   manufacturer: "设备厂1",
-      //   producingPlace: "无锡",
-      //   qrCode: "qr0000000_" + i,
-      //   deviceOwner: "周周",
-      //   purchaseAmount: 10000,
-      //   accessory: "123",
-      //
-      //   picture1: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
-      //   picture2: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
-      //   picture3: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
-      //   picture4: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
-      //   picture5: "https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png",
-      // })
     }
   }
 
   render() {
-    const { submitting, match: { params }, hospital } = this.props;
-    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const {submitting, match: {params}, hospital} = this.props;
+    const {getFieldDecorator, getFieldValue} = this.props.form;
 
     const formItemLayout = {
       labelCol: {
-        xs: { span: 24 },
-        sm: { span: 3 },
+        xs: {span: 24},
+        sm: {span: 4},
       },
       wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 12 },
-        md: { span: 10 },
+        xs: {span: 24},
+        sm: {span: 12},
+        md: {span: 10},
       },
     };
 
     const submitFormLayout = {
       wrapperCol: {
-        xs: { span: 24, offset: 0 },
-        sm: { span: 10, offset: 7 },
+        xs: {span: 24, offset: 0},
+        sm: {span: 10, offset: 7},
       },
     };
 
     let isEditMode = params.deviceId != null;
 
-    const { previewVisible, previewImage, fileList } = this.state;
+    const {previewVisible, previewImage, fileList} = this.state;
 
     const uploadButton = (
       <div>
-        <Icon type="plus" />
+        <Icon type="plus"/>
         <div className="ant-upload-text">Upload</div>
       </div>
     );
 
     function getCheckFieldNode(fieldName, title, isRequired, meta) {
+      let val = getFieldValue(fieldName) || meta.initialValue
       return (
         <FormItem {...formItemLayout} label={(isRequired ? '*' : '') + title}>
           {getFieldDecorator(fieldName, {
-            initialValue: getFieldValue(fieldName) || meta.initialValue,
+            valuePropName: 'checked',
+            initialValue: val === true || val === 1,
             rules: [],
           })(<Checkbox {...meta} />)}
         </FormItem>
@@ -298,7 +268,7 @@ export default class DeviceEdit extends Component {
                 message: `请输入${title}`,
               },
             ],
-          })(<DatePicker format={dateFormat} />)}
+          })(<DatePicker format={dateFormat}/>)}
         </FormItem>
       );
     }
@@ -315,7 +285,7 @@ export default class DeviceEdit extends Component {
                   message: `请输入${title}`,
                 },
               ],
-            })(<InputNumber {...meta} placeholder={`请输入${title}`} />)}
+            })(<InputNumber {...meta} placeholder={`请输入${title}`}/>)}
           </FormItem>
         );
       } else {
@@ -334,7 +304,7 @@ export default class DeviceEdit extends Component {
                   message: `请输入${title}`,
                 },
               ],
-            })(<Input {...meta} placeholder={`请输入${title}`} />)}
+            })(<Input {...meta} placeholder={`请输入${title}`}/>)}
           </FormItem>
         );
       }
@@ -351,7 +321,7 @@ export default class DeviceEdit extends Component {
                 message: `请输入${title}`,
               },
             ],
-          })(<TextArea style={{ minHeight: 32 }} placeholder={`请输入${title}`} rows={4} />)}
+          })(<TextArea style={{minHeight: 32}} placeholder={`请输入${title}`} rows={4}/>)}
         </FormItem>
       );
     }
@@ -382,10 +352,10 @@ export default class DeviceEdit extends Component {
 
     return (
       <PageHeaderLayout title={isEditMode ? '设备编辑' : '设备新增'} content="">
-        <Card bordered={false}>
-          <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
-            <Tabs defaultActiveKey="1" type="card" mode={'left'}>
-              <TabPane tab="基本信息" key="1">
+        <Form onSubmit={this.handleSubmit} hideRequiredMark style={{marginTop: 8}}>
+          <Tabs defaultActiveKey="1" type="card" mode={'left'}>
+            <TabPane tab="基本信息" key="1">
+              <Card bordered={false}>
                 {getInputFieldNode('deviceCode', '设备编号', false)}
                 {getInputFieldNode('deviceName', '设备名称', false)}
 
@@ -395,7 +365,7 @@ export default class DeviceEdit extends Component {
                   true,
                   hospital.list.map(hid => {
                     let h = hospital.byIds[hid];
-                    return { value: h.hospitalId, text: h.hospitalName };
+                    return {value: h.hospitalId, text: h.hospitalName};
                   })
                 )}
 
@@ -407,7 +377,7 @@ export default class DeviceEdit extends Component {
                         message: '请选择所属部门',
                       },
                     ],
-                  })(<DepartmentSelect placeholder="请选择所属部门" />)}
+                  })(<DepartmentSelect placeholder="请选择所属部门"/>)}
                 </FormItem>
                 {getSelectFieldNode('deviceType', '设备类型', true, [
                   {
@@ -444,39 +414,21 @@ export default class DeviceEdit extends Component {
                   },
                 ])}
 
-                {getInputFieldNode('deviceId', '设备编号', false, { hidden: true })}
+                {getInputFieldNode('deviceId', '设备编号', false, {hidden: true})}
 
-                {getInputFieldNode('picture1', '', false, { hidden: true })}
-                {getInputFieldNode('picture2', '', false, { hidden: true })}
-                {getInputFieldNode('picture3', '', false, { hidden: true })}
-                {getInputFieldNode('picture4', '', false, { hidden: true })}
-                {getInputFieldNode('picture5', '', false, { hidden: true })}
+                {getInputFieldNode('picture1', '', false, {hidden: true})}
+                {getInputFieldNode('picture2', '', false, {hidden: true})}
+                {getInputFieldNode('picture3', '', false, {hidden: true})}
+                {getInputFieldNode('picture4', '', false, {hidden: true})}
+                {getInputFieldNode('picture5', '', false, {hidden: true})}
 
-                {/* ================================== */}
-              </TabPane>
 
-              <TabPane tab="资产信息" key="2">
-                {getInputFieldNode('assetNo', '设备资产编号', false)}
-                {getInputFieldNode('deviceModel', '设备型号', false)}
-                {getInputFieldNode('serialNumber', '设备序列号', false)}
+              </Card>
+              {/* ================================== */}
+            </TabPane>
 
-                {getInputFieldNode('deviceOwner', '设备负责人', false)}
-                {getInputFieldNode('purchaseAmount', '采购金额', false, {
-                  isNumber: true,
-                  formatter: value => `\¥${value}`,
-                  parser: value => value.replace('¥', ''),
-                })}
-
-                {getDateFieldNode('maintenanceEndDate', '保修期结束时间', false)}
-
-                {getInputFieldNode('manufacturer', '设备厂家', false)}
-                {getInputFieldNode('producingPlace', '设备产地', false)}
-
-                {getTextFieldNode('deviceDesc', '设备描述', false)}
-                {getTextFieldNode('accessory', '设备附件', false)}
-              </TabPane>
-
-              <TabPane tab="图片信息" key="3">
+            <TabPane tab="图片信息" key="2">
+              <Card bordered={false}>
                 <FormItem {...formItemLayout} label="图片">
                   <div className="clearfix">
                     <Upload
@@ -490,15 +442,86 @@ export default class DeviceEdit extends Component {
                       {fileList.length >= 5 ? null : uploadButton}
                     </Upload>
                     <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-                      <img alt="device-preview" style={{ width: '100%' }} src={previewImage} />
+                      <img alt="device-preview" style={{width: '100%'}} src={previewImage}/>
                     </Modal>
                   </div>
                 </FormItem>
-              </TabPane>
 
-              <TabPane tab="检测设置" key="4">
-                {getCheckFieldNode('needInspection', '是否需要巡检', false, { hidden: true })}
-                {getFieldValue('needInspection') &&
+              </Card>
+            </TabPane>
+
+            <TabPane tab="资产信息" key="3">
+              <Card bordered={false}>
+                {getInputFieldNode('assetNo', '设备资产编号', false)}
+                {getInputFieldNode('deviceModel', '设备型号', false)}
+                {getInputFieldNode('serialNumber', '设备序列号', false)}
+
+                {getInputFieldNode('deviceOwner', '设备负责人', false)}
+                {getInputFieldNode('purchaseAmount', '采购金额', false, {
+                  isNumber: true,
+                  formatter: value => `\¥${value}`,
+                  parser: value => value.replace('¥', ''),
+                })}
+                {getDateFieldNode('storageDate', '入库日期', false)}
+
+
+                <Divider style={{ marginBottom: 32 }} />
+
+                {getInputFieldNode('manufacturer', '设备厂家', false)}
+                {getInputFieldNode('producingPlace', '设备产地', false)}
+
+                {getTextFieldNode('deviceDesc', '设备描述', false)}
+                {getTextFieldNode('accessory', '设备附件', false)}
+
+              </Card>
+            </TabPane>
+
+            <TabPane tab="安装信息" key="4">
+              <Card bordered={false}>
+                {getDateFieldNode('setupDate', '安装日期', false)}
+                {getDateFieldNode('useDate', '使用日期', false)}
+                {getDateFieldNode('acceptDate', '验收日期', false)}
+                {getInputFieldNode('acceptRemark', '验收评价', false)}
+                {getInputFieldNode('acceptFile', '验收清单', false)}
+              </Card>
+            </TabPane>
+
+            <TabPane tab="合同保修" key="5">
+              <Card bordered={false}>
+                {getDateFieldNode('maintenanceEndDate', '保修期结束时间', false)}
+                {getDateFieldNode('warrantyBeginDate', '合同开始时间', false)}
+                {getDateFieldNode('warrantyEndDate', '合同结束时间', false)}
+                {getInputFieldNode('warrantyAmount', '合同金额', false, {
+                  isNumber: true,
+                  formatter: value => `\¥${value}`,
+                  parser: value => value.replace('¥', ''),
+                })}
+
+                {getTextFieldNode('warrantyContent', '合同内容', false)}
+
+
+              </Card>
+            </TabPane>
+
+            <TabPane tab="售后信息" key="6">
+              <Card bordered={false}>
+                {getInputFieldNode('salesSupplier', '销售供应商名称', false)}
+                {getInputFieldNode('salesSupplierContact', '销售供应商联系人', false)}
+                {getInputFieldNode('salesSupplierPhone', '销售供应商电话', false)}
+                {getInputFieldNode('salesSupplierDesc', '销售供应商描述', false)}
+                {getInputFieldNode('afterSaleProvider', '售后服务供应商名称', false)}
+                {getInputFieldNode('afterSaleProviderEngineer', '售后服务供应商工程师', false)}
+                {getInputFieldNode('afterSaleProviderPhone', '售后服务供应商电话', false)}
+                {getTextFieldNode('afterSaleProviderDesc', '售后服务供应商描述', false)}
+              </Card>
+            </TabPane>
+
+
+
+            <TabPane tab="检测设置" key="7">
+              <Card bordered={false}>
+                {getCheckFieldNode('needInspection', '是否需要巡检', false, {hidden: true})}
+                {getFieldValue('needInspection') ?
                   getInputFieldNode('inspectionInterval', '巡检间隔', false, {
                     isNumber: true,
                     min: 1,
@@ -506,10 +529,10 @@ export default class DeviceEdit extends Component {
                     formatter: value => `${value}天`,
                     parser: value => value.replace('天', ''),
                     className: ['input-number-right'],
-                  })}
+                  }) : ''}
 
-                {getCheckFieldNode('needMaintain', '是否需要保养', false, { hidden: true })}
-                {getFieldValue('needMaintain') &&
+                {getCheckFieldNode('needMaintain', '是否需要保养', false, {hidden: true})}
+                {getFieldValue('needMaintain') ?
                   getInputFieldNode('maintenanceInterval', '保养间隔', false, {
                     isNumber: true,
                     min: 1,
@@ -517,27 +540,29 @@ export default class DeviceEdit extends Component {
                     initialValue: 30,
                     formatter: value => `${value}天`,
                     parser: value => value.replace('天', ''),
-                  })}
+                  }) : ''}
 
-                {getCheckFieldNode('needMetering', '是否需要计量', false, { hidden: true })}
-                {getFieldValue('needMetering') &&
+                {getCheckFieldNode('needMetering', '是否需要计量', false, {hidden: true})}
+                {getFieldValue('needMetering') ?
                   getInputFieldNode('meteringInterval', '计量间隔', false, {
                     isNumber: true,
                     min: 1,
                     initialValue: 30,
                     formatter: value => `${value}天`,
                     parser: value => value.replace('天', ''),
-                  })}
-              </TabPane>
-            </Tabs>
+                  }) : ''}
 
-            <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
-              <Button type="primary" htmlType="submit" loading={submitting}>
-                保存
-              </Button>
-            </FormItem>
-          </Form>
-        </Card>
+
+              </Card>
+            </TabPane>
+          </Tabs>
+
+          <FormItem {...submitFormLayout} style={{marginTop: 32}}>
+            <Button type="primary" htmlType="submit" loading={submitting}>
+              保存
+            </Button>
+          </FormItem>
+        </Form>
       </PageHeaderLayout>
     );
   }

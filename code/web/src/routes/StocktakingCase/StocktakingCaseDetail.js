@@ -56,6 +56,11 @@ export default class StocktakingCaseDetail extends Component {
 
     const columns = [
       {
+        title: '设备ID',
+        dataIndex: 'deviceId',
+        key: 'deviceId',
+      },
+      {
         title: '设备名称',
         dataIndex: 'deviceName',
         key: 'deviceName',
@@ -88,7 +93,7 @@ export default class StocktakingCaseDetail extends Component {
             </Card>
           </TabPane>
           <TabPane tab="设备列表" key="2">
-            <Table dataSource={currentDetail.devices} columns={columns} />
+            <Table style={{backgroundColor:'white'}} dataSource={currentDetail.devices} columns={columns} />
           </TabPane>
         </Tabs>
       </PageHeaderLayout>

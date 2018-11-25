@@ -14,7 +14,10 @@ export default {
 
   state: {
     list: [],
-    pagination: {},
+    pagination: {
+      current: 1,
+      pageSize: 10,
+    },
     byIds: {},
     currentDetail: null,
   },
@@ -31,7 +34,11 @@ export default {
       const response = yield call(queryMtCaseList, payload);
       yield put({
         type: 'save',
-        payload: response,
+        pagination: {
+          current: payload.pageIndex == null ? 1 : payload.pageIndex + 1,
+          pageSize: payload.pageSize || 10,
+          total: response.recordCount || 0,
+        },
       });
     },
     *fetchDetail({ payload, callback }, { call, put }) {
@@ -73,7 +80,7 @@ export default {
     },
     *changeState({ payload, callback }, { call, put }) {
       let response;
-      if (payload.caseState === 50) {
+      if (payload.caseState === 50||payload.caseState === 40) {
         response = yield call(closeMtCase, {
           ...payload,
         }) || {};

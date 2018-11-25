@@ -329,7 +329,7 @@ export default class StocktakingCaseList extends PureComponent {
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={10} sm={24}>
-            <FormItem label="计划时间">
+            <FormItem label="计划开始时间">
               {getFieldDecorator('planBeginTimeRange')(
                 <RangePicker format={'YYYY/MM/DD'} placeholder={['开始时间', '结束时间']} />
               )}

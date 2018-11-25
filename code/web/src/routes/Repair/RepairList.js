@@ -28,7 +28,7 @@ import styles from './TableList.less';
 import DeviceSelect from '../../components/biz/DeviceSelect';
 import EngineerSelect from '../../components/biz/EngineerSelect';
 
-const statusMap = { '10': '待维修', '20': '已取消', '30': '维修中', '50': '已完成' };
+const statusMap = { '10': '待维修', '20': '已取消', '30': '维修中', '40': '已完成','50':'已关闭' };
 
 const { TextArea } = Input;
 
@@ -242,10 +242,13 @@ export default class RepairList extends PureComponent {
   handleSearch = e => {
     e.preventDefault();
 
-    const { dispatch, form, user } = this.props;
+    const { dispatch, form, user ,repair} = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
+      repair.pagination.current =1;
+
+      console.log(repair.pagination)
 
       const values = {
         ...fieldsValue,
@@ -257,6 +260,8 @@ export default class RepairList extends PureComponent {
 
       let payload = {
         assigneeUserId: user.currentUser.userId,
+        pageIndex: 0,
+        pageSize: 10,
       };
 
       for (let k in values) {
@@ -322,38 +327,24 @@ export default class RepairList extends PureComponent {
           <Col md={8} sm={24}>
             <FormItem label="设备ID">
               {getFieldDecorator('deviceId')(<Input placeholder="请输入" />)}
-              {/*{getFieldDecorator('deviceId')(<DeviceSelect placeholder="请输入" />)}*/}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="状态">
               {getFieldDecorator('caseState')(
                 <Select placeholder={`工单状态`}>
-                  <Option key={-1} value={''}>
+                  <Select.Option key={-1} value={''}>
                     全部
-                  </Option>
+                  </Select.Option>
                   {Object.keys(statusMap).map(op => (
-                    <Option key={op} value={Number(op)}>
+                    <Select.Option key={op} value={Number(op)}>
                       {statusMap[op]}
-                    </Option>
+                    </Select.Option>
                   ))}
                 </Select>
               )}
             </FormItem>
           </Col>
-          {/*<Col md={8} sm={24}>
-            <FormItem label="设备状态">
-              {getFieldDecorator('deviceState')(<Select placeholder={`设备状态`}>
-                <Option key={-1} value={''}>
-                  全部
-                </Option>
-                <Option value="1">正常</Option>
-                <Option value="2">故障</Option>
-              </Select>)}
-            </FormItem>
-
-          </Col>*/}
-
           <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">
@@ -362,9 +353,6 @@ export default class RepairList extends PureComponent {
               <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
                 重置
               </Button>
-              {/*<a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
-                展开 <Icon type="down" />
-              </a>*/}
             </span>
           </Col>
         </Row>

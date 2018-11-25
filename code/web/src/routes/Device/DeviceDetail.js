@@ -106,9 +106,12 @@ export default class DeviceDetail extends Component {
       marginBottom: 20,
     };
     let btnEditStyle = {
-      position: 'absolute',
-      right: 20,
-      top: 20,
+      // position: 'absolute',
+      right: 40,
+      zIndex:20,
+      float:'right'
+
+      // top: 20,
     };
 
     let qrCode = currentDetail.qRCode || (currentDetail.deviceId && `[${currentDetail.deviceId}]`);
@@ -121,18 +124,19 @@ export default class DeviceDetail extends Component {
       currentDetail.picture5;
 
     return (
-      <PageHeaderLayout title="">
+      <PageHeaderLayout title="" className={'device-detail'}>
+        <Button
+          type="primary"
+          title={'编辑'}
+          shape="circle"
+          icon="edit"
+          onClick={this.goToEdit.bind(this)}
+          style={btnEditStyle}
+        />
         <Tabs defaultActiveKey="1" type="card1">
-          <TabPane tab="设备信息" key="1">
+          <TabPane tab="基本信息" key="1">
             <Card bordered={false} style={{ position: 'relative', padding: 0 }}>
-              <Button
-                type="primary"
-                title={'编辑'}
-                shape="circle"
-                icon="edit"
-                onClick={this.goToEdit.bind(this)}
-                style={btnEditStyle}
-              />
+
 
               <DescriptionList size="large" title="基本信息" style={{ marginBottom: 32 }}>
                 <Description term="设备ID">{currentDetail.deviceId}</Description>
@@ -142,51 +146,7 @@ export default class DeviceDetail extends Component {
                 <Description term="设备描述">{currentDetail.deviceDesc}</Description>
               </DescriptionList>
 
-              <Divider style={{ marginBottom: 32 }} />
-              <DescriptionList size="large" title="图片" style={{ marginBottom: 32 }}>
-                {!hasImage && <span>暂无</span>}
 
-                {currentDetail.picture1 && (
-                  <img
-                    style={imgStyle}
-                    src={currentDetail.picture1}
-                    onClick={this.showImage.bind(this, currentDetail.picture1)}
-                    alt=""
-                  />
-                )}
-                {currentDetail.picture2 && (
-                  <img
-                    style={imgStyle}
-                    src={currentDetail.picture2}
-                    onClick={this.showImage.bind(this, currentDetail.picture2)}
-                    alt=""
-                  />
-                )}
-                {currentDetail.picture3 && (
-                  <img
-                    style={imgStyle}
-                    src={currentDetail.picture3}
-                    onClick={this.showImage.bind(this, currentDetail.picture3)}
-                    alt=""
-                  />
-                )}
-                {currentDetail.picture4 && (
-                  <img
-                    style={imgStyle}
-                    src={currentDetail.picture4}
-                    onClick={this.showImage.bind(this, currentDetail.picture4)}
-                    alt=""
-                  />
-                )}
-                {currentDetail.picture5 && (
-                  <img
-                    style={imgStyle}
-                    src={currentDetail.picture5}
-                    onClick={this.showImage.bind(this, currentDetail.Picture5)}
-                    alt=""
-                  />
-                )}
-              </DescriptionList>
               <Divider style={{ marginBottom: 32 }} />
               <DescriptionList size="large" title="状态" style={{ marginBottom: 32 }}>
                 <Description term="设备状态">
@@ -202,17 +162,24 @@ export default class DeviceDetail extends Component {
                   {qrCode ? <QRCode size={150} value={qrCode} /> : '暂无'}
                 </Description>
               </DescriptionList>
-              <DescriptionList size="large" title="条码信息" style={{ marginBottom: 32 }}>
-                <Description term="设备编号">{currentDetail.deviceCode}</Description>
-                <Description term="资产编号">{currentDetail.assetNo}</Description>
-                <Description term="序列号">{currentDetail.serialNumber}</Description>
-              </DescriptionList>
+
               <Divider style={{ marginBottom: 32 }} />
               <DescriptionList size="large" title="部门信息" style={{ marginBottom: 32 }}>
                 <Description term="所属医院">{currentDetail.hospital}</Description>
                 <Description term="所属部门">{currentDetail.department}</Description>
               </DescriptionList>
               <Divider style={{ marginBottom: 32 }} />
+
+
+            </Card>
+          </TabPane>
+          <TabPane tab="资产信息" key="2">
+            <Card bordered={false} style={{ padding: 0 }}>
+              <DescriptionList size="large" title="条码信息" style={{ marginBottom: 32 }}>
+                <Description term="设备编号">{currentDetail.deviceCode}</Description>
+                <Description term="资产编号">{currentDetail.assetNo}</Description>
+                <Description term="序列号">{currentDetail.serialNumber}</Description>
+              </DescriptionList>
 
               <DescriptionList size="large" title="安装验收" style={{ marginBottom: 32 }}>
                 <Description term="安装日期">{currentDetail.setupDate}</Description>
@@ -270,7 +237,72 @@ export default class DeviceDetail extends Component {
               </DescriptionList>
             </Card>
           </TabPane>
-          <TabPane tab="历史事件" key="2">
+          <TabPane tab="图片信息" key="3">
+            <Card bordered={false} style={{ padding: 0 }}>
+              <DescriptionList size="large" title="图片" style={{ marginBottom: 32 }}>
+                {!hasImage && <span>暂无</span>}
+
+                {currentDetail.picture1 && (
+                  <img
+                    style={imgStyle}
+                    src={currentDetail.picture1}
+                    onClick={this.showImage.bind(this, currentDetail.picture1)}
+                    alt=""
+                  />
+                )}
+                {currentDetail.picture2 && (
+                  <img
+                    style={imgStyle}
+                    src={currentDetail.picture2}
+                    onClick={this.showImage.bind(this, currentDetail.picture2)}
+                    alt=""
+                  />
+                )}
+                {currentDetail.picture3 && (
+                  <img
+                    style={imgStyle}
+                    src={currentDetail.picture3}
+                    onClick={this.showImage.bind(this, currentDetail.picture3)}
+                    alt=""
+                  />
+                )}
+                {currentDetail.picture4 && (
+                  <img
+                    style={imgStyle}
+                    src={currentDetail.picture4}
+                    onClick={this.showImage.bind(this, currentDetail.picture4)}
+                    alt=""
+                  />
+                )}
+                {currentDetail.picture5 && (
+                  <img
+                    style={imgStyle}
+                    src={currentDetail.picture5}
+                    onClick={this.showImage.bind(this, currentDetail.Picture5)}
+                    alt=""
+                  />
+                )}
+              </DescriptionList>
+            </Card>
+
+          </TabPane>
+          <TabPane tab="检测设置" key="4">
+            <Card bordered={false} style={{ padding: 0 }}>
+              <DescriptionList size="large" title="巡检" style={{ marginBottom: 32 }}>
+                <Description term="是否需要">{currentDetail.needInspection==1?'是':'否'}</Description>
+                <Description term="巡检间隔">{currentDetail.needInspection==1?`${currentDetail.inspectionInterval}天`:'无'}</Description>
+              </DescriptionList>
+              <DescriptionList size="large" title="巡检" style={{ marginBottom: 32 }}>
+                <Description term="是否需要">{currentDetail.needMaintain==1?'是':'否'}</Description>
+                <Description term="保养间隔">{currentDetail.needMaintain==1?`${currentDetail.maintenanceInterval}天`:'无'}</Description>
+              </DescriptionList>
+              <DescriptionList size="large" title="计量" style={{ marginBottom: 32 }}>
+                <Description term="是否需要">{currentDetail.needMetering==1?'是':'否'}</Description>
+                <Description term="计量间隔">{currentDetail.needMetering==1?`${currentDetail.meteringInterval}天`:'无'}</Description>
+              </DescriptionList>
+            </Card>
+          </TabPane>
+          <TabPane tab="历史记录" key="5">
             <Card bordered={false} style={{ padding: 0 }}>
               <Timeline mode={'alternate'}>
                 {currentDetail.timeline &&
