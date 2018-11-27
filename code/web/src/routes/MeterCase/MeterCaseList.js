@@ -285,9 +285,9 @@ export default class MeterCaseList extends PureComponent {
 
   getCaseStateName(state) {
     const Names = {
-      10: '新报修',
+      10: '新计量',
       20: '已取消',
-      30: '维修中',
+      30: '计量中',
       40: '已完成',
       50: '已关闭',
     };

@@ -13,9 +13,6 @@
     "cordova-plugin-http": {
       "PACKAGE_NAME": "io.hzly360.amarium"
     },
-    "cordova-plugin-local-notification": {
-      "PACKAGE_NAME": "io.hzly360.amarium"
-    },
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "io.hzly360.amarium"
     },
@@ -27,12 +24,6 @@
     }
   },
   "dependent_plugins": {
-    "cordova-plugin-badge": {
-      "PACKAGE_NAME": "io.hzly360.amarium"
-    },
-    "cordova-plugin-device": {
-      "PACKAGE_NAME": "io.hzly360.amarium"
-    },
     "cordova-plugin-file": {
       "PACKAGE_NAME": "io.hzly360.amarium"
     }

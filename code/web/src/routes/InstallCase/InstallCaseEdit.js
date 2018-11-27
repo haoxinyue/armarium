@@ -339,8 +339,8 @@ export default class InstallCaseEdit extends Component {
                 text: 'MR',
               },
               {
-                value: 3,
-                text: '普放',
+                value: 0,
+                text: '其他',
               },
             ])}
 

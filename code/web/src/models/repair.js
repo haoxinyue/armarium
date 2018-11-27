@@ -34,11 +34,14 @@ export default {
       const response = yield call(queryMtCaseList, payload);
       yield put({
         type: 'save',
-        pagination: {
-          current: payload.pageIndex == null ? 1 : payload.pageIndex + 1,
-          pageSize: payload.pageSize || 10,
-          total: response.recordCount || 0,
-        },
+        payload:{
+          ...response,
+          pagination: {
+            current: payload.pageIndex == null ? 1 : payload.pageIndex + 1,
+            pageSize: payload.pageSize || 10,
+            total: response.recordCount || 0,
+          },
+        }
       });
     },
     *fetchDetail({ payload, callback }, { call, put }) {

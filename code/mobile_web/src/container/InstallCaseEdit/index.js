@@ -150,13 +150,16 @@ class DeviceEdit extends Component {
 
     getSubmitFormValue() {
 
+
+        const { match: {params: {caseId}},userInfo} = this.props;
+
         let formData =  {
             ...this.state.formValue,
             // deviceState: this.state.formValue.deviceState[0],
             deviceType: this.state.formValue.deviceType[0],
             // usageState: this.state.formValue.usageState[0]
+            assigneeUserId:userInfo.userId,
         }
-        const { match: {params: {caseId}}} = this.props;
 
         if (this.state.imageFiles&&this.state.imageFiles.length){
             this.state.imageFiles.forEach((f,i)=>{

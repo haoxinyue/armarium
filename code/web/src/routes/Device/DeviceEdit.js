@@ -89,7 +89,8 @@ export default class DeviceEdit extends Component {
       if (!err) {
         let fData = {
           ...values,
-          maintenanceEndDate: moment(values.maintenanceEndDate).format('YYYY/MM/DD'),
+          maintenanceEndDate: values.maintenanceEndDate && moment(values.maintenanceEndDate).format('YYYY/MM/DD'),
+          setupDate: values.setupDate && moment(values.setupDate).format('YYYY/MM/DD'),
           needInspection: values.needInspection ? 1 : 0,
           needMaintain: values.needMaintain ? 1 : 0,
           needMetering: values.needMetering ? 1 : 0,
@@ -189,8 +190,8 @@ export default class DeviceEdit extends Component {
           data[k] = d[k];
         }
 
-        if (k === 'maintenanceEndDate') {
-          data[k] = moment(data[k]);
+        if (k.indexOf('Date')!==-1) {
+          data[k] = data[k] && moment(data[k]);
         }
       }
       setFieldsValue(data);
@@ -257,11 +258,12 @@ export default class DeviceEdit extends Component {
 
     function getDateFieldNode(fieldName, title, isRequired) {
       const dateFormat = 'YYYY/MM/DD';
-
+      let fv = getFieldValue(fieldName)
+      console.log(fv)
       return (
         <FormItem {...formItemLayout} label={(isRequired ? '*' : '') + title}>
           {getFieldDecorator(fieldName, {
-            initialValue: getFieldValue(fieldName),
+            initialValue: fv && moment(fv),
             rules: [
               {
                 required: isRequired,
@@ -389,8 +391,8 @@ export default class DeviceEdit extends Component {
                     text: 'MR',
                   },
                   {
-                    value: 3,
-                    text: '普放',
+                    value: 0,
+                    text: '其他',
                   },
                 ])}
                 {getSelectFieldNode('deviceState', '设备状态', true, [
@@ -473,18 +475,22 @@ export default class DeviceEdit extends Component {
                 {getTextFieldNode('deviceDesc', '设备描述', false)}
                 {getTextFieldNode('accessory', '设备附件', false)}
 
-              </Card>
-            </TabPane>
+                <Divider style={{ marginBottom: 32 }} />
 
-            <TabPane tab="安装信息" key="4">
-              <Card bordered={false}>
                 {getDateFieldNode('setupDate', '安装日期', false)}
                 {getDateFieldNode('useDate', '使用日期', false)}
                 {getDateFieldNode('acceptDate', '验收日期', false)}
-                {getInputFieldNode('acceptRemark', '验收评价', false)}
-                {getInputFieldNode('acceptFile', '验收清单', false)}
+                {getTextFieldNode('acceptRemark', '验收评价', false)}
+                {getTextFieldNode('acceptFile', '验收清单', false)}
+
               </Card>
             </TabPane>
+
+           {/* <TabPane tab="安装信息" key="4">
+              <Card bordered={false}>
+
+              </Card>
+            </TabPane>*/}
 
             <TabPane tab="合同保修" key="5">
               <Card bordered={false}>

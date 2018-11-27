@@ -30,6 +30,7 @@ class Devices extends Component {
             height: document.documentElement.clientHeight - 88 - 90,
             useBodyScroll: false,
             openFilter: false,
+            stateFilter: '',
             searchValue: '',
             pageIndex: 0,
             hasMore: false
@@ -76,14 +77,15 @@ class Devices extends Component {
         this.onRefresh()
     }
 
-    queryPageData(clear,resetSearch) {
+    queryPageData(clear, resetSearch) {
         const {dispatch} = this.props
         const nextPage = (clear ? 0 : (this.state.pageIndex + 1))
         this.setState({refreshing: !!clear, pageIndex: nextPage, isLoading: true});
 
         dispatch(fetchDeviceList({
             pageIndex: nextPage,
-            deviceName: resetSearch?'':this.state.searchValue
+            deviceName: resetSearch ? '' : this.state.searchValue,
+            deviceState: this.state.stateFilter
         })).then((res) => {
             if (!res.error) {
                 Toast.info("success")
@@ -132,7 +134,7 @@ class Devices extends Component {
 
 
     onRefresh = (reset) => {
-        this.queryPageData(true,reset)
+        this.queryPageData(true, reset)
     };
 
 
@@ -155,11 +157,19 @@ class Devices extends Component {
             name: 'part',
             defaultValue: '所有',
             data: ['所有', '正常', '故障'],
-            onChange: () => {
+            onChange: (v) => {
+                const map = {
+                    '正常': '1',
+                    '故障': '2'
+                }
+                console.log( map[v])
                 this.setState({
-                    openFilter: false
-                })
-                this.onRefresh()
+                    openFilter: false,
+                    stateFilter: map[v]
+                },()=>{
+                    this.onRefresh()
+                });
+
             }
         }
 
@@ -186,7 +196,7 @@ class Devices extends Component {
                 </ul>
             </div>;
 
-        var hasData = this.state.dataSource.getRowCount()>0;
+        var hasData = this.state.dataSource.getRowCount() > 0;
 
         return (
             <Drawer
@@ -204,7 +214,7 @@ class Devices extends Component {
                     <SearchBar className="search-box" placeholder="请输入设备名称" value={this.state.searchValue}
                                onChange={this.handleChange}
                                onSubmit={this.handleSubmit}
-                               onClear={this.onRefresh.bind(this,true)}
+                               onClear={this.onRefresh.bind(this, true)}
                     />
                     <div className="dataList-container" id="J_Scroll">
                         <div className="scroll-hook">
@@ -221,7 +231,7 @@ class Devices extends Component {
                                     />
                                 )}
                                 renderFooter={() => (<div style={{padding: 30, textAlign: 'center'}}>
-                                    {this.state.isLoading ? '加载中...' : (!hasData?'无数据':'')}
+                                    {this.state.isLoading ? '加载中...' : (!hasData ? '无数据' : '')}
                                 </div>)}
                                 renderSeparator={separator}
                                 useBodyScroll={this.state.useBodyScroll}

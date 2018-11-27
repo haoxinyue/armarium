@@ -101,7 +101,7 @@ class RepairDetail extends Component {
             })
         }
 
-        function getTimeLineItem(data) {
+        function getTimeLineItem(data,index) {
 
             let statusStr ="";
             switch (data.caseState){
@@ -120,15 +120,23 @@ class RepairDetail extends Component {
                 case 50:
                     statusStr ="关闭工单";
                     break;
+                default:
+                    statusStr ="其他";
+                    break;
 
             }
 
             let timeStr = moment(data.createTime).format("YYYY/MM/DD HH:mm:ss");
 
             statusStr += '-';
+           if(data.assigneeUserName){
+               statusStr += data.assigneeUserName;
+               statusStr += '-';
+           }
+
             statusStr += timeStr;
 
-            return <Step key={data} description={statusStr} />
+            return <Step key={index} description={statusStr} />
         }
 
 
@@ -198,7 +206,7 @@ class RepairDetail extends Component {
 
                                         <Steps size={"small"}>
                                             {
-                                                caseInfo &&  caseInfo.timeShaft&&  caseInfo.timeShaft.map((item)=>getTimeLineItem(item))
+                                                caseInfo &&  caseInfo.timeShaft&&  caseInfo.timeShaft.map((item,index)=>getTimeLineItem(item,index))
                                             }
                                         </Steps>
                                     </div>
@@ -215,7 +223,7 @@ class RepairDetail extends Component {
                             <div className="detail-block">
 
                                 <div className="block-title">
-                                    <span>设备图片</span>
+                                    <span>工单图片</span>
                                 </div>
 
                                 <div className="block-content">
@@ -226,7 +234,7 @@ class RepairDetail extends Component {
                                             onImageClick={(index, fs) => console.log(index, fs)}
                                             selectable={false}
                                             accept="image/gif,image/jpeg,image/jpg,image/png"
-                                        />:<span>暂无</span>
+                                        />:<span>无</span>
                                     }
 
                                 </div>

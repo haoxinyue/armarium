@@ -104,10 +104,12 @@ class MeterCaseEdit extends Component {
         let formData = {
             ...this.state.formValue,
             creater: userInfo.userId,
-            meteringResult:this.state.formValue.meteringResult1&&this.state.formValue.meteringResult[0],
+            meteringResult:this.state.formValue.meteringResult&&this.state.formValue.meteringResult[0],
             modifier: userInfo.userId,
             actualUserId: userInfo.userId,
+            assigneeUserId:userInfo.userId,
             actualTime: moment().format("YYYY-MM-DD HH:mm:ss"),
+            deviceId:this.state.formValue.deviceId && Number(this.state.formValue.deviceId)
         }
 
         return formData

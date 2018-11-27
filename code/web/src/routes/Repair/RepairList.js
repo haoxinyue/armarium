@@ -28,7 +28,7 @@ import styles from './TableList.less';
 import DeviceSelect from '../../components/biz/DeviceSelect';
 import EngineerSelect from '../../components/biz/EngineerSelect';
 
-const statusMap = { '10': '待维修', '20': '已取消', '30': '维修中', '40': '已完成','50':'已关闭' };
+const statusMap = { '10': '新报修', '20': '已取消', '30': '维修中', '40': '已完成','50':'已关闭' };
 
 const { TextArea } = Input;
 

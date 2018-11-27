@@ -218,7 +218,8 @@ class Dashboard extends Component {
                     {
                         image: require("../../assets/img/hospital/if_13_hospital_2774744.png"),
                         desc: "添加资产",
-                        link: "/devices"
+                        // link: "/devices"
+                        link: "/deviceAdd"
                     },
                     {
                         image: require("../../assets/img/hospital/if_8_hospital_2774754.png"),

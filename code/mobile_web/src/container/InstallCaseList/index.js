@@ -59,6 +59,9 @@ class InstallListItem extends Component {
                         </div>
                         <div className="item-desc-left">
                             <div>
+                                <span className="key">工单号</span>：
+                                <span className="value">{itemData.caseId}</span>
+                            </div><div>
                                 <span className="key">科室</span>：
                                 <span className="value">{itemData.deptName}</span>
                             </div>

@@ -429,19 +429,13 @@ export const getRepairDetail = createAction(REPAIR.SAVE,
         new Promise((resolve, reject) => {
             Promise.all([
                 doPostQuery(api.repairGet,{ ...params}),
-                // axios.http.post(api.repairGet, ({
-                //     ...params
-                // })),
                 doPostQuery(api.repairTimeShaftGet,{ ...params}),
-                // axios.http.post(api.repairTimeShaftGet, ({
-                //     ...params
-                // }))
             ]).then((reslist) => {
-
-                if (reslist[0].data&&reslist[0].data.data){
+                console.log(reslist)
+                if (reslist[0].data){
                     let info = {
-                        ...reslist[0].data.data,
-                        timeShaft: reslist[1].data && reslist[1].data.data
+                        ...reslist[0].data,
+                        timeShaft: reslist[1].data
                     };
                     resolve({
                         data: info

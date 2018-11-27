@@ -167,29 +167,32 @@ export default class StocktakingCaseList extends PureComponent {
   }
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
+    const { dispatch,form } = this.props;
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
 
-    const filters = Object.keys(filtersArg).reduce((obj, key) => {
-      const newObj = { ...obj };
-      newObj[key] = getValue(filtersArg[key]);
-      return newObj;
-    }, {});
+      const formValues = {
+        ...fieldsValue
+      };
 
-    const params = {
-      pageIndex: pagination.current - 1,
-      pageSize: pagination.pageSize,
-      ...formValues,
-      ...filters,
-    };
-    if (sorter.field) {
-      params.sorter = `${sorter.field}_${sorter.order}`;
-    }
+      const params = {
+        pageIndex: pagination.current - 1,
+        pageSize: pagination.pageSize,
+        ...formValues
+      };
 
-    dispatch({
-      type: 'stocktakingCase/fetch',
-      payload: params,
-    });
+
+      dispatch({
+        type: 'stocktakingCase/fetch',
+        payload: params,
+      });
+
+
+    })
+
+
+
+
   };
 
   handleFormReset = () => {

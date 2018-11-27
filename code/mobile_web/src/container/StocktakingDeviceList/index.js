@@ -126,7 +126,7 @@ class StocktakingCaseList extends Component {
     componentDidMount() {
         const {dispatch} = this.props;
         dispatch(changeHeaderRight([
-            <Button key="0" size="small" type="primary" onClick={this.createNewCase.bind(this, null)}>开始巡检</Button>
+            <Button key="0" size="small" type="primary" onClick={this.createNewCase.bind(this, null)}>开始盘点</Button>
         ]))
 
 
