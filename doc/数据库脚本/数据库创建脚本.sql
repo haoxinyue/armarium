@@ -1255,7 +1255,8 @@ CREATE TABLE public.tb_stocktaking_case
     case_subject character varying(50),
     case_remark character varying(500),
     case_state smallint NOT NULL,
-    plan_time timestamp without time zone,
+    plan_begin_time timestamp without time zone,
+	plan_end_time timestamp without time zone,
 	assignee_user_id integer,
 	actual_time timestamp without time zone, 
 	hospital_id integer NOT NULL,
@@ -1295,9 +1296,11 @@ COMMENT ON COLUMN public.tb_stocktaking_case.assignee_user_id
     IS '盘点当前指派人用户ID';
 	
 
-COMMENT ON COLUMN public.tb_stocktaking_case.plan_time
-    IS '盘点计划执行时间';
+COMMENT ON COLUMN public.tb_stocktaking_case.plan_begin_time
+    IS '盘点计划执行开始时间';
 	
+COMMENT ON COLUMN public.tb_stocktaking_case.plan_begin_time
+    IS '盘点计划执行结束时间';
 
 COMMENT ON COLUMN public.tb_stocktaking_case.actual_time
     IS '盘点实际执行时间';
@@ -1522,7 +1525,37 @@ COMMENT ON COLUMN public.tsys_config.config_code
 	
 	
 	
-	
+
+-- ----------------------------
+-- Table structure for tb_user
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."tb_user";
+CREATE TABLE "public"."tb_user" (
+"user_id" int4 DEFAULT nextval('tb_user_user_id_seq'::regclass) NOT NULL,
+"login_name" varchar(50) COLLATE "default",
+"login_password" varchar(50) COLLATE "default" NOT NULL,
+"mobile" varchar(50) COLLATE "default",
+"email" varchar(50) COLLATE "default",
+"display_name" varchar(50) COLLATE "default",
+"create_time" timestamp(6) NOT NULL,
+"creater" int4 NOT NULL,
+"modify_time" timestamp(6) NOT NULL,
+"modifier" int4 NOT NULL,
+"weixin_openid" varchar(100) COLLATE "default"
+)
+WITH (OIDS=FALSE)
+
+;
+COMMENT ON COLUMN "public"."tb_user"."weixin_openid" IS '微信openid';
+
+-- ----------------------------
+-- Alter Sequences Owned By 
+-- ----------------------------
+
+-- ----------------------------
+-- Primary Key structure for table tb_user
+-- ----------------------------
+ALTER TABLE "public"."tb_user" ADD PRIMARY KEY ("user_id");
 	
 	
 	
