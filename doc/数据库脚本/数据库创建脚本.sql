@@ -1189,7 +1189,7 @@ CREATE TABLE public.tb_metering_case
 	metering_time timestamp without time zone,
 	metering_data character varying(500), 
     metering_result smallint DEFAULT 1,
-	result_file character varying(100),
+	result_file character varying(200),
 
     create_time timestamp without time zone NOT NULL,
     creater integer NOT NULL,
@@ -1414,7 +1414,7 @@ CREATE TABLE public.tb_pm_case
 	actual_pm_user_id integer,
 	
 	accessory_info character varying(500),
-	pm_file character varying(100),
+	pm_file character varying(200),
 	remark character varying(500),
 	
 
