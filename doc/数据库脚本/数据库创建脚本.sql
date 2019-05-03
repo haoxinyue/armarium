@@ -667,7 +667,8 @@ CREATE TABLE public.tb_device
 	metering_interval integer,
 	next_metering_date timestamp without time zone,
 	inspection_owner integer,
-
+	
+	force_inspection smallint DEFAULT 0,
 	
     create_time timestamp without time zone NOT NULL,
     creater integer NOT NULL,
@@ -832,6 +833,9 @@ COMMENT ON COLUMN public.tb_device.next_maintenance_date
 	
 COMMENT ON COLUMN public.tb_device.inspection_owner
     IS '巡检负责人';
+	
+COMMENT ON COLUMN public.tb_device.force_inspection
+    IS '是否强检设备';
 	
 CREATE TABLE public.tb_bad_event
 (
@@ -1564,7 +1568,54 @@ ALTER TABLE "public"."tb_user" ADD PRIMARY KEY ("user_id");
 	
 	
 	
+
 	
+	
+
+CREATE TABLE public.tb_device_attachment
+(
+    attachment_id serial NOT NULL,
+	
+	attachment_name character varying(50) NOT NULL,
+	attachment_type smallint NOT NULL,
+	file_type smallint NOT NULL,
+	file_path character varying(200) NOT NULL,
+    
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    modify_time timestamp without time zone NOT NULL,
+    modifier integer NOT NULL,
+
+
+    PRIMARY KEY (attachment_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_device_attachment
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_device_attachment
+    IS '设备附件表';
+
+
+COMMENT ON COLUMN public.tb_device_attachment.attachment_name
+    IS '附件名称';
+
+COMMENT ON COLUMN public.tb_device_attachment.attachment_type
+    IS '附件类型 1.用户手册 2.操作手册 3.维护手册 99.其他';
+	
+COMMENT ON COLUMN public.tb_device_attachment.file_type
+    IS '文件类型：1.文件 2.视频 99.其他';
+
+
+
+
+
+
+
+
 	
 	
 	
