@@ -11,13 +11,8 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.druid.util.StringUtils;
 import com.jiabo.medical.constant.ConstantInfo;
-import com.jiabo.medical.entity.Contract;
-import com.jiabo.medical.entity.Equipment;
 import com.jiabo.medical.entity.Purchase;
-import com.jiabo.medical.mapper.ContractMapper;
-import com.jiabo.medical.mapper.EquipmentMapper;
 import com.jiabo.medical.mapper.PurchaseMapper;
-import com.jiabo.medical.mapper.UserMapper;
 import com.jiabo.medical.pojo.ResponseDTO;
 
 
@@ -37,28 +32,20 @@ public class PurchaseService {
 		
 		purchase.setPurchaseOwner(StringUtils.isEmpty(purchase.getPurchaseOwner())?null:"%"+purchase.getPurchaseOwner()+"%");
 		
-		if (purchase.getPageIndex() == null) {
+		recordsCnt = purchaseMapper.getPurchaseCount(purchase);
 		
-			recordsCnt = purchaseMapper.getPurchaseCount(purchase);
-			
-			if (recordsCnt == 0) {
-				res.code = ConstantInfo.INVALID;
-				res.message = "没有符合该条件的采购信息!";
-				return res;
-			}
-			
+		if (recordsCnt == 0) {
+			res.code = ConstantInfo.INVALID;
+			res.message = "没有符合该条件的采购信息!";
+			return res;
+		}
+		if (purchase.getPageIndex() == null) {
 			purchase.setPageIndex(0);
 		} else {
 			purchase.setPageIndex(purchase.getPageIndex()*10);
 		}
 		
 		List<Purchase> purchaseList = purchaseMapper.getPurchaseList(purchase);
-		
-		if (purchaseList.size() == 0) {
-			res.code = ConstantInfo.INVALID;
-			res.message = "没有符合该条件的采购信息!";
-			return res;
-		}
 		
 		res.data = purchaseList;
 		res.recordCount = recordsCnt;

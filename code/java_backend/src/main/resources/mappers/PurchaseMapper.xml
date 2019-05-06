@@ -47,7 +47,7 @@
             </if>
          </where>
          order by purchase_owner, contract_id
-         limit 10 offset #{pageIndex,jdbcType=INTEGER} 
+         limit #{pageSize,jdbcType=INTEGER} offset #{pageIndex,jdbcType=INTEGER} 
             
   </select>
   

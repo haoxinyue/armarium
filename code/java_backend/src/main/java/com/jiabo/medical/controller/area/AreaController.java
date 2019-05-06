@@ -18,7 +18,7 @@ public class AreaController {
 	private AreaService areaService;
 	
 	@RequestMapping(value="/getAreaInfo",method=RequestMethod.POST)
-	public ResponseDTO login() {
+	public ResponseDTO getAreaInfo() {
 		ResponseDTO result = areaService.getAreaInfo();
 		return result;
 	}

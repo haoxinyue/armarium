@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabo.medical.mapper.InsCaseMapper">  
+    <resultMap type="com.jiabo.medical.entity.InstCaseDTO" id="caseMap">
+        <!-- 用id属性来映射主键字段 -->
+        <id property="caseId" column="case_id" javaType="java.lang.Integer"/>
+        <!-- 用result属性来映射非主键字段 -->
+        <result property="caseSubject" column="case_subject"/>
+        <result property="caseRemark" column="case_remark"/>
+        <result property="caseState" column="case_state"/>
+        <result property="reporterUserId" column="reporter_user_id"/>
+        <result property="assigneeUserId" column="assignee_user_id"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="deviceCode" column="device_code"/>
+        <result property="deviceModel" column="device_model"/>
+        <result property="deviceType" column="device_type"/>
+        <result property="needInspection" column="need_inspection"/>
+        <result property="needMetering" column="need_metering"/>
+        <result property="usageState" column="usage_state"/>
+        <result property="hospitalId" column="hospital_id"/>
+        <result property="deviceName" column="device_name"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="expectedTime" column="expected_time" javaType="java.lang.String"/>
+        <result property="setupTime" column="setup_time" javaType="java.lang.String"/>
+        <result property="feedbackScore" column="feedback_score"/>
+        <result property="setupRemark" column="setup_remark"/>
+        <result property="setupBeginTime" column="setup_begin_time"/>
+        <result property="cost" column="cost"/>
+        <result property="createTime" column="create_time" javaType="java.sql.Timestamp"/>
+        <result property="creater" column="creater"/>
+        <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp"/>
+        <result property="modifier" column="modifier"/>
+    </resultMap>
+    
+    <select id="getCaseRecCount" parameterType="com.jiabo.medical.entity.InstCaseDTO" resultType="java.lang.Integer">
+        select count(1)
+          from tb_setup_case as tsc
+            left join tb_device as td
+                on td.setup_case_id = tsc.case_id 
+        <where>
+            <if test="assigneeUserId != null and assigneeUserId != ''">
+                tsc.assignee_user_id = #{assigneeUserId}
+            </if>
+            <if test="caseState != null and caseState != ''">
+                tsc.case_state = #{caseState}
+            </if>
+            <if test="deviceCode != null and deviceCode != ''">
+                and td.device_code like #{deviceCode}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                and td.device_name like #{deviceName}
+            </if>
+         </where>
+        
+    </select>
+  
+  <select id="getInsCaseList" parameterType="com.jiabo.medical.entity.InstCaseDTO" resultMap="caseMap">
+    select tmc.*,td.device_id,th.hospital_name,tdm.dept_name
+          from tb_setup_case as tmc
+            left join tb_device as td
+                on td.setup_case_id = tmc.case_id 
+            left join tb_hospital as th
+                on tmc.hospital_id = th.hospital_id
+            left join tb_department as tdm
+                on tmc.dept_id = tdm.dept_id
+        <where>
+            <if test="assigneeUserId != null and assigneeUserId != ''">
+                tmc.assignee_user_id = #{assigneeUserId}
+            </if>
+            <if test="caseState != null and caseState != ''">
+                tmc.case_state = #{caseState}
+            </if>
+            <if test="deviceCode != null and deviceCode != ''">
+                and td.device_code like #{deviceCode}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                and td.device_name like #{deviceName}
+            </if>
+         </where>
+         order by tmc.create_time desc
+         limit #{pageSize,jdbcType=INTEGER} offset #{pageIndex,jdbcType=INTEGER} 
+         
+  </select>
+  
+  <select id="getInsCaseInfo" parameterType="java.lang.Integer" resultMap="caseMap">
+        select tmc.*, td.device_code, td.device_model, td.device_id, td.need_inspection, td.need_metering, td.usage_state, th.hospital_id,tdm.dept_id
+          from tb_setup_case as tmc 
+            left join tb_device as td
+                on td.setup_case_id = tmc.case_id 
+            left join tb_hospital as th
+                on tmc.hospital_id = th.hospital_id
+            left join tb_department as tdm
+                on tmc.dept_id = tdm.dept_id
+        where
+            tmc.case_id = #{caseId}
+            
+  </select>
+  
+  <insert id="addInsCase" parameterType="com.jiabo.medical.entity.InstCaseDTO">  
+    insert into tb_setup_case
+        (
+            case_subject,
+            case_remark, 
+            case_state, 
+            hospital_id, 
+            dept_id,
+            expected_time,
+            device_name,
+            device_type,
+            assignee_user_id,
+            setup_time,
+            setup_remark,
+            create_time, 
+            creater, 
+            modify_time, 
+            modifier,
+            setup_begin_time
+        )
+        values  
+        (
+             #{caseSubject,jdbcType=VARCHAR}, 
+             #{caseRemark,jdbcType=VARCHAR},
+             #{caseState,jdbcType=INTEGER},
+             #{hospitalId,jdbcType=VARCHAR},
+             #{deptId,jdbcType=INTEGER},
+             to_timestamp(#{expectedTime},'YYYY-MM-DD HH24:MI:SS'),
+             #{deviceName,jdbcType=VARCHAR},
+             #{deviceType,jdbcType=INTEGER},
+             #{assigneeUserId,jdbcType=INTEGER},
+             null,
+             #{setupRemark,jdbcType=VARCHAR},
+             #{createTime,jdbcType=TIMESTAMP},
+             #{creater,jdbcType=INTEGER},
+             #{modifyTime,jdbcType=TIMESTAMP},
+             #{modifier,jdbcType=INTEGER},
+             null
+         )
+             
+  </insert>
+  
+  
+  <select id="getSequenceNo" resultType="java.lang.Integer" >
+     SELECT last_value from tb_setup_case_case_id_seq
+  </select>
+  
+  <select id="getAssigneeIds" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select tur.user_id
+        from tr_user_role as tur
+            inner join tb_role as tr
+                on tur.role_id = tr.role_id
+                  where tr.role_name = #{roleName}
+  </select>
+  
+  <select id="getRoleName" parameterType="java.lang.Integer" resultType="java.lang.String">
+    select tr.role_name
+        from tr_user_role as tur
+            inner join tb_role as tr
+                on tur.role_id = tr.role_id
+                  where tur.user_id = #{userId}
+  </select>
+ 
+  
+  <select id="rotateInsCaseState" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+    select count(1)
+        from tb_setup_case 
+            where assignee_user_id = #{assigneeUserId}
+                
+  </select>
+  
+  <update id="updInsCase" parameterType="com.jiabo.medical.entity.InstCaseDTO">
+    update tb_setup_case 
+        <set>
+            <if test="caseRemark != null and caseRemark != ''">
+                case_remark = #{caseRemark},
+            </if>
+            <if test="caseState != null and caseState != ''">
+                case_state = #{caseState},
+            </if>
+            <if test="assigneeUserId != null and assigneeUserId != ''">
+                assignee_user_id = #{assigneeUserId},
+            </if>
+            <if test="setupTime != null and setupTime != ''">
+                setup_time = to_timestamp(#{setupTime},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="setupRemark != null and setupRemark != ''">
+                setup_remark = #{setupRemark},
+            </if>
+            <if test="setupBeginTime != null and setupBeginTime != ''">
+                setup_begin_time = to_timestamp(#{setupBeginTime},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+	           modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+	           modifier = #{modifier}
+        </set>
+           
+        where case_id = #{caseId,jdbcType=INTEGER}
+  </update>
+ 
+
+</mapper>

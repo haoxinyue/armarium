@@ -2,15 +2,24 @@ package com.jiabo.medical.entity;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 public class User implements Serializable {
 	
+	private String openId;
+	private String jsCode;
 	private Integer userId;
+	private Integer roleId;
 	private String loginName;
 	private String loginPassword;
 	private String mobile;
 	private String email;
+	
+	private List<UserRole> users;
+	
 	private String displayName;
+	private String roleName;
 	
 	private Timestamp createTime;
 	private Integer creater;
@@ -76,6 +85,36 @@ public class User implements Serializable {
 	}
 	public void setModifier(Integer modifier) {
 		this.modifier = modifier;
+	}
+	public String getRoleName() {
+		return roleName;
+	}
+	public List<UserRole> getUsers() {
+		return users;
+	}
+	public void setUsers(List<UserRole> users) {
+		this.users = users;
+	}
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+	public Integer getRoleId() {
+		return roleId;
+	}
+	public void setRoleId(Integer roleId) {
+		this.roleId = roleId;
+	}
+	public String getOpenId() {
+		return openId;
+	}
+	public void setOpenId(String openId) {
+		this.openId = openId;
+	}
+	public String getJsCode() {
+		return jsCode;
+	}
+	public void setJsCode(String jsCode) {
+		this.jsCode = jsCode;
 	}
 	
 }

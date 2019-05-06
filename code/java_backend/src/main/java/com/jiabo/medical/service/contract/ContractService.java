@@ -14,8 +14,6 @@ import com.jiabo.medical.constant.ConstantInfo;
 import com.jiabo.medical.entity.Contract;
 import com.jiabo.medical.entity.Equipment;
 import com.jiabo.medical.mapper.ContractMapper;
-import com.jiabo.medical.mapper.EquipmentMapper;
-import com.jiabo.medical.mapper.UserMapper;
 import com.jiabo.medical.pojo.ResponseDTO;
 
 
@@ -36,28 +34,21 @@ public class ContractService {
 		contr.setContractNo(StringUtils.isEmpty(contr.getContractNo())?null:"%"+contr.getContractNo()+"%");
 		contr.setHospital(StringUtils.isEmpty(contr.getHospital())?null:"%"+contr.getHospital()+"%");
 		
-		if (contr.getPageIndex() == null) {
+		recordsCnt = contractMapper.getContrRecCount(contr);
 		
-			recordsCnt = contractMapper.getContrRecCount(contr);
-			
-			if (recordsCnt == 0) {
-				res.code = ConstantInfo.INVALID;
-				res.message = "没有符合该条件的合同信息!";
-				return res;
-			}
-			
+		if (recordsCnt == 0) {
+			res.code = ConstantInfo.INVALID;
+			res.message = "没有符合该条件的合同信息!";
+			return res;
+		}
+		
+		if (contr.getPageIndex() == null) {
 			contr.setPageIndex(0);
 		} else {
 			contr.setPageIndex(contr.getPageIndex()*10);
 		}
 		
 		List<Contract> contracts = contractMapper.getContractList(contr);
-		
-		if (contracts.size() == 0) {
-			res.code = ConstantInfo.INVALID;
-			res.message = "没有符合该条件的合同信息!";
-			return res;
-		}
 		
 		res.data = contracts;
 		res.recordCount = recordsCnt;

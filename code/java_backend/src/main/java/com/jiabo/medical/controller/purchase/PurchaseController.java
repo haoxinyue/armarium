@@ -23,28 +23,28 @@ public class PurchaseController {
 	private PurchaseService purchaseService;
 	
 	@RequestMapping(value="/getPurchaseList",method=RequestMethod.POST)
-	public ResponseDTO getPurchaseInfos(Purchase pur) {
+	public ResponseDTO getPurchaseInfos(@RequestBody Purchase pur) {
 		return purchaseService.getPurchaseInfos(pur);
 	}
 	
 	@RequestMapping(value="/getPurchaseInfo",method=RequestMethod.POST)
-	public ResponseDTO getContractInfo(@RequestParam("purchaseId") int purchaseId) {
-		return purchaseService.getPurchaseInfo(purchaseId);
+	public ResponseDTO getContractInfo(@RequestBody Purchase pur) {
+		return purchaseService.getPurchaseInfo(pur.getPurchaseId());
 	}
 	
 	@RequestMapping(value="/addPurchaseInfo",method=RequestMethod.POST)
-	public ResponseDTO addPurchaseInfo(Purchase pur) {
+	public ResponseDTO addPurchaseInfo(@RequestBody Purchase pur) {
 		return purchaseService.addPurchaseInfo(pur);
 	}
 	
 	@RequestMapping(value="/updPurchaseInfo",method=RequestMethod.POST)
-	public ResponseDTO updPurchaseInfo(Purchase pur) {
+	public ResponseDTO updPurchaseInfo(@RequestBody Purchase pur) {
 		return purchaseService.updPurchaseInfo(pur);
 	}
 	
 	@RequestMapping(value="/delPurchase",method=RequestMethod.POST)
-	public ResponseDTO delPurchase(@RequestParam("purchaseId") int purchaseId) {
-		return purchaseService.delPurchase(purchaseId);
+	public ResponseDTO delPurchase(@RequestBody Purchase pur) {
+		return purchaseService.delPurchase(pur.getPurchaseId());
 	}
 	
 }

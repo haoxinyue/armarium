@@ -21,28 +21,28 @@ public class ContractController {
 	private ContractService contractService;
 	
 	@RequestMapping(value="/getContractList",method=RequestMethod.POST)
-	public ResponseDTO getContractInfos(Contract contr) {
+	public ResponseDTO getContractInfos(@RequestBody Contract contr) {
 		return contractService.getContractInfos(contr);
 	}
 	
 	@RequestMapping(value="/getContractInfo",method=RequestMethod.POST)
-	public ResponseDTO getContractInfo(@RequestParam("contractId") int contractId) {
-		return contractService.getContractInfo(contractId);
+	public ResponseDTO getContractInfo(@RequestBody Contract contr) {
+		return contractService.getContractInfo(contr.getContractId());
 	}
 	
 	@RequestMapping(value="/addContractInfo",method=RequestMethod.POST)
-	public ResponseDTO addContractInfo(Contract contr) {
+	public ResponseDTO addContractInfo(@RequestBody Contract contr) {
 		return contractService.addContractInfo(contr);
 	}
 	
 	@RequestMapping(value="/updContractInfo",method=RequestMethod.POST)
-	public ResponseDTO updContractInfo(Contract contr) {
+	public ResponseDTO updContractInfo(@RequestBody Contract contr) {
 		return contractService.updContractInfo(contr);
 	}
 	
 	@RequestMapping(value="/delContract",method=RequestMethod.POST)
-	public ResponseDTO delContractInfo(@RequestParam("contractId") int contractId) {
-		return contractService.delContract(contractId);
+	public ResponseDTO delContractInfo(@RequestBody Contract contr) {
+		return contractService.delContract(contr.getContractId());
 	}
 	
 }

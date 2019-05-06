@@ -12,6 +12,7 @@ public class Department implements Serializable {
 	private String hospital;
 	private String deptPath;
 	private String remark;
+	private Integer userId;
 	
 	
 	private Timestamp createTime;
@@ -91,6 +92,12 @@ public class Department implements Serializable {
 	}
 	public void setModifier(Integer modifier) {
 		this.modifier = modifier;
+	}
+	public Integer getUserId() {
+		return userId;
+	}
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 	
 }

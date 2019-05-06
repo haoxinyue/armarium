@@ -65,7 +65,7 @@
             </if>
          </where>
          order by tc.hospital_id, tc.accept_date
-         limit 10 offset #{pageIndex,jdbcType=INTEGER} 
+         limit #{pageSize,jdbcType=INTEGER} offset #{pageIndex,jdbcType=INTEGER}
          
   </select>
   

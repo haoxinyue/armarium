@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabo.medical.mapper.BadEventMapper">  
+    <resultMap type="com.jiabo.medical.entity.BadEventDTO" id="eventMap">
+        <!-- 用id属性来映射主键字段 -->
+        <id property="eventId" column="event_id" javaType="java.lang.Integer"/>
+        <!-- 用result属性来映射非主键字段 -->
+        <result property="eventSubject" column="event_subject"/>
+        <result property="eventRemark" column="event_remark"/>
+        <result property="eventTime" column="event_time" javaType="java.lang.String"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="hospital" column="hospital_name"/>
+        <result property="deviceName" column="device_name"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="discussionSuggestion" column="discussion_suggestion"/>
+        <result property="discussionParticipant" column="discussion_participant"/>
+        <result property="discussionTime" column="discussion_time"/>
+        <result property="solveResult" column="solve_result"/>
+        <result property="solveTime" column="solve_time"/>
+        <result property="createTime" column="create_time" javaType="java.sql.Timestamp"/>
+        <result property="creater" column="creater"/>
+        <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp"/>
+        <result property="modifier" column="modifier"/>
+    </resultMap>
+    
+    <select id="getCaseRecCount" parameterType="com.jiabo.medical.entity.BadEventDTO" resultType="java.lang.Integer">
+        select count(1)
+          from tb_bad_event as tbe
+          	inner join tb_device as td
+          	  on tbe.device_id = td.device_id
+          	left join tb_department as tdm
+                on td.dept_id = tdm.dept_id
+        <where>
+            <if test="deviceName != null and deviceName != ''">
+                td.device_name like #{deviceName}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                tdm.deptName = #{deptName}
+            </if>
+            <if test="eventSubject != null and eventSubject != ''">
+                tbe.event_subject like #{eventSubject}
+            </if>
+         </where>
+        
+    </select>
+  
+  <select id="getBadEventList" parameterType="com.jiabo.medical.entity.BadEventDTO" resultMap="eventMap">
+    select tbe.*,td.device_name,tdm.dept_name
+          from tb_bad_event as tbe
+          	inner join tb_device as td
+          	  on tbe.device_id = td.device_id
+          	left join tb_department as tdm
+                on td.dept_id = tdm.dept_id
+        <where>
+            <if test="deviceName != null and deviceName != ''">
+                td.device_name like #{deviceName}
+            </if>
+            <if test="deptName != null and deptName != ''">
+                tdm.dept_name = #{deptName}
+            </if>
+            <if test="eventSubject != null and eventSubject != ''">
+                tbe.event_subject like #{eventSubject}
+            </if>
+         </where>
+         order by tbe.create_time desc
+         limit 10 offset #{pageIndex,jdbcType=INTEGER} 
+         
+  </select>
+  
+  <select id="getBadEventInfo" parameterType="java.lang.Integer" resultMap="eventMap">
+        select tbe.*,td.device_name,tdm.dept_name
+          from tb_bad_event as tbe
+          	inner join tb_device as td
+          	  on tbe.device_id = td.device_id
+          	left join tb_department as tdm
+                on td.dept_id = tdm.dept_id
+        where
+            tbe.event_id = #{eventId}
+ 
+  </select>
+  
+  <insert id="addBadEvent" parameterType="com.jiabo.medical.entity.BadEventDTO">  
+    insert into tb_bad_event
+        (
+            event_subject,
+            device_id, 
+            event_time, 
+            event_remark,
+            discussion_suggestion,
+            discussion_participant,
+            discussion_time,
+            solve_result,
+            solve_time,
+            create_time, 
+            creater, 
+            modify_time, 
+            modifier
+        )
+        values  
+        (
+             #{eventSubject,jdbcType=VARCHAR}, 
+             #{deviceId,jdbcType=INTEGER},
+             to_timestamp(#{eventTime},'YYYY-MM-DD HH24:MI:SS'),
+             #{eventRemark,jdbcType=VARCHAR},
+             #{discussionSuggestion,jdbcType=VARCHAR},
+             #{discussionParticipant,jdbcType=VARCHAR},
+  			   null,
+             #{solveResult,jdbcType=VARCHAR},
+             null,
+             #{createTime,jdbcType=TIMESTAMP},
+             #{creater,jdbcType=INTEGER},
+             #{modifyTime,jdbcType=TIMESTAMP},
+             #{modifier,jdbcType=INTEGER}
+         )
+             
+  </insert>
+  
+  
+  <select id="getSequenceNo" resultType="java.lang.Integer" >
+     SELECT last_value from tb_bad_event_event_id_seq
+  </select>
+  
+  <update id="updBadEvent" parameterType="com.jiabo.medical.entity.BadEventDTO">
+    update tb_bad_event 
+        <set>
+            <if test="deviceId != null">
+                device_id = #{deviceId},
+            </if>
+            <if test="eventRemark != null and eventRemark != ''">
+                event_remark = #{eventRemark},
+            </if>
+            <if test="eventSubject != null and eventSubject != ''">
+                event_subject = #{eventSubject},
+            </if>
+            <if test="discussionSuggestion != null and discussionSuggestion != ''">
+                discussion_suggestion = #{discussionSuggestion},
+            </if>
+            <if test="discussionParticipant != null and discussionParticipant != ''">
+                discussion_participant = #{discussionParticipant},
+            </if>
+            <if test="discussionTime != null and discussionTime != ''">
+                discussion_time = to_timestamp(#{discussionTime},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="solveResult != null and solveResult != ''">
+                solve_result = #{solveResult},
+            </if>
+            <if test="eventTime != null and eventTime != ''">
+                event_time = to_timestamp(#{eventTime},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="solveTime != null and solveTime != ''">
+                solve_time = to_timestamp(#{solveTime},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+	           modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+	           modifier = #{modifier}
+        </set>
+           
+        where event_id = #{eventId,jdbcType=INTEGER}
+  </update>
+ 
+
+</mapper>

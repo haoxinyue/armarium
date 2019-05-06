@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabo.medical.mapper.MeterCaseMapper">  
+    <resultMap type="com.jiabo.medical.entity.MeteringCaseDTO" id="caseMap">
+        <!-- 用id属性来映射主键字段 -->
+        <id property="caseId" column="case_id" javaType="java.lang.Integer"/>
+        <!-- 用result属性来映射非主键字段 -->
+        <result property="caseSubject" column="case_subject"/>
+        <result property="caseRemark" column="case_remark"/>
+        <result property="caseState" column="case_state"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="assigneeUserId" column="assignee_user_id"/>
+        <result property="deviceName" column="device_name"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="meteringType" column="metering_type" javaType="java.lang.Integer"/>
+        <result property="meteringTime" column="metering_time"/>
+        <result property="meteringData" column="metering_data"/>
+        <result property="meteringResult" column="metering_result"/>
+        <result property="resultFile" column="result_file"/>
+        <result property="createTime" column="create_time" javaType="java.sql.Timestamp"/>
+        <result property="creater" column="creater"/>
+        <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp"/>
+        <result property="modifier" column="modifier"/>
+    </resultMap>
+    
+    <select id="getCaseRecCount" parameterType="com.jiabo.medical.entity.MeteringCaseDTO" resultType="java.lang.Integer">
+        select count(1)
+          from tb_metering_case as tsc
+            left join tb_device as td
+                on td.device_id = tsc.device_id
+        <where>
+            <if test="assigneeUserId != null and assigneeUserId != ''">
+                and tsc.assignee_user_id = #{assigneeUserId}
+            </if>
+            <if test="deviceId != null and deviceId != ''">
+                and td.device_id = #{deviceId}
+            </if>
+            <if test="deviceCode != null and deviceCode != ''">
+                and td.device_code like #{deviceCode}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                and td.device_name like #{deviceName}
+            </if>
+         </where>
+        
+    </select>
+  
+  <select id="getMeteringCaseList" parameterType="com.jiabo.medical.entity.MeteringCaseDTO" resultMap="caseMap">
+    select tmc.*,td.device_name, tdm.dept_name
+          from tb_metering_case as tmc
+            left join tb_device as td
+                on tmc.device_id = td.device_id
+            left join tb_department as tdm
+                on td.dept_id = tdm.dept_id
+        <where>
+            <if test="assigneeUserId != null and assigneeUserId != ''">
+                tmc.assignee_user_id = #{assigneeUserId}
+            </if>
+            <if test="deviceId != null and deviceId != ''">
+                and td.device_id = #{deviceId}
+            </if>
+            <if test="deviceCode != null and deviceCode != ''">
+                and td.device_code like #{deviceCode}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                and td.device_name like #{deviceName}
+            </if>
+         </where>
+         order by tmc.create_time desc
+         limit #{pageSize,jdbcType=INTEGER} offset #{pageIndex,jdbcType=INTEGER} 
+
+         
+  </select>
+  
+  <select id="getMeteringCaseInfo" parameterType="java.lang.Integer" resultMap="caseMap">
+       select tmc.*,td.device_name, tdm.dept_name
+          from tb_metering_case as tmc
+            inner join tb_device as td
+                on tmc.device_id = td.device_id
+            left join tb_department as tdm
+                on td.dept_id = tdm.dept_id
+        where
+            tmc.case_id = #{caseId}
+            
+  </select>
+  
+  <select id="getSequenceNo" resultType="java.lang.Integer" >
+     SELECT last_value from tb_metering_case_case_id_seq
+  </select>
+  
+  <select id="getRoleName" parameterType="java.lang.Integer" resultType="java.lang.String">
+    select tr.role_name
+        from tr_user_role as tur
+            inner join tb_role as tr
+                on tur.role_id = tr.role_id
+                  where tur.user_id = #{userId}
+  </select>
+  
+  <select id="rotateMeterCaseState" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1)
+          from tb_metering_case as tsc
+        where
+            tsc.assignee_user_id = #{assigneeUserId}
+            and tsc.case_state = 10
+    </select>
+  
+  <insert id="addMeteringCase" parameterType="com.jiabo.medical.entity.MeteringCaseDTO">  
+    insert into tb_metering_case
+        (
+            case_subject,
+            case_remark, 
+            case_state, 
+            device_id, 
+            assignee_user_id,
+            metering_type,
+            metering_time,
+            metering_data,
+            metering_result,
+            result_file,
+            create_time, 
+            creater, 
+            modify_time, 
+            modifier
+        )
+        values  
+        (
+             #{caseSubject,jdbcType=VARCHAR}, 
+             #{caseRemark,jdbcType=VARCHAR},
+             #{caseState,jdbcType=INTEGER},
+             #{deviceId,jdbcType=INTEGER},
+             #{assigneeUserId,jdbcType=INTEGER},
+             #{meteringType,jdbcType=INTEGER},
+             null,
+             null,
+             null,
+             null,
+             #{createTime,jdbcType=TIMESTAMP},
+             #{creater,jdbcType=INTEGER},
+             #{modifyTime,jdbcType=TIMESTAMP},
+             #{modifier,jdbcType=INTEGER}
+         )
+             
+  </insert>
+ 
+ <update id="updAssignPerson" parameterType="com.jiabo.medical.entity.MeteringCaseDTO">
+    update tb_metering_case 
+        <set>
+            <if test="caseSubject != null and caseSubject != ''">
+                case_subject = #{caseSubject},
+            </if>
+            <if test="caseRemark != null and caseRemark != ''">
+                case_remark = #{caseRemark},
+            </if>
+            <if test="meteringType != null">
+                metering_type = #{meteringType},
+            </if>
+
+            <if test="assigneeUserId != null">
+                assignee_user_id = #{assigneeUserId},
+            </if>
+            
+               modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+               modifier = #{modifier}
+        </set>
+           
+        where case_id = #{caseId,jdbcType=INTEGER}
+  </update>
+
+  <update id="updMeteringCase" parameterType="com.jiabo.medical.entity.MeteringCaseDTO">
+    update tb_metering_case 
+        <set>
+            <if test="caseRemark != null and caseRemark != ''">
+                case_remark = #{caseRemark},
+            </if>
+            <if test="caseState != null and caseState != ''">
+                case_state = #{caseState},
+            </if>
+            <if test="assigneeUserId != null and assigneeUserId != ''">
+                assignee_user_id = #{assigneeUserId},
+            </if>
+            <if test="meteringTime != null and meteringTime != ''">
+                metering_time = to_timestamp(#{meteringTime},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="meteringData != null and meteringData != ''">
+                metering_data = #{meteringData},
+            </if>
+            <if test="meteringResult != null">
+                metering_result = #{meteringResult},
+            </if>
+            <if test="resultFile != null and resultFile != ''">
+                result_file = #{resultFile},
+            </if>
+            
+	           modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+	           modifier = #{modifier}
+        </set>
+           
+        where device_id = #{deviceId,jdbcType=INTEGER}
+            and case_state = 10
+  </update>
+ 
+
+</mapper>

@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 public class Contract implements Serializable {
 	
 	private Integer pageIndex = null;
+	private Integer pageSize = 10;
 	private Integer contractId;
 	private String contractNo;
 	private Integer parentDeptId;
@@ -105,6 +106,12 @@ public class Contract implements Serializable {
 	}
 	public void setPageIndex(Integer pageIndex) {
 		this.pageIndex = pageIndex;
+	}
+	public Integer getPageSize() {
+		return pageSize;
+	}
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
 	}
 	
 	

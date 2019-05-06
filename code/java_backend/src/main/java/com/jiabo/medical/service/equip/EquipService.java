@@ -4,8 +4,11 @@ package com.jiabo.medical.service.equip;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +17,20 @@ import com.jiabo.medical.constant.ConstantInfo;
 import com.jiabo.medical.entity.Equipment;
 import com.jiabo.medical.mapper.EquipmentMapper;
 import com.jiabo.medical.pojo.ResponseDTO;
+import com.jiabo.medical.util.QRCodeUtil;
 
 
 
 @Service
 public class EquipService {
+	
+	@Value("${server.ip.address}")
+	private String serverAdd;
+	
+	@Value("${accessory.file.path}") 
+	private String filePath;
+	
+	private static String URL_PICTURE = "/accessory/queryPic?file=";
 	
 	@Autowired
 	private EquipmentMapper equipmentMapper;
@@ -40,27 +52,21 @@ public class EquipService {
         equip.setProducingPlace(StringUtils.isEmpty(equip.getProducingPlace())?null:"%"+equip.getProducingPlace()+"%");
         equip.setDeviceOwner(StringUtils.isEmpty(equip.getDeviceOwner())?null:"%"+equip.getDeviceOwner()+"%");
 		
+        recordsCount = equipmentMapper.getEquipRecCount(equip);
+		
+		if (recordsCount == 0) {
+			res.code = ConstantInfo.INVALID;
+			res.message = "没有符合该条件的设备信息!";
+			return res;
+		}
+		
 		if (equip.getPageIndex() == null) {
-			recordsCount = equipmentMapper.getEquipRecCount(equip);
-			
-			if (recordsCount == 0) {
-				res.code = ConstantInfo.INVALID;
-				res.message = "没有符合该条件的设备信息!";
-				return res;
-			}
-			
 			equip.setPageIndex(0);
 		} else {
 			equip.setPageIndex(equip.getPageIndex()*10);
 		}
 		
 		List<Equipment> equips = equipmentMapper.getEquipmentList(equip);
-		
-		if (equips.size() == 0) {
-			res.code = ConstantInfo.INVALID;
-			res.message = "没有符合该条件的设备信息!";
-			return res;
-		}
 		
 		res.data = equips;
 		res.recordCount = recordsCount;
@@ -79,6 +85,26 @@ public ResponseDTO<Equipment> getEquipmentInfo(int deviceId) {
 			res.code = ConstantInfo.INVALID;
 			res.message = "没有符合该条件的设备信息!";
 			return res;
+		}
+		
+		if (!StringUtils.isEmpty(equip.getPicture1())) {
+			equip.setPicture1(serverAdd + URL_PICTURE + equip.getPicture1().split(filePath)[1]);
+		}
+		
+		if (!StringUtils.isEmpty(equip.getPicture2())) {
+			equip.setPicture2(serverAdd + URL_PICTURE + equip.getPicture2().split(filePath)[1]);
+		}
+		
+		if (!StringUtils.isEmpty(equip.getPicture3())) {
+			equip.setPicture3(serverAdd + URL_PICTURE + equip.getPicture3().split(filePath)[1]);
+		}
+		
+		if (!StringUtils.isEmpty(equip.getPicture4())) {
+			equip.setPicture4(serverAdd + URL_PICTURE + equip.getPicture4().split(filePath)[1]);
+		}
+		
+		if (!StringUtils.isEmpty(equip.getPicture5())) {
+			equip.setPicture5(serverAdd + URL_PICTURE + equip.getPicture5().split(filePath)[1]);
 		}
 		
 		res.data = equip;
@@ -105,13 +131,6 @@ public ResponseDTO<Equipment> getEquipmentInfo(int deviceId) {
 			return res;
 		}
 		
-		if (StringUtils.isEmpty(equip.getDeviceModel())) {
-			res.code = ConstantInfo.INVALID;
-			res.message = "设备型号未输入";
-			
-			return res;
-		}
-		
 		if (equip.getDeviceType() == null) {
 			res.code = ConstantInfo.INVALID;
 			res.message = "设备类型未输入";
@@ -126,19 +145,31 @@ public ResponseDTO<Equipment> getEquipmentInfo(int deviceId) {
 			return res;
 		}
 		
-		if (StringUtils.isEmpty(equip.getSerialNumber())) {
-			res.code = ConstantInfo.INVALID;
-			res.message = "设备序列号未输入";
-			
-			return res;
+		
+		if (!StringUtils.isEmpty(equip.getPicture1())) {
+			equip.setPicture1(filePath + equip.getPicture1().split("file=")[1]);
 		}
 		
-		if (StringUtils.isEmpty(equip.getQrCode())) {
-			res.code = ConstantInfo.INVALID;
-			res.message = "二维码编号未输入";
-			
-			return res;
+		if (!StringUtils.isEmpty(equip.getPicture2())) {
+			equip.setPicture2(filePath + equip.getPicture2().split("file=")[1]);
 		}
+		
+		if (!StringUtils.isEmpty(equip.getPicture3())) {
+			equip.setPicture3(filePath + equip.getPicture3().split("file=")[1]);
+		}
+		
+		if (!StringUtils.isEmpty(equip.getPicture4())) {
+			equip.setPicture4(filePath + equip.getPicture4().split("file=")[1]);
+		}
+		
+		if (!StringUtils.isEmpty(equip.getPicture5())) {
+			equip.setPicture5(filePath + equip.getPicture5().split("file=")[1]);
+		}
+		
+		
+		int seqNo= equipmentMapper.getSequenceNo() + 1;
+		
+		equip.setQrCode(String.valueOf(seqNo));
 		
 		
 		Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -153,7 +184,6 @@ public ResponseDTO<Equipment> getEquipmentInfo(int deviceId) {
 				res.code = ConstantInfo.NORMAL;
 				res.message = "添加成功";
 				
-				int seqNo= equipmentMapper.getSequenceNo();
 				equip.setDeviceId(seqNo);
 				
 				res.data = equip;
@@ -165,6 +195,8 @@ public ResponseDTO<Equipment> getEquipmentInfo(int deviceId) {
 		} catch (DataAccessException e) {
 			res.code = ConstantInfo.INVALID;
 			res.message = e.getMessage();
+			
+			log.error(e.getMessage());
 		}
 		
 		return res;
@@ -217,12 +249,26 @@ public ResponseDTO<Equipment> getEquipmentInfo(int deviceId) {
 			return res;
 		}
 		
-		if (StringUtils.isEmpty(equip.getQrCode())) {
-			res.code = ConstantInfo.INVALID;
-			res.message = "二维码编号未输入";
-			
-			return res;
+		if (!StringUtils.isEmpty(equip.getPicture1())) {
+			equip.setPicture1(filePath + equip.getPicture1().split("file=")[1]);
 		}
+		
+		if (!StringUtils.isEmpty(equip.getPicture2())) {
+			equip.setPicture2(filePath + equip.getPicture2().split("file=")[1]);
+		}
+		
+		if (!StringUtils.isEmpty(equip.getPicture3())) {
+			equip.setPicture3(filePath + equip.getPicture3().split("file=")[1]);
+		}
+		
+		if (!StringUtils.isEmpty(equip.getPicture4())) {
+			equip.setPicture4(filePath + equip.getPicture4().split("file=")[1]);
+		}
+		
+		if (!StringUtils.isEmpty(equip.getPicture5())) {
+			equip.setPicture5(filePath + equip.getPicture5().split("file=")[1]);
+		}
+
 		
 		Timestamp now = new Timestamp(System.currentTimeMillis());
 		

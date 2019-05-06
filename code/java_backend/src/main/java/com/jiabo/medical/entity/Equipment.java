@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 public class Equipment implements Serializable {
 	
 	private Integer pageIndex = null;
+	private Integer pageSize = 10;
 	private Integer deviceId;
 	private String deviceCode;
 	private String deviceName;
@@ -61,6 +62,17 @@ public class Equipment implements Serializable {
 	private String afterSaleProviderPhone;
 	private String afterSaleProviderDesc;
 	private Integer contractId;
+	private Integer  setupCaseId;
+	private Integer  needInspection;
+	private Integer inspectionInterval;
+	private Timestamp nextInspectionDate;
+	private Integer  needMaintain;
+	private Integer  maintenanceInterval;
+	private Timestamp nextMaintenanceDate;
+	private Integer  needMetering;
+	private Integer  meteringInterval;
+	private Timestamp nextMeteringDate;
+	
 	
 	private Timestamp createTime;
 	private Integer creater;
@@ -368,5 +380,70 @@ public class Equipment implements Serializable {
 	public void setPageIndex(Integer pageIndex) {
 		this.pageIndex = pageIndex;
 	}
-	
+	public Integer getSetupCaseId() {
+		return setupCaseId;
+	}
+	public void setSetupCaseId(Integer setupCaseId) {
+		this.setupCaseId = setupCaseId;
+	}
+	public Integer getNeedInspection() {
+		return needInspection;
+	}
+	public void setNeedInspection(Integer needInspection) {
+		this.needInspection = needInspection;
+	}
+	public Integer getInspectionInterval() {
+		return inspectionInterval;
+	}
+	public void setInspectionInterval(Integer inspectionInterval) {
+		this.inspectionInterval = inspectionInterval;
+	}
+	public Timestamp getNextInspectionDate() {
+		return nextInspectionDate;
+	}
+	public void setNextInspectionDate(Timestamp nextInspectionDate) {
+		this.nextInspectionDate = nextInspectionDate;
+	}
+	public Integer getNeedMetering() {
+		return needMetering;
+	}
+	public void setNeedMetering(Integer needMetering) {
+		this.needMetering = needMetering;
+	}
+	public Integer getMeteringInterval() {
+		return meteringInterval;
+	}
+	public void setMeteringInterval(Integer meteringInterval) {
+		this.meteringInterval = meteringInterval;
+	}
+	public Timestamp getNextMeteringDate() {
+		return nextMeteringDate;
+	}
+	public void setNextMeteringDate(Timestamp nextMeteringDate) {
+		this.nextMeteringDate = nextMeteringDate;
+	}
+	public Integer getNeedMaintain() {
+		return needMaintain;
+	}
+	public void setNeedMaintain(Integer needMaintain) {
+		this.needMaintain = needMaintain;
+	}
+	public Integer getMaintenanceInterval() {
+		return maintenanceInterval;
+	}
+	public void setMaintenanceInterval(Integer maintenanceInterval) {
+		this.maintenanceInterval = maintenanceInterval;
+	}
+	public Timestamp getNextMaintenanceDate() {
+		return nextMaintenanceDate;
+	}
+	public void setNextMaintenanceDate(Timestamp nextMaintenanceDate) {
+		this.nextMaintenanceDate = nextMaintenanceDate;
+	}
+	public Integer getPageSize() {
+		return pageSize;
+	}
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
+	}
 }

@@ -2,6 +2,9 @@ package com.jiabo.medical.util;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.Random;
+
+import com.alibaba.druid.util.StringUtils;
 
 
 public class CommonUtils {
@@ -33,7 +36,24 @@ public class CommonUtils {
         
     }
     
-    public static void main(String[] args) {
-        System.out.println(isDate("2010-10-41"));
-    }
+    public static String substring(String val, int length) {
+		if (StringUtils.isEmpty(val)) {
+			return null;
+		} else if (val.length() >= length) {
+			return val.substring(0, length-1);
+		} else {
+			return val;
+		}
+	}
+    
+   public static String createRandomFolder() {
+	   String luckNumber = "";
+       while (luckNumber.length() < 6) {
+           int number = new Random().nextInt(10);// 生成随机数
+           System.out.println("10以内随机数："+number);
+           luckNumber = luckNumber + number;// 
+       }
+       
+       return luckNumber;
+   }
 }

@@ -15,7 +15,7 @@ import com.jiabo.medical.entity.Department;
 public interface AccessoryMapper  {
 	public Accessory getAccessoryInfo(int accessoryId) throws DataAccessException;
 	public int getSequenceNo() throws DataAccessException;
-    public int addAccessoryInfo( Accessory accessory) throws DataAccessException;
-    public int updAccessoryInfo(Accessory accessory) throws DataAccessException;
+    public int addAccessory( Accessory accessory) throws DataAccessException;
+    public int updAccessory(Accessory accessory) throws DataAccessException;
     public int delAccessory(int accessoryId) throws DataAccessException;  
 }

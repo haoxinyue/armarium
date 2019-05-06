@@ -11,7 +11,6 @@ import com.jiabo.medical.constant.ConstantInfo;
 import com.jiabo.medical.entity.Area;
 import com.jiabo.medical.entity.User;
 import com.jiabo.medical.mapper.AreaMapper;
-import com.jiabo.medical.mapper.UserMapper;
 import com.jiabo.medical.pojo.ResponseDTO;
 
 @Service

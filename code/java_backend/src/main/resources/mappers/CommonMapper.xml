@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabo.medical.mapper.CommonMapper">  
+    <resultMap type="com.jiabo.medical.entity.Hospital" id="hMap">
+        <!-- 用id属性来映射主键字段 -->
+        <id property="hospitalId" column="hospital_id" javaType="java.lang.Integer"/>
+        <!-- 用result属性来映射非主键字段 -->
+        <result property="hospitalName" column="hospital_name"/>
+        <result property="hospitalAddr" column="hospital_addr"/>
+        <result property="areaId" column="area_id"/>
+        <result property="createTime" column="create_time" javaType="java.sql.Timestamp"/>
+        <result property="creater" column="creater"/>
+        <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp"/>
+        <result property="modifier" column="modifier"/>
+    </resultMap>
+  
+  <select id="getHosptList"  resultMap="hMap">
+    select tmc.*
+          from tb_hospital as tmc
+         order by tmc.hospital_name desc
+  </select>
+  
+  <select id="getDeviceTypeList"  resultType="java.lang.String">
+    select config_value
+          from tsys_config
+          where config_key = 'device_type'
+         order by config_value desc
+  </select>
+  
+
+</mapper>

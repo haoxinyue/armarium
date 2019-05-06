@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiabo.medical.mapper.InspCaseMapper">  
+    <resultMap type="com.jiabo.medical.entity.InspCaseDTO" id="caseMap">
+        <!-- 用id属性来映射主键字段 -->
+        <id property="caseId" column="case_id" javaType="java.lang.Integer"/>
+        <!-- 用result属性来映射非主键字段 -->
+        <result property="caseSubject" column="case_subject"/>
+        <result property="caseRemark" column="case_remark"/>
+        <result property="caseState" column="case_state"/>
+        <result property="assigneeUserId" column="assignee_user_id"/>
+        <result property="assigneeUserName" column="display_name"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="inspectionType" column="inspection_type"/>
+        <result property="deviceOnState" column="device_on_state"/>
+        <result property="deviceElecEvnState" column="device_elec_evn_state"/>
+        <result property="deviceFuncState" column="device_func_state"/>
+        <result property="deviceParamInput" column="device_param_input"/>
+        <result property="hospital" column="hospital_name"/>
+        <result property="deviceCode" column="device_code"/>
+        <result property="deviceName" column="device_name"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="inspectionTime" column="inspection_time"/>
+        <result property="inspectionRemark" column="inspection_remark"/>
+        <result property="createTime" column="create_time" javaType="java.sql.Timestamp"/>
+        <result property="creater" column="creater"/>
+        <result property="modifyTime" column="modify_time" javaType="java.sql.Timestamp"/>
+        <result property="modifier" column="modifier"/>
+    </resultMap>
+    
+    <select id="getCaseRecCount" parameterType="com.jiabo.medical.entity.InspCaseDTO" resultType="java.lang.Integer">
+        select count(1)
+          from tb_inspection_case as tsc
+            left join tb_device as td
+                on td.device_id = tsc.device_id
+        <where>
+            <if test="assigneeUserId != null and assigneeUserId != ''">
+                and tsc.assignee_user_id = #{assigneeUserId}
+            </if>
+            <if test="deviceCode != null and deviceCode != ''">
+                and td.device_code like #{deviceCode}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                and td.device_name like #{deviceName}
+            </if>
+         </where>
+        
+    </select>
+  
+  <select id="getInspCaseList" parameterType="com.jiabo.medical.entity.InspCaseDTO" resultMap="caseMap">
+    select tmc.*, td.device_name, tu.display_name, th.hospital_name,tdm.dept_name
+          from tb_inspection_case as tmc  
+            left join tb_device as td
+                on td.device_id = tmc.device_id
+            left join tb_hospital as th
+                on td.hospital_id = th.hospital_id
+            left join tb_department as tdm
+                on td.dept_id = tdm.dept_id
+            left join tb_user as tu
+                on tmc.assignee_user_id = tu.user_id
+        <where>
+            <if test="assigneeUserId != null and assigneeUserId != ''">
+                tmc.assignee_user_id = #{assigneeUserId}
+            </if>
+            <if test="deviceCode != null and deviceCode != ''">
+                and td.device_code like #{deviceCode}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                and td.device_name like #{deviceName}
+            </if>
+         </where>
+         order by tmc.create_time desc
+         limit #{pageSize,jdbcType=INTEGER} offset #{pageIndex,jdbcType=INTEGER} 
+         
+  </select>
+  
+  <select id="getInspCaseInfo" parameterType="java.lang.Integer" resultMap="caseMap">
+        select tmc.*, td.device_name, tu.display_name, th.hospital_name,tdm.dept_name
+          from tb_inspection_case as tmc  
+            left join tb_device as td
+                on td.device_id = tmc.device_id
+            left join tb_hospital as th
+                on td.hospital_id = th.hospital_id
+            left join tb_department as tdm
+                on td.dept_id = tdm.dept_id
+            left join tb_user as tu
+                on tmc.assignee_user_id = tu.user_id
+        where
+            tmc.case_id = #{caseId}
+            
+  </select>
+  
+  <select id="getRoleName" parameterType="java.lang.Integer" resultType="java.lang.String">
+    select tr.role_name
+        from tr_user_role as tur
+            inner join tb_role as tr
+                on tur.role_id = tr.role_id
+                  where tur.user_id = #{userId}
+  </select>
+  
+  <insert id="addInspCase" parameterType="com.jiabo.medical.entity.InspCaseDTO">  
+    insert into tb_inspection_case
+        (
+            case_subject,
+            case_remark, 
+            inspection_type,
+            case_state, 
+            device_id, 
+            assignee_user_id,
+            device_on_state,
+            device_elec_evn_state,
+            device_func_state,
+            device_param_input,
+            inspection_time,
+            inspection_remark,
+            create_time, 
+            creater, 
+            modify_time, 
+            modifier
+        )
+        values  
+        (
+             #{caseSubject,jdbcType=VARCHAR}, 
+             #{caseRemark,jdbcType=VARCHAR},
+             #{inspectionType,jdbcType=INTEGER},
+             #{caseState,jdbcType=INTEGER},
+             #{deviceId,jdbcType=INTEGER},
+             #{assigneeUserId,jdbcType=INTEGER},
+             #{deviceOnState,jdbcType=INTEGER},
+             #{deviceElecEvnState,jdbcType=INTEGER},
+             #{deviceFuncState,jdbcType=INTEGER},
+             #{deviceParamInput,jdbcType=VARCHAR},
+             to_timestamp(#{inspectionTime},'YYYY-MM-DD HH24:MI:SS'),
+             #{inspectionRemark,jdbcType=VARCHAR},
+             #{createTime,jdbcType=TIMESTAMP},
+             #{creater,jdbcType=INTEGER},
+             #{modifyTime,jdbcType=TIMESTAMP},
+             #{modifier,jdbcType=INTEGER}
+         )
+             
+  </insert>
+  
+  
+  <select id="getSequenceNo" resultType="java.lang.Integer" >
+     SELECT last_value from tb_inspection_case_case_id_seq
+  </select>
+
+  <update id="updInspCase" parameterType="com.jiabo.medical.entity.InspCaseDTO">
+    update tb_inspection_case 
+        <set>
+            <if test="caseRemark != null and caseRemark != ''">
+                case_remark = #{caseRemark},
+            </if>
+            <if test="caseState != null and caseState != ''">
+                case_state = #{caseState},
+            </if>
+            <if test="assigneeUserId != null and assigneeUserId != ''">
+                assignee_user_id = #{assigneeUserId},
+            </if>
+            <if test="setupTime != null and setupTime != ''">
+                setup_time = to_timestamp(#{setupTime},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+             <if test="setupRemark != null and setupRemark != ''">
+                setup_remark = #{setupRemark},
+            </if>
+            
+	           modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+	           modifier = #{modifier}
+        </set>
+        <where>
+           <if test="caseId != null">
+               case_id = #{caseId}
+           </if>
+           <if test="deviceId != null">
+               device_id = #{deviceId}
+           </if>
+        </where>
+  </update>
+ 
+
+</mapper>

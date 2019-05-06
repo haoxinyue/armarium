@@ -6,9 +6,9 @@ import java.sql.Timestamp;
 public class Accessory implements Serializable {
 	
 	private Integer accessoryId;
-	private Integer userManual;
-	private Integer maintenanceManual;
-	private Integer handbook;
+	private Integer userManual=null;
+	private Integer maintenanceManual=null;
+	private Integer handbook=null;
 	
 	private String data1file;
 	private String data1desc;
@@ -28,6 +28,7 @@ public class Accessory implements Serializable {
 	private Integer creater;
 	private Timestamp modifyTime;
 	private Integer modifier;
+	
 	public Integer getAccessoryId() {
 		return accessoryId;
 	}
