@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.dao.DataAccessException;
 
+import com.jiabo.medical.entity.EquipAttachment;
 import com.jiabo.medical.entity.Equipment;
 
 
@@ -26,6 +27,7 @@ public interface EquipmentMapper  {
     public Equipment getMeterDeviceInfo(int deviceId) throws DataAccessException;
     public int getEquipId(int setupCaseId) throws DataAccessException;
     public int updEquipmentInfo(Equipment equip) throws DataAccessException;
+    public int addAttatchment(EquipAttachment eAttach) throws DataAccessException;
     public int updEquipUsageState(Equipment equip) throws DataAccessException;
     public int updEquipSetupTime(Equipment equip) throws DataAccessException;
     public int updEquipInspTime(Equipment equip) throws DataAccessException;

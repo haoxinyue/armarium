@@ -56,4 +56,14 @@ public class CommonUtils {
        
        return luckNumber;
    }
+   
+   public static boolean isInArray(String val, String[] array) {
+		for (String element : array) {
+			if (element.equals(val)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }

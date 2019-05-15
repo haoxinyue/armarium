@@ -829,6 +829,31 @@
       where device_id = #{deviceId,jdbcType=INTEGER}
   </update>
   
+  <insert id="addAttatchment" parameterType="com.jiabo.medical.entity.EquipAttachment">  
+    insert into tb_device_attachment 
+        (
+        attachment_name, 
+        attachment_type, 
+        file_type, 
+        file_path, 
+        create_time, 
+        creater, 
+        modify_time, 
+        modifier
+        )
+        values 
+        (
+        #{attachmentName}, 
+        #{attachmentType,jdbcType=INTEGER},
+        #{fileType,jdbcType=INTEGER}, 
+        #{filePath},
+        #{createTime,jdbcType=TIMESTAMP},
+        #{creater,jdbcType=INTEGER},
+        #{modifyTime,jdbcType=TIMESTAMP},
+        #{modifier,jdbcType=INTEGER}
+          )
+  </insert>
+  
   <delete id="delEquipmentInfo" parameterType="java.lang.Integer">  
    delete from tb_device 
       where device_id = #{deviceId}

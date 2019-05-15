@@ -2,6 +2,7 @@ package com.jiabo.medical.entity;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class Equipment implements Serializable {
 	
@@ -35,6 +36,7 @@ public class Equipment implements Serializable {
 	private String producingPlace;
 	
 	private String accessory;
+	private List<EquipAttachment> accessories;
 	private String setupDate;
 	private String acceptDate;
 	
@@ -445,5 +447,11 @@ public class Equipment implements Serializable {
 	}
 	public void setPageSize(Integer pageSize) {
 		this.pageSize = pageSize;
+	}
+	public List<EquipAttachment> getAccessories() {
+		return accessories;
+	}
+	public void setAccessories(List<EquipAttachment> accessories) {
+		this.accessories = accessories;
 	}
 }

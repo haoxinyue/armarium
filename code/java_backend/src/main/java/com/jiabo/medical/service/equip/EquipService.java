@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.druid.util.StringUtils;
 import com.jiabo.medical.constant.ConstantInfo;
+import com.jiabo.medical.entity.EquipAttachment;
 import com.jiabo.medical.entity.Equipment;
 import com.jiabo.medical.mapper.EquipmentMapper;
 import com.jiabo.medical.pojo.ResponseDTO;
@@ -278,6 +279,22 @@ public ResponseDTO<Equipment> getEquipmentInfo(int deviceId) {
 			int count = equipmentMapper.updEquipmentInfo(equip);
 			
 			if (count > 0) {
+				
+				
+				for (EquipAttachment eAttach:equip.getAccessories() ) {
+					eAttach.setDeviceId(equip.getDeviceId());
+					eAttach.setAttachmentName(eAttach.getFilePath().split("file=")[1]);
+					
+					
+					eAttach.setCreateTime(now);
+					eAttach.setModifyTime(now);
+					
+					eAttach.setCreater(equip.getModifier());
+					eAttach.setModifier(equip.getModifier());
+					
+					equipmentMapper.addAttatchment(eAttach);
+					
+				}
 				res.code = ConstantInfo.NORMAL;
 				res.message = "更新成功";
 				

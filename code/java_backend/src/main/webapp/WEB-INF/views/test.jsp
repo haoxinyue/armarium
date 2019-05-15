@@ -109,8 +109,10 @@ function getTimeline() {
     });
 }
 
-function getShafts() {
-    alert('getShafts');
+function testMaltiFiles() {
+    
+	var fd = new FormData();
+	
     var obj = {
     		"caseId":4
             };
@@ -260,6 +262,8 @@ function getMtCaseInfos() {
            
             "assigneeUserId":10002
             };
+    
+    
     
     $.ajax({
         type: "post",
@@ -494,14 +498,14 @@ $(document).ready(function(){
 
 <body>
 <%out.println("Context路径：XXXXXXXX hello spring boot -- jsp"); %>
-<form action="http://47.100.198.255:8080/accessory/fileUpload" method="POST" enctype="multipart/form-data">
-    文件：<input type="file" name="fileUpload"/>
+<form action="http://localhost:8080/accessory/uploadAccessory" method="POST" enctype="multipart/form-data">
+    文件：<input type="file" name="fileUpload" multiple/>
     <input type="submit" />
     <input type="button" value="test" onclick="getMtCaseInfos()"/>
     <input type="button" value="testXX" onclick="getWechatSession()"/>
     <br>
-    <img src='http://47.100.198.255:8080/accessory/queryPic?fileName=di.png'  style="width:300px"/>
+    <img src='http://localhost:8080/accessory/queryPic?fileName=di.png'  style="width:300px"/>
 </form>
-<a href="http://47.100.198.255:8080/accessory/queryPic?fileName=di.png">下载test</a>
+<a href="http://localhost:8080/accessory/download?fileName=di.png">下载test</a>
 </body>
 </html>
