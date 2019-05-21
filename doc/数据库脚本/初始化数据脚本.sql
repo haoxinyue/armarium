@@ -65,4 +65,56 @@ INSERT INTO public.tb_hospital(	hospital_name, hospital_addr, area_id, create_ti
 --初始化科室
 1000003
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--初始化系统功能点表
+INSERT INTO public.tb_system_func(	func_name, func_code, func_desc)	VALUES ('设备添加', 'device.create', '设备添加');
+INSERT INTO public.tb_system_func(	func_name, func_code, func_desc)	VALUES ('设备删除', 'device.delete', '设备删除');
+INSERT INTO public.tb_system_func(	func_name, func_code, func_desc)	VALUES ('设备修改', 'device.update', '设备修改');
+INSERT INTO public.tb_system_func(	func_name, func_code, func_desc)	VALUES ('设备查询', 'device.retrieve', '设备查询');
+
+
+
+
+
+--初始化角色和系统功能点关系表
+INSERT INTO public.tr_role_func(role_id, func_id, create_time, creater) VALUES (1, 1, '2019-05-19', 10001);
+INSERT INTO public.tr_role_func(role_id, func_id, create_time, creater) VALUES (1, 2, '2019-05-19', 10001);
+INSERT INTO public.tr_role_func(role_id, func_id, create_time, creater) VALUES (1, 3, '2019-05-19', 10001);
+INSERT INTO public.tr_role_func(role_id, func_id, create_time, creater) VALUES (1, 4, '2019-05-19', 10001);
+
+INSERT INTO public.tr_role_func(role_id, func_id, create_time, creater) VALUES (2, 1, '2019-05-19', 10001);
+INSERT INTO public.tr_role_func(role_id, func_id, create_time, creater) VALUES (2, 2, '2019-05-19', 10001);
+INSERT INTO public.tr_role_func(role_id, func_id, create_time, creater) VALUES (2, 3, '2019-05-19', 10001);
+INSERT INTO public.tr_role_func(role_id, func_id, create_time, creater) VALUES (2, 4, '2019-05-19', 10001);
+
+INSERT INTO public.tr_role_func(role_id, func_id, create_time, creater) VALUES (4, 4, '2019-05-19', 10001);
+INSERT INTO public.tr_role_func(role_id, func_id, create_time, creater) VALUES (7, 4, '2019-05-19', 10001);
+
+
+
+
+
 	

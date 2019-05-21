@@ -1265,6 +1265,10 @@ CREATE TABLE public.tb_stocktaking_case
 	actual_time timestamp without time zone, 
 	hospital_id integer NOT NULL,
 	
+	audit_state smallint NULL default 0,
+	audit_user_id integer,
+	audit_time timestamp without time zone, 
+	
     create_time timestamp without time zone NOT NULL,
     creater integer NOT NULL,
     modify_time timestamp without time zone NOT NULL,
@@ -1311,6 +1315,16 @@ COMMENT ON COLUMN public.tb_stocktaking_case.actual_time
 	
 COMMENT ON COLUMN public.tb_stocktaking_case.hospital_id
     IS '医院ID';
+	
+	
+COMMENT ON COLUMN public.tb_stocktaking_case.audit_state
+    IS '审核状态 0：未审核 1：已审核';
+
+COMMENT ON COLUMN public.tb_stocktaking_case.audit_user_id
+    IS '审核人用户ID';
+	
+COMMENT ON COLUMN public.tb_stocktaking_case.audit_time
+    IS '审核时间';
 	
 
 	
@@ -1575,7 +1589,7 @@ ALTER TABLE "public"."tb_user" ADD PRIMARY KEY ("user_id");
 CREATE TABLE public.tb_device_attachment
 (
     attachment_id serial NOT NULL,
-	
+	device_id integer NOT NULL,
 	attachment_name character varying(50) NOT NULL,
 	attachment_type smallint NOT NULL,
 	file_type smallint NOT NULL,
@@ -1616,8 +1630,82 @@ COMMENT ON COLUMN public.tb_device_attachment.file_type
 
 
 
+
+CREATE TABLE public.tr_user_dept
+(
+    rel_id serial NOT NULL,
+    user_id integer NOT NULL,
+    dept_id integer NOT NULL,
+	is_supervisor smallint NOT NULL default 0,
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    PRIMARY KEY (rel_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tr_user_dept
+    OWNER to armarium;
+COMMENT ON TABLE public.tr_user_dept
+    IS '用户与部门关系表';
+	
+COMMENT ON COLUMN public.tr_user_dept.is_supervisor
+    IS '是否部门主管，0：不是 1：是';
 	
 	
 	
+	
+	
+	
+	
+	
+CREATE TABLE public.tb_system_func
+(
+    func_id serial NOT NULL,
+	func_type smallint,
+	func_name character varying(50),
+	func_code character varying(50),
+	func_desc character varying(200),
+	
+    PRIMARY KEY (func_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_system_func
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_system_func
+    IS '系统功能表，定义所有的系统功能，用于权限控制';
+	
+	
+	
+	
+
+
+CREATE TABLE public.tr_role_func
+(
+    rel_id serial NOT NULL,
+    role_id integer NOT NULL,
+    func_id integer NOT NULL,
+    create_time timestamp without time zone NOT NULL,
+    creater integer NOT NULL,
+    PRIMARY KEY (rel_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tr_role_func
+    OWNER to armarium;
+COMMENT ON TABLE public.tr_role_func
+    IS '角色和系统功能点的关系';
+	
+COMMENT ON COLUMN public.tr_role_func.func_id
+    IS '系统功能点，tb_system_func主键';
 	
 	
