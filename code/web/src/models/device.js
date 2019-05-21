@@ -47,6 +47,10 @@ export default {
       const response = yield call(queryDeviceDetail, {
         deviceId: Number(payload.deviceId),
       });
+      let success = response && response.code == 0;
+      if (!success) {
+        return;
+      }
 
       const response2 = yield call(queryDeviceTimeline, {
         deviceId: Number(payload.deviceId),
@@ -66,6 +70,10 @@ export default {
       const response = yield call(queryDeviceTimeline, {
         deviceId: Number(payload.deviceId),
       });
+      let success = response && response.code == 0;
+      if (!success) {
+        return;
+      }
       yield put({
         type: 'saveTimeline',
         payload: {
@@ -77,24 +85,20 @@ export default {
     },
     *add({ payload, callback }, { call, put }) {
       const response = yield call(addDevice, payload) || {};
-      let success = response.code == 0;
-      if (success) {
-        yield put({
-          type: 'saveCurrent',
-          payload: response.data,
-        });
+      let success = response && response.code == 0;
+      if (!success) {
+        return;
       }
-      if (callback)
-        callback({
-          deviceId: response.data.deviceId,
-          success,
-          message: response.message,
-        });
+      yield put({
+        type: 'saveCurrent',
+        payload: response.data,
+      });
       const result = {
-        deviceId: payload.deviceId,
+        deviceId: response.data.deviceId,
         success,
         message: response.message,
       };
+      if (callback) callback(result);
       return result;
     },
     *remove({ payload }, { call, put }) {

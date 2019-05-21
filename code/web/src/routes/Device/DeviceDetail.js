@@ -7,7 +7,7 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import styles from '../Profile/BasicProfile.less';
 import styles_1 from './DeviceDetail.less';
 
-import { UsageStateNames, DeviceStateNames } from '../../utils/constants';
+import { UsageStateNames, DeviceStateNames, AttachmentTypes } from '../../utils/constants';
 
 import QRCode from 'qrcode.react';
 import moment from 'moment';
@@ -108,11 +108,30 @@ export default class DeviceDetail extends Component {
     let btnEditStyle = {
       // position: 'absolute',
       right: 40,
-      zIndex:20,
-      float:'right'
+      zIndex: 20,
+      float: 'right',
 
       // top: 20,
     };
+
+    const getAttachTypeName = function(type) {
+      // ：1.用户手册 2.操作手册 3.维护手册 99.其他
+
+      return AttachmentTypes[type] || '未知';
+    };
+
+    // currentDetail.accessories =[
+    //   {
+    //     name:"员工手册",
+    //     typeName:getAttachTypeName(1),
+    //     path:"http://www.baidu.com",
+    //   },
+    //   {
+    //     name:"操作手册2",
+    //     typeName:getAttachTypeName(2),
+    //     path:"http://www.baidu.com",
+    //   },
+    // ]
 
     let qrCode = currentDetail.qRCode || (currentDetail.deviceId && `[${currentDetail.deviceId}]`);
 
@@ -136,8 +155,6 @@ export default class DeviceDetail extends Component {
         <Tabs defaultActiveKey="1" type="card1">
           <TabPane tab="基本信息" key="1">
             <Card bordered={false} style={{ position: 'relative', padding: 0 }}>
-
-
               <DescriptionList size="large" title="基本信息" style={{ marginBottom: 32 }}>
                 <Description term="设备ID">{currentDetail.deviceId}</Description>
                 <Description term="设备编号">{currentDetail.deviceCode}</Description>
@@ -145,7 +162,6 @@ export default class DeviceDetail extends Component {
                 <Description term="设备类型">{currentDetail.deviceModel}</Description>
                 <Description term="设备描述">{currentDetail.deviceDesc}</Description>
               </DescriptionList>
-
 
               <Divider style={{ marginBottom: 32 }} />
               <DescriptionList size="large" title="状态" style={{ marginBottom: 32 }}>
@@ -169,8 +185,6 @@ export default class DeviceDetail extends Component {
                 <Description term="所属部门">{currentDetail.department}</Description>
               </DescriptionList>
               <Divider style={{ marginBottom: 32 }} />
-
-
             </Card>
           </TabPane>
           <TabPane tab="资产信息" key="2">
@@ -284,25 +298,62 @@ export default class DeviceDetail extends Component {
                 )}
               </DescriptionList>
             </Card>
-
           </TabPane>
-          <TabPane tab="检测设置" key="4">
+          <TabPane tab="设备附件" key="4">
             <Card bordered={false} style={{ padding: 0 }}>
-              <DescriptionList size="large" title="巡检" style={{ marginBottom: 32 }}>
-                <Description term="是否需要">{currentDetail.needInspection==1?'是':'否'}</Description>
-                <Description term="巡检间隔">{currentDetail.needInspection==1?`${currentDetail.inspectionInterval}天`:'无'}</Description>
+              {(currentDetail.accessories || []).map(att => (
+                <DescriptionList
+                  size="small"
+                  title={getAttachTypeName(att.attachmentType)}
+                  style={{ marginBottom: 32 }}
+                >
+                  <Description term="">
+                    <a title={'点击下载'} href={att.filePath} target="_blank">
+                      {att.attachmentName}（点击下载）
+                    </a>
+                  </Description>
+                </DescriptionList>
+              ))}
+            </Card>
+          </TabPane>
+          <TabPane tab="检测设置" key="5">
+            <Card bordered={false} style={{ padding: 0 }}>
+              <DescriptionList size="large" title="强检设备" style={{ marginBottom: 32 }}>
+                <Description term="是否需要">
+                  {currentDetail.force_inspection == 1 ? '是' : '否'}
+                </Description>
               </DescriptionList>
               <DescriptionList size="large" title="巡检" style={{ marginBottom: 32 }}>
-                <Description term="是否需要">{currentDetail.needMaintain==1?'是':'否'}</Description>
-                <Description term="保养间隔">{currentDetail.needMaintain==1?`${currentDetail.maintenanceInterval}天`:'无'}</Description>
+                <Description term="是否需要">
+                  {currentDetail.needInspection == 1 ? '是' : '否'}
+                </Description>
+                <Description term="巡检间隔">
+                  {currentDetail.needInspection == 1
+                    ? `${currentDetail.inspectionInterval}天`
+                    : '无'}
+                </Description>
+              </DescriptionList>
+              <DescriptionList size="large" title="巡检" style={{ marginBottom: 32 }}>
+                <Description term="是否需要">
+                  {currentDetail.needMaintain == 1 ? '是' : '否'}
+                </Description>
+                <Description term="保养间隔">
+                  {currentDetail.needMaintain == 1
+                    ? `${currentDetail.maintenanceInterval}天`
+                    : '无'}
+                </Description>
               </DescriptionList>
               <DescriptionList size="large" title="计量" style={{ marginBottom: 32 }}>
-                <Description term="是否需要">{currentDetail.needMetering==1?'是':'否'}</Description>
-                <Description term="计量间隔">{currentDetail.needMetering==1?`${currentDetail.meteringInterval}天`:'无'}</Description>
+                <Description term="是否需要">
+                  {currentDetail.needMetering == 1 ? '是' : '否'}
+                </Description>
+                <Description term="计量间隔">
+                  {currentDetail.needMetering == 1 ? `${currentDetail.meteringInterval}天` : '无'}
+                </Description>
               </DescriptionList>
             </Card>
           </TabPane>
-          <TabPane tab="历史记录" key="5">
+          <TabPane tab="历史记录" key="6">
             <Card bordered={false} style={{ padding: 0 }}>
               <Timeline mode={'alternate'}>
                 {currentDetail.timeline &&

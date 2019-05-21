@@ -167,32 +167,37 @@ export default class StocktakingCaseList extends PureComponent {
   }
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const { dispatch,form } = this.props;
+    const { dispatch, form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-
-      const formValues = {
-        ...fieldsValue
-      };
 
       const params = {
         pageIndex: pagination.current - 1,
         pageSize: pagination.pageSize,
-        ...formValues
       };
 
+      for (let k in fieldsValue) {
+        if (fieldsValue[k] !== undefined) {
+          if (k === 'planBeginTimeRange') {
+            let times = fieldsValue[k].map(
+              (d, i) =>
+                i === 0
+                  ? moment(d).format('YYYY/MM/DD 00:00:00')
+                  : moment(d).format('YYYY/MM/DD 23:59:59')
+            );
+            params.planBeginTimeFrom = times[0];
+            params.planBeginTimeTo = times[1];
+          } else {
+            params[k] = fieldsValue[k];
+          }
+        }
+      }
 
       dispatch({
         type: 'stocktakingCase/fetch',
         payload: params,
       });
-
-
-    })
-
-
-
-
+    });
   };
 
   handleFormReset = () => {

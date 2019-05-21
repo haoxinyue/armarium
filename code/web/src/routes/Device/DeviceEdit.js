@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
-import {connect} from 'dva';
-import {routerRedux} from 'dva/router';
+import React, { Component } from 'react';
+import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 import moment from 'moment';
 
-import {uploadUrl} from '../../services/api';
+import { uploadUrl } from '../../services/api';
 
 import {
   Form,
@@ -29,14 +29,15 @@ const TabPane = Tabs.TabPane;
 
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DepartmentSelect from '../../components/biz/DepartmentSelect';
+import { AttachmentTypes, AttachmentFileTypes } from '../../utils/constants';
 import styles from '../Forms/style.less';
 
 const FormItem = Form.Item;
-const {Option} = Select;
-const {RangePicker} = DatePicker;
-const {TextArea} = Input;
+const { Option } = Select;
+const { RangePicker } = DatePicker;
+const { TextArea } = Input;
 
-@connect(({device, hospital, user, loading}) => ({
+@connect(({ device, hospital, user, loading }) => ({
   device,
   hospital,
   currentUser: user.currentUser || {},
@@ -50,7 +51,7 @@ export default class DeviceEdit extends Component {
     fileList: [],
   };
 
-  handleCancel = () => this.setState({previewVisible: false});
+  handleCancel = () => this.setState({ previewVisible: false });
 
   handlePreview = file => {
     this.setState({
@@ -59,9 +60,9 @@ export default class DeviceEdit extends Component {
     });
   };
 
-  handleChange = ({fileList}) => {
-    const {setFieldsValue} = this.props.form;
-    this.setState({fileList});
+  handleChange = ({ fileList }) => {
+    const { setFieldsValue } = this.props.form;
+    this.setState({ fileList });
     let files = {
       picture1: '',
       picture2: '',
@@ -81,16 +82,29 @@ export default class DeviceEdit extends Component {
     setFieldsValue(files);
   };
 
+  handleAttachUploadFileChange = ({ fileList }) => {
+    const { setFieldsValue, getFieldValue } = this.props.form;
+    let accessories = getFieldValue('accessories') || [];
+    // this.setState({fileList});
+    if (fileList[0] && fileList[0].attachmentId) {
+      setFieldsValue({
+        accessories: accessories.concat(fileList),
+      });
+    }
+  };
+
   handleSubmit = e => {
     e.preventDefault();
-    const {dispatch, match: {params}, currentUser} = this.props;
+    const { dispatch, match: { params }, currentUser } = this.props;
     let isEditMode = params.deviceId != null;
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         let fData = {
           ...values,
-          maintenanceEndDate: values.maintenanceEndDate && moment(values.maintenanceEndDate).format('YYYY/MM/DD'),
+          maintenanceEndDate:
+            values.maintenanceEndDate && moment(values.maintenanceEndDate).format('YYYY/MM/DD'),
           setupDate: values.setupDate && moment(values.setupDate).format('YYYY/MM/DD'),
+          force_inspection: values.force_inspection ? 1 : 0,
           needInspection: values.needInspection ? 1 : 0,
           needMaintain: values.needMaintain ? 1 : 0,
           needMetering: values.needMetering ? 1 : 0,
@@ -107,8 +121,12 @@ export default class DeviceEdit extends Component {
           payload: fData,
         }).then(
           res => {
-            message.success('保存成功');
-            dispatch(routerRedux.push(`/device/device-detail/${res.deviceId}`));
+            if (res.deviceId) {
+              message.success('保存成功');
+              dispatch(routerRedux.push(`/device/device-detail/${res.deviceId}`));
+            } else {
+              message.error('保存失败');
+            }
           },
           () => {
             message.error('保存失败');
@@ -129,8 +147,8 @@ export default class DeviceEdit extends Component {
 
   componentWillReceiveProps(nextProps) {
     console.log('==componentWillReceiveProps==');
-    const {device, match: {params: {deviceId}}} = this.props;
-    const {device: nextDevice, match: {params: {deviceId: nextDeviceId}}} = nextProps;
+    const { device, match: { params: { deviceId } } } = this.props;
+    const { device: nextDevice, match: { params: { deviceId: nextDeviceId } } } = nextProps;
     const info = device.byIds[nextDeviceId];
     const nextInfo = nextDevice.byIds[nextDeviceId];
     if (
@@ -163,12 +181,12 @@ export default class DeviceEdit extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const {dispatch, match: {params: {deviceId}}} = this.props;
-    const {match: {params: {deviceId: NextDeviceId}}} = nextProps;
+    const { dispatch, match: { params: { deviceId } } } = this.props;
+    const { match: { params: { deviceId: NextDeviceId } } } = nextProps;
     if (NextDeviceId && NextDeviceId !== deviceId) {
       dispatch({
         type: 'device/fetchDetail',
-        payload: {deviceId: NextDeviceId},
+        payload: { deviceId: NextDeviceId },
       });
       return true;
     }
@@ -176,13 +194,13 @@ export default class DeviceEdit extends Component {
   }
 
   componentDidMount() {
-    const {dispatch, form, match} = this.props;
+    const { dispatch, form, match } = this.props;
 
-    const {params: {deviceId}} = match;
+    const { params: { deviceId } } = match;
 
-    const callback = function (d) {
-      const {form} = this.props;
-      const {setFieldsInitialValue, setFieldsValue} = form;
+    const callback = function(d) {
+      const { form } = this.props;
+      const { setFieldsInitialValue, setFieldsValue } = form;
 
       let data = {};
       for (var k in d) {
@@ -190,7 +208,7 @@ export default class DeviceEdit extends Component {
           data[k] = d[k];
         }
 
-        if (k.indexOf('Date')!==-1) {
+        if (k.indexOf('Date') !== -1) {
           data[k] = data[k] && moment(data[k]);
         }
       }
@@ -210,41 +228,42 @@ export default class DeviceEdit extends Component {
   }
 
   render() {
-    const {submitting, match: {params}, hospital} = this.props;
-    const {getFieldDecorator, getFieldValue} = this.props.form;
+    const { submitting, match: { params }, hospital } = this.props;
+    const { getFieldDecorator, getFieldValue, setFieldsValue } = this.props.form;
+    let accessories = getFieldValue('accessories') || [];
 
     const formItemLayout = {
       labelCol: {
-        xs: {span: 24},
-        sm: {span: 4},
+        xs: { span: 24 },
+        sm: { span: 4 },
       },
       wrapperCol: {
-        xs: {span: 24},
-        sm: {span: 12},
-        md: {span: 10},
+        xs: { span: 24 },
+        sm: { span: 12 },
+        md: { span: 10 },
       },
     };
 
     const submitFormLayout = {
       wrapperCol: {
-        xs: {span: 24, offset: 0},
-        sm: {span: 10, offset: 7},
+        xs: { span: 24, offset: 0 },
+        sm: { span: 10, offset: 7 },
       },
     };
 
     let isEditMode = params.deviceId != null;
 
-    const {previewVisible, previewImage, fileList} = this.state;
+    const { previewVisible, previewImage, fileList } = this.state;
 
     const uploadButton = (
       <div>
-        <Icon type="plus"/>
+        <Icon type="plus" />
         <div className="ant-upload-text">Upload</div>
       </div>
     );
 
     function getCheckFieldNode(fieldName, title, isRequired, meta) {
-      let val = getFieldValue(fieldName) || meta.initialValue
+      let val = getFieldValue(fieldName) || meta.initialValue;
       return (
         <FormItem {...formItemLayout} label={(isRequired ? '*' : '') + title}>
           {getFieldDecorator(fieldName, {
@@ -258,8 +277,7 @@ export default class DeviceEdit extends Component {
 
     function getDateFieldNode(fieldName, title, isRequired) {
       const dateFormat = 'YYYY/MM/DD';
-      let fv = getFieldValue(fieldName)
-      console.log(fv)
+      let fv = getFieldValue(fieldName);
       return (
         <FormItem {...formItemLayout} label={(isRequired ? '*' : '') + title}>
           {getFieldDecorator(fieldName, {
@@ -270,7 +288,7 @@ export default class DeviceEdit extends Component {
                 message: `请输入${title}`,
               },
             ],
-          })(<DatePicker format={dateFormat}/>)}
+          })(<DatePicker format={dateFormat} />)}
         </FormItem>
       );
     }
@@ -287,7 +305,7 @@ export default class DeviceEdit extends Component {
                   message: `请输入${title}`,
                 },
               ],
-            })(<InputNumber {...meta} placeholder={`请输入${title}`}/>)}
+            })(<InputNumber {...meta} placeholder={`请输入${title}`} />)}
           </FormItem>
         );
       } else {
@@ -306,7 +324,7 @@ export default class DeviceEdit extends Component {
                   message: `请输入${title}`,
                 },
               ],
-            })(<Input {...meta} placeholder={`请输入${title}`}/>)}
+            })(<Input {...meta} placeholder={`请输入${title}`} />)}
           </FormItem>
         );
       }
@@ -323,7 +341,7 @@ export default class DeviceEdit extends Component {
                 message: `请输入${title}`,
               },
             ],
-          })(<TextArea style={{minHeight: 32}} placeholder={`请输入${title}`} rows={4}/>)}
+          })(<TextArea style={{ minHeight: 32 }} placeholder={`请输入${title}`} rows={4} />)}
         </FormItem>
       );
     }
@@ -354,7 +372,7 @@ export default class DeviceEdit extends Component {
 
     return (
       <PageHeaderLayout title={isEditMode ? '设备编辑' : '设备新增'} content="">
-        <Form onSubmit={this.handleSubmit} hideRequiredMark style={{marginTop: 8}}>
+        <Form onSubmit={this.handleSubmit} hideRequiredMark style={{ marginTop: 8 }}>
           <Tabs defaultActiveKey="1" type="card" mode={'left'}>
             <TabPane tab="基本信息" key="1">
               <Card bordered={false}>
@@ -367,7 +385,7 @@ export default class DeviceEdit extends Component {
                   true,
                   hospital.list.map(hid => {
                     let h = hospital.byIds[hid];
-                    return {value: h.hospitalId, text: h.hospitalName};
+                    return { value: h.hospitalId, text: h.hospitalName };
                   })
                 )}
 
@@ -379,7 +397,7 @@ export default class DeviceEdit extends Component {
                         message: '请选择所属部门',
                       },
                     ],
-                  })(<DepartmentSelect placeholder="请选择所属部门"/>)}
+                  })(<DepartmentSelect placeholder="请选择所属部门" />)}
                 </FormItem>
                 {getSelectFieldNode('deviceType', '设备类型', true, [
                   {
@@ -416,15 +434,13 @@ export default class DeviceEdit extends Component {
                   },
                 ])}
 
-                {getInputFieldNode('deviceId', '设备编号', false, {hidden: true})}
+                {getInputFieldNode('deviceId', '设备编号', false, { hidden: true })}
 
-                {getInputFieldNode('picture1', '', false, {hidden: true})}
-                {getInputFieldNode('picture2', '', false, {hidden: true})}
-                {getInputFieldNode('picture3', '', false, {hidden: true})}
-                {getInputFieldNode('picture4', '', false, {hidden: true})}
-                {getInputFieldNode('picture5', '', false, {hidden: true})}
-
-
+                {getInputFieldNode('picture1', '', false, { hidden: true })}
+                {getInputFieldNode('picture2', '', false, { hidden: true })}
+                {getInputFieldNode('picture3', '', false, { hidden: true })}
+                {getInputFieldNode('picture4', '', false, { hidden: true })}
+                {getInputFieldNode('picture5', '', false, { hidden: true })}
               </Card>
               {/* ================================== */}
             </TabPane>
@@ -444,11 +460,10 @@ export default class DeviceEdit extends Component {
                       {fileList.length >= 5 ? null : uploadButton}
                     </Upload>
                     <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-                      <img alt="device-preview" style={{width: '100%'}} src={previewImage}/>
+                      <img alt="device-preview" style={{ width: '100%' }} src={previewImage} />
                     </Modal>
                   </div>
                 </FormItem>
-
               </Card>
             </TabPane>
 
@@ -466,7 +481,6 @@ export default class DeviceEdit extends Component {
                 })}
                 {getDateFieldNode('storageDate', '入库日期', false)}
 
-
                 <Divider style={{ marginBottom: 32 }} />
 
                 {getInputFieldNode('manufacturer', '设备厂家', false)}
@@ -482,15 +496,64 @@ export default class DeviceEdit extends Component {
                 {getDateFieldNode('acceptDate', '验收日期', false)}
                 {getTextFieldNode('acceptRemark', '验收评价', false)}
                 {getTextFieldNode('acceptFile', '验收清单', false)}
-
               </Card>
             </TabPane>
 
-           {/* <TabPane tab="安装信息" key="4">
+            <TabPane tab="设备附件" key="4">
               <Card bordered={false}>
+                {accessories.map(att => (
+                  <div>
+                    <span>附件类型</span>
+                    <Select defaultValue={att.attachmentType + ''} style={{ width: 120 }}>
+                      {Object.keys(AttachmentTypes).map(type => (
+                        <Option
+                          value={type}
+                          onChange={v => {
+                            att.attachmentType = v;
+                            setFieldsValue({
+                              accessories: accessories,
+                            });
+                          }}
+                        >
+                          {AttachmentTypes[type]}
+                        </Option>
+                      ))}
+                    </Select>
+                    <span>文件名称</span>
+                    <Input
+                      style={{ width: 200 }}
+                      value={att.attachmentName}
+                      onChange={v => {
+                        att.attachmentType = v;
+                        setFieldsValue({
+                          accessories: accessories,
+                        });
+                      }}
+                    />
+                    <span>文件类型：{AttachmentFileTypes[att.fileType] || '其他'}</span>
 
+                    <Button
+                      onClick={() => {
+                        setFieldsValue({
+                          accessories: accessories.filter(t => t != att),
+                        });
+                      }}
+                    >
+                      删除
+                    </Button>
+                  </div>
+                ))}
+
+                <Upload
+                  action={uploadUrl}
+                  showUploadList={false}
+                  onChange={this.handleAttachUploadFileChange}
+                  name={'fileUpload'}
+                >
+                  {accessories.length >= 5 ? null : uploadButton}
+                </Upload>
               </Card>
-            </TabPane>*/}
+            </TabPane>
 
             <TabPane tab="合同保修" key="5">
               <Card bordered={false}>
@@ -504,8 +567,6 @@ export default class DeviceEdit extends Component {
                 })}
 
                 {getTextFieldNode('warrantyContent', '合同内容', false)}
-
-
               </Card>
             </TabPane>
 
@@ -522,48 +583,48 @@ export default class DeviceEdit extends Component {
               </Card>
             </TabPane>
 
-
-
             <TabPane tab="检测设置" key="7">
               <Card bordered={false}>
-                {getCheckFieldNode('needInspection', '是否需要巡检', false, {hidden: true})}
-                {getFieldValue('needInspection') ?
-                  getInputFieldNode('inspectionInterval', '巡检间隔', false, {
-                    isNumber: true,
-                    min: 1,
-                    initialValue: 30,
-                    formatter: value => `${value}天`,
-                    parser: value => value.replace('天', ''),
-                    className: ['input-number-right'],
-                  }) : ''}
+                {getCheckFieldNode('force_inspection', '是否强检设备', false, { hidden: true })}
+                {getCheckFieldNode('needInspection', '是否需要巡检', false, { hidden: true })}
+                {getFieldValue('needInspection')
+                  ? getInputFieldNode('inspectionInterval', '巡检间隔', false, {
+                      isNumber: true,
+                      min: 1,
+                      initialValue: 30,
+                      formatter: value => `${value}天`,
+                      parser: value => value.replace('天', ''),
+                      className: ['input-number-right'],
+                    })
+                  : ''}
 
-                {getCheckFieldNode('needMaintain', '是否需要保养', false, {hidden: true})}
-                {getFieldValue('needMaintain') ?
-                  getInputFieldNode('maintenanceInterval', '保养间隔', false, {
-                    isNumber: true,
-                    min: 1,
-                    precision: 0,
-                    initialValue: 30,
-                    formatter: value => `${value}天`,
-                    parser: value => value.replace('天', ''),
-                  }) : ''}
+                {getCheckFieldNode('needMaintain', '是否需要保养', false, { hidden: true })}
+                {getFieldValue('needMaintain')
+                  ? getInputFieldNode('maintenanceInterval', '保养间隔', false, {
+                      isNumber: true,
+                      min: 1,
+                      precision: 0,
+                      initialValue: 30,
+                      formatter: value => `${value}天`,
+                      parser: value => value.replace('天', ''),
+                    })
+                  : ''}
 
-                {getCheckFieldNode('needMetering', '是否需要计量', false, {hidden: true})}
-                {getFieldValue('needMetering') ?
-                  getInputFieldNode('meteringInterval', '计量间隔', false, {
-                    isNumber: true,
-                    min: 1,
-                    initialValue: 30,
-                    formatter: value => `${value}天`,
-                    parser: value => value.replace('天', ''),
-                  }) : ''}
-
-
+                {getCheckFieldNode('needMetering', '是否需要计量', false, { hidden: true })}
+                {getFieldValue('needMetering')
+                  ? getInputFieldNode('meteringInterval', '计量间隔', false, {
+                      isNumber: true,
+                      min: 1,
+                      initialValue: 30,
+                      formatter: value => `${value}天`,
+                      parser: value => value.replace('天', ''),
+                    })
+                  : ''}
               </Card>
             </TabPane>
           </Tabs>
 
-          <FormItem {...submitFormLayout} style={{marginTop: 32}}>
+          <FormItem {...submitFormLayout} style={{ marginTop: 32 }}>
             <Button type="primary" htmlType="submit" loading={submitting}>
               保存
             </Button>

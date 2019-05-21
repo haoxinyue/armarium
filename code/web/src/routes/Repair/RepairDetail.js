@@ -243,6 +243,9 @@ export default class RepairDetail extends Component {
         case 20:
           statusStr = '取消报修';
           break;
+        case 25:
+          statusStr = '已派单';
+          break;
         case 30:
           statusStr = '开始维修';
           break;
