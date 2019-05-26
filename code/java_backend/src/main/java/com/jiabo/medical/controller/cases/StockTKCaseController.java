@@ -52,4 +52,14 @@ public class StockTKCaseController {
 		return caseService.updStockTKCase(caseDto);
 	}
 	
+	@RequestMapping(value="/updStockTKCaseState",method=RequestMethod.POST)
+	public ResponseDTO updStockTKCaseState(@RequestBody StockCaseDTO caseDto) {
+		return caseService.updStockTKCaseState(caseDto);
+	}
+	
+	@RequestMapping(value="/delStockTKCase",method=RequestMethod.POST)
+	public ResponseDTO delStockTKCase(@RequestBody StockCaseDTO caseDto) {
+		return caseService.updStockTKCase(caseDto);
+	}
+	
 }

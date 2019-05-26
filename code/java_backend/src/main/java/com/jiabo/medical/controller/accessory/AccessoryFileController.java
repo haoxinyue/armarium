@@ -1,6 +1,5 @@
 package com.jiabo.medical.controller.accessory;
 
-import static org.hamcrest.Matchers.stringContainsInOrder;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -8,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import com.jiabo.medical.constant.ConstantInfo;
 import com.jiabo.medical.entity.Accessory;
 import com.jiabo.medical.entity.EquipAttachment;
+import com.jiabo.medical.mapper.EquipmentMapper;
 import com.jiabo.medical.pojo.ResponseDTO;
 import com.jiabo.medical.service.accessory.DeviceAccessoryService;
 import com.jiabo.medical.util.CommonUtils;
@@ -49,9 +50,15 @@ public class AccessoryFileController {
 	
 	@Value("${video.types}")
 	private String videoTypes;
+	
+	@Value("${picture.types}")
+	private String pictureTypes;
 
 	@Autowired
 	private DeviceAccessoryService deviceAccessoryService;
+	
+	@Autowired
+	private EquipmentMapper equipmentMapper;
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -91,24 +98,11 @@ public class AccessoryFileController {
 
 		try {
 			
-			int fileType;
-			
 			file.transferTo(dest);
-			if (CommonUtils.isInArray(suffixName, fileTypes.split(","))) {
-				fileType = 1;
-			} else if (CommonUtils.isInArray(suffixName, videoTypes.split(","))){
-				fileType = 2;
-			} else {
-				fileType = 99;
-			}
 			
-			
-			EquipAttachment data =new EquipAttachment();
-			data.setAttachmentUrl(serverAdd + "/accessory/queryPic?file=" + fileName);
-			data.setFileType(fileType);
 			res.code = ConstantInfo.NORMAL;
 			
-			res.data = data;
+			res.data = serverAdd + "/accessory/queryPic?file=" + fileName;
 			res.message = "上传成功";
 		} catch (IllegalStateException e) {
 			res.code = ConstantInfo.INVALID;
@@ -117,6 +111,84 @@ public class AccessoryFileController {
 			res.code = ConstantInfo.INVALID;
 			res.message = "上传失败";
 		}
+
+		return res;
+
+	}
+	
+	@RequestMapping(value = "/attachmentUpload", method = RequestMethod.POST)
+	public ResponseDTO attachmentUpload(@RequestParam("fileUpload") MultipartFile file, @RequestParam("creater") int creater) {
+
+		ResponseDTO res = new ResponseDTO();
+
+		if (file.isEmpty()) {
+			res.code = ConstantInfo.INVALID;
+			res.message = "文件为空";
+			return res;
+		}
+		// 获取文件名
+		String orignfileName = file.getOriginalFilename();
+
+		// 获取文件的后缀名
+		String suffixName = orignfileName.lastIndexOf(".") > 0 ? orignfileName.substring(orignfileName.lastIndexOf(".")) : null;
+		logger.info("上传的后缀名为：" + suffixName);
+		// String folder = CommonUtils.createRandomFolder()+"/";
+		String fileNameWithoutSuffix;
+		if (orignfileName.lastIndexOf(".") > 0) {
+			fileNameWithoutSuffix = orignfileName.substring(0, orignfileName.lastIndexOf("."));
+		} else {
+			fileNameWithoutSuffix = orignfileName;
+		}
+		// 文件上传后的路径
+		// 解决中文问题，liunx下中文路径，图片显示问题
+
+		String savefileName = fileNameWithoutSuffix + "_" + UUID.randomUUID().toString().replace("-", "") + suffixName;
+		int endIndx = savefileName.length() < 99 ? savefileName.length() : 99;
+		File dest = new File(filePath + savefileName.substring(0, endIndx));
+		// 检测是否存在目录
+		if (!dest.getParentFile().exists()) {
+			dest.getParentFile().mkdirs();
+		}
+
+		try {
+			
+			int fileType;
+			
+			file.transferTo(dest);
+			if (CommonUtils.isInArray(suffixName, fileTypes.split(","))) {
+				fileType = 1;
+			} else if (CommonUtils.isInArray(suffixName, videoTypes.split(","))){
+				fileType = 2;
+			} else if (CommonUtils.isInArray(suffixName, pictureTypes.split(","))){
+				fileType = 3;
+			} else {
+				fileType = 99;
+			}
+			
+			EquipAttachment eAttach = new EquipAttachment();
+			eAttach.setFilePath(serverAdd + "/accessory/download?fileName=" + savefileName);
+			eAttach.setFileType(fileType);
+			eAttach.setAttachmentName(orignfileName);
+			eAttach.setAttachmentType(1);
+			
+			Timestamp now = new Timestamp(System.currentTimeMillis());
+			eAttach.setCreateTime(now);
+			eAttach.setModifyTime(now);
+			
+			eAttach.setCreater(creater);
+			eAttach.setModifier(creater);
+			
+			int count = equipmentMapper.addAttatchment(eAttach);
+			eAttach.setAttachmentId(equipmentMapper.getAttachSequenceNo());
+			
+			res.code = ConstantInfo.NORMAL;
+			
+			res.data = eAttach;
+			res.message = "上传成功";
+		} catch (Exception e) {
+			res.code = ConstantInfo.INVALID;
+			res.message = "上传失败";
+		} 
 
 		return res;
 
@@ -143,50 +215,7 @@ public class AccessoryFileController {
 		}
 	}
 
-	// 处理多文件上传
-	@RequestMapping(value = "/uploadAccessory", method = RequestMethod.POST)
-	public ResponseDTO multipleFilesUpload(HttpServletRequest request) {
-		ResponseDTO res = new ResponseDTO();
-
-		// 获取上传的文件数组
-		List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("fileUpload");
-
-		for (MultipartFile file : files) {
-			if (file.isEmpty()) {
-				res.code = ConstantInfo.INVALID;
-				res.message = "文件为空";
-				return res;
-			}
-
-			// 获取文件名
-			String fileName = file.getOriginalFilename();
-
-			// 获取文件的后缀名
-			String suffixName = fileName.lastIndexOf(".") > 0 ? fileName.substring(fileName.lastIndexOf(".")) : null;
-			logger.info("上传的后缀名为：" + suffixName);
-			// String folder = CommonUtils.createRandomFolder()+"/";
-			String fileNameWithoutSuffix;
-			if (fileName.lastIndexOf(".") > 0) {
-				fileNameWithoutSuffix = fileName.substring(0, fileName.lastIndexOf("."));
-			} else {
-				fileNameWithoutSuffix = fileName;
-			}
-			// 文件上传后的路径
-			// 解决中文问题，liunx下中文路径，图片显示问题
-
-			fileName = fileNameWithoutSuffix + "_" + UUID.randomUUID().toString().replace("-", "") + suffixName;
-			int endIndx = fileName.length() < 99 ? fileName.length() : 99;
-			File dest = new File(filePath + fileName.substring(0, endIndx));
-			// 检测是否存在目录
-			if (!dest.getParentFile().exists()) {
-				dest.getParentFile().mkdirs();
-			}
-
-		}
-
-		return null;
-
-	}
+	
 
 	private FileInputStream query_getPhotoImageBlob(String fileName) {
 		FileInputStream is = null;

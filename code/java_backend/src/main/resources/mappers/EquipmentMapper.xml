@@ -65,6 +65,17 @@
         <result property="modifier" column="modifier" javaType="java.lang.Integer"/>
     </resultMap>
     
+    <resultMap type="com.jiabo.medical.entity.EquipAttachment" id="attachMap">
+        <!-- 用id属性来映射主键字段 -->
+        <id property="attachmentId" column="attachment_id" javaType="java.lang.Integer"/>
+        <!-- 用result属性来映射非主键字段 -->
+        <result property="attachmentName" column="attachment_name"/>
+        <result property="attachmentType" column="attachment_type"/>
+        <result property="fileType" column="file_type"/>
+        <result property="filePath" column="file_path"/>
+        <result property="deviceId" column="device_id"/>
+    </resultMap>
+    
     <select id="getEquipRecCount" resultType="java.lang.Integer" parameterType="com.jiabo.medical.entity.Equipment">  
     select count(1)
         from tb_device dv
@@ -302,6 +313,10 @@
   
   <select id="getSequenceNo" resultType="java.lang.Integer" >
      SELECT last_value from tb_device_device_id_seq
+  </select>
+  
+  <select id="getAttachSequenceNo" resultType="java.lang.Integer" >
+     SELECT last_value from tb_device_attachment_attachment_id_seq
   </select>
   
   <select id="getInspDeviceInfos" resultMap="equipMap" parameterType="java.lang.Integer">
@@ -829,6 +844,19 @@
       where device_id = #{deviceId,jdbcType=INTEGER}
   </update>
   
+  <select id="getEquipAttatchment" parameterType="java.lang.Integer" resultMap="attachMap">
+    select
+         attachment_id,
+	     file_path,
+	     file_type,
+	     attachment_name,
+	     attachment_type,
+	     device_id
+     from
+         tb_device_attachment 
+            where device_id = #{deviceId,jdbcType=INTEGER}
+  </select>
+  
   <insert id="addAttatchment" parameterType="com.jiabo.medical.entity.EquipAttachment">  
     insert into tb_device_attachment 
         (
@@ -839,7 +867,8 @@
         create_time, 
         creater, 
         modify_time, 
-        modifier
+        modifier,
+        device_id
         )
         values 
         (
@@ -850,9 +879,29 @@
         #{createTime,jdbcType=TIMESTAMP},
         #{creater,jdbcType=INTEGER},
         #{modifyTime,jdbcType=TIMESTAMP},
-        #{modifier,jdbcType=INTEGER}
+        #{modifier,jdbcType=INTEGER},
+        #{deviceId,jdbcType=INTEGER}
           )
   </insert>
+  
+  <update id="updAttatchment" parameterType="com.jiabo.medical.entity.EquipAttachment">
+    update 
+    tb_device_attachment 
+      set
+        device_id =#{deviceId,jdbcType=INTEGER},
+        attachment_name = #{attachmentName},
+        attachment_type = #{attachmentType, jdbcType=INTEGER},
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+        modifier = #{modifier, jdbcType=INTEGER}
+      where attachment_id = #{attachmentId,jdbcType=INTEGER}
+  </update>
+  
+  <delete id="delAttachment" parameterType="java.lang.Integer">  
+   delete 
+   from tb_device_attachment 
+      where attachment_id = #{attachmentId}
+    
+  </delete>
   
   <delete id="delEquipmentInfo" parameterType="java.lang.Integer">  
    delete from tb_device 

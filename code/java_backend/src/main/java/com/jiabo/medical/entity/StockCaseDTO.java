@@ -18,6 +18,7 @@ public class StockCaseDTO implements Serializable {
 	private String operationTime;
 	private String remark;
 	private Integer assigneeUserId;
+	private Integer auditState;
 	
 	private Timestamp createTime;
 	private Integer creater;
@@ -128,6 +129,12 @@ public class StockCaseDTO implements Serializable {
 	}
 	public void setAssigneeUserId(Integer assigneeUserId) {
 		this.assigneeUserId = assigneeUserId;
+	}
+	public Integer getAuditState() {
+		return auditState;
+	}
+	public void setAuditState(Integer auditState) {
+		this.auditState = auditState;
 	}
 	
 }

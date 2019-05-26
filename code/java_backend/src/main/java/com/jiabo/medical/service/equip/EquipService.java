@@ -1,6 +1,7 @@
 package com.jiabo.medical.service.equip;
 
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -107,6 +108,10 @@ public ResponseDTO<Equipment> getEquipmentInfo(int deviceId) {
 		if (!StringUtils.isEmpty(equip.getPicture5())) {
 			equip.setPicture5(serverAdd + URL_PICTURE + equip.getPicture5().split(filePath)[1]);
 		}
+		
+		List<EquipAttachment> accessories = equipmentMapper.getEquipAttatchment(deviceId);
+		
+		equip.setAccessories(accessories);
 		
 		res.data = equip;
 		res.code = ConstantInfo.NORMAL;
@@ -280,21 +285,38 @@ public ResponseDTO<Equipment> getEquipmentInfo(int deviceId) {
 			
 			if (count > 0) {
 				
-				
-				for (EquipAttachment eAttach:equip.getAccessories() ) {
-					eAttach.setDeviceId(equip.getDeviceId());
-					eAttach.setAttachmentName(eAttach.getFilePath().split("file=")[1]);
+				if (equip.getAccessories() != null) {
 					
-					
-					eAttach.setCreateTime(now);
-					eAttach.setModifyTime(now);
-					
-					eAttach.setCreater(equip.getModifier());
-					eAttach.setModifier(equip.getModifier());
-					
-					equipmentMapper.addAttatchment(eAttach);
-					
+					for (EquipAttachment eAttach:equip.getAccessories() ) {
+						eAttach.setDeviceId(equip.getDeviceId());
+
+						eAttach.setModifyTime(now);
+						eAttach.setModifier(equip.getModifier());
+						
+						equipmentMapper.updAttatchment(eAttach);
+						
+					}
 				}
+				
+				List<EquipAttachment> orginAttachs = equipmentMapper.getEquipAttatchment(equip.getDeviceId());
+				
+				if (orginAttachs != null) {
+					for (EquipAttachment oAttach:orginAttachs) {
+						if (equip.getAccessories() == null || !equip.getAccessories().contains(oAttach) ) {
+							equipmentMapper.delAttachment(oAttach.getAttachmentId());
+							
+							String  storageFileName = oAttach.getFilePath().split("fileName=")[1];
+							
+							File dest = new File(filePath + storageFileName);
+
+							if (dest.exists()) {
+								dest.delete();
+							}
+						}
+					}
+				}
+				
+				
 				res.code = ConstantInfo.NORMAL;
 				res.message = "更新成功";
 				
@@ -312,6 +334,8 @@ public ResponseDTO<Equipment> getEquipmentInfo(int deviceId) {
 		return res;
 		
 	}
+	
+	
 	
 	public ResponseDTO delEquipment(int deviceId) {
 		

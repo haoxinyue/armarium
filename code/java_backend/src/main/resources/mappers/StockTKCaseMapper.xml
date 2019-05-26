@@ -282,6 +282,35 @@
 	        case_id = #{caseId,jdbcType=INTEGER}
 	    and  device_id = #{deviceId,jdbcType=INTEGER}
   </update>
+  
+  <update id="updStockTKCaseState" parameterType="com.jiabo.medical.entity.StockCaseDTO">
+    update tb_stocktaking_case 
+        <set>
+            <if test="auditState != null">
+                audit_state = #{auditState,jdbcType=INTEGER},
+            </if>
+            <if test="modifyTime != null and modifyTime != ''">
+                audit_time = to_timestamp(#{modifyTime},'YYYY-MM-DD HH24:MI:SS'),
+            </if>
+            <if test="modifier != null">
+                audit_user_id = #{modifier,jdbcType=INTEGER},
+            </if>
+        </set>
+           
+        where 
+            case_id = #{caseId,jdbcType=INTEGER}
+  </update>
  
-
+    <delete id="delStockTKCase" parameterType="java.lang.Integer">
+    delete from tb_stocktaking_case 
+        where 
+            case_id = #{caseId,jdbcType=INTEGER};
+    delete from tb_stocktaking_case_plan_dept 
+        where 
+            case_id = #{caseId,jdbcType=INTEGER};
+    delete from tb_stocktaking_case_actual_device 
+        where 
+            case_id = #{caseId,jdbcType=INTEGER};
+            
+  </delete>
 </mapper>

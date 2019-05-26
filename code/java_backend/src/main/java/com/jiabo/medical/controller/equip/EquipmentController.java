@@ -1,6 +1,5 @@
 package com.jiabo.medical.controller.equip;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;

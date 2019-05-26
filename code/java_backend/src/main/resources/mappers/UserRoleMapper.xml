@@ -13,6 +13,8 @@
         <result property="openId" column="weixin_openid"/>
         <result property="roleId" column="role_id" javaType="java.lang.Integer"/>
         <result property="roleName" column="role_name"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="deptName" column="dept_name"/>
     </resultMap>
     
     <resultMap type="com.jiabo.medical.entity.UserRole" id="userRoleMap">
@@ -30,22 +32,30 @@
   </select>
   
   <select id="findUserInfo" resultMap="userMap" parameterType="com.jiabo.medical.entity.User">  
-    select tu.user_id,tu.login_name,tu.login_password,tu.mobile,tu.email,tu.display_name, tr.role_name  
+    select tu.user_id,tu.login_name,tu.login_password,tu.mobile,tu.email,tu.display_name, tr.role_name , td.dept_id, td.dept_name
         from tb_user as tu
             left join  tr_user_role as tur
                 on tur.user_id = tu.user_id
                     left join tb_role as tr
                         on tur.role_id = tr.role_id
+                    left join tr_user_dept as tud
+                        on tu.user_id = tud.user_id
+                    left join tb_department as td
+                        on tud.dept_id = td.dept_id
         where  tu.login_name = #{loginName,jdbcType=VARCHAR} and tu.login_password = #{loginPassword,jdbcType=VARCHAR} 
   </select>
   
   <select id="getUserWithOpenId" resultMap="userMap" parameterType="java.lang.String">  
-    select tu.user_id,tu.login_name,tu.login_password, tu.mobile,tu.email,tu.display_name, tr.role_name,tu.weixin_openid  
+    select tu.user_id,tu.login_name,tu.login_password, tu.mobile,tu.email,tu.display_name, tr.role_name,td.dept_id, td.dept_name,tu.weixin_openid 
         from tb_user as tu
             left join tr_user_role as tur
                 on tur.user_id = tu.user_id
                     left join tb_role as tr
                         on tur.role_id = tr.role_id
+                    left join tr_user_dept as tud
+                        on tu.user_id = tud.user_id
+                    left join tb_department as td
+                        on tud.dept_id = td.dept_id
         where  tu.weixin_openid = #{openId}
   </select>
   

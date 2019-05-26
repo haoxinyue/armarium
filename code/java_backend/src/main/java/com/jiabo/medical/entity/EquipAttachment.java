@@ -82,4 +82,20 @@ public class EquipAttachment {
 		this.deviceId = deviceId;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		EquipAttachment other = (EquipAttachment) obj;
+		if (attachmentId == null) {
+			if (other.attachmentId != null)
+				return false;
+		} else if (!attachmentId.equals(other.attachmentId))
+			return false;
+		return true;
+	}
 }

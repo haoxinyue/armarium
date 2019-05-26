@@ -15,6 +15,8 @@ public class User implements Serializable {
 	private String loginPassword;
 	private String mobile;
 	private String email;
+	private Integer deptId;
+	private String deptName;
 	
 	private List<UserRole> users;
 	
@@ -115,6 +117,18 @@ public class User implements Serializable {
 	}
 	public void setJsCode(String jsCode) {
 		this.jsCode = jsCode;
+	}
+	public Integer getDeptId() {
+		return deptId;
+	}
+	public void setDeptId(Integer deptId) {
+		this.deptId = deptId;
+	}
+	public String getDeptName() {
+		return deptName;
+	}
+	public void setDeptName(String deptName) {
+		this.deptName = deptName;
 	}
 	
 }

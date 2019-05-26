@@ -36,6 +36,19 @@ public class UserRole implements Serializable {
 		this.displayName = displayName;
 	}
 	
+	public Timestamp getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
+	}
+	public Integer getCreater() {
+		return creater;
+	}
+	public void setCreater(Integer creater) {
+		this.creater = creater;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -58,17 +71,5 @@ public class UserRole implements Serializable {
 		} else if (!userId.equals(other.userId))
 			return false;
 		return true;
-	}
-	public Timestamp getCreateTime() {
-		return createTime;
-	}
-	public void setCreateTime(Timestamp createTime) {
-		this.createTime = createTime;
-	}
-	public Integer getCreater() {
-		return creater;
-	}
-	public void setCreater(Integer creater) {
-		this.creater = creater;
 	}
 }

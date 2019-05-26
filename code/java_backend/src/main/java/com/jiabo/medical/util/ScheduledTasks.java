@@ -30,6 +30,7 @@ public class ScheduledTasks {
 	@Autowired
 	private EquipmentMapper equipMapper;
 	
+	// 自动生成保养case
 	@Scheduled(cron = "0 0 0 15 * *")  //cron接受cron表达式，根据cron表达式确定定时规则 
     public void setAutoPmCase() {
 
@@ -68,6 +69,7 @@ public class ScheduledTasks {
 	
     }
 	
+	// 自动生成计量case
 	@Scheduled(cron = "0 0 1 * * ?")  //每天凌晨一点，根据cron表达式确定定时规则 
     public void setAutoMeteringCase() {
 		

@@ -24,6 +24,8 @@ public interface StockTKCaseMapper  {
 	public int getSequenceNo() throws DataAccessException;
     public int addStockTKCase(StockTKCaseDTO caseDto) throws DataAccessException;
     public int updStockTKDevCase(StockCaseDTO caseDto) throws DataAccessException;
+    public int updStockTKCaseState(StockCaseDTO caseDto) throws DataAccessException;
+    public int delStockTKCase(int caseId) throws DataAccessException;
     public int updStockTKCase(int caseId) throws DataAccessException;
     public int addStockDeptCase(StockCaseDTO caseDto) throws DataAccessException;
     public int addStockDeviceCase(StockCaseDTO caseDto) throws DataAccessException;

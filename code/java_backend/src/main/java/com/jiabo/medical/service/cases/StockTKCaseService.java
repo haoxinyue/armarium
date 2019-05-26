@@ -307,10 +307,12 @@ public ResponseDTO completePmCase(PmCaseDTO caseDto) {
 		
 		// 无caseId场合
 		if (caseDto.getCaseId() == null) {
-			// 获取待盘点的工单号
-			List<Integer> pmCaseId = caseMapper.getPmCaseId(10);
-			caseDto.setCaseId(pmCaseId.get(0));
+			res.code = ConstantInfo.INVALID;
+			res.message = "请指定一个盘点计划!";
+			return res;
 		}
+		
+		
 		
 		int count = caseMapper.updStockTKDevCase(caseDto);
 		
@@ -346,6 +348,73 @@ public ResponseDTO completePmCase(PmCaseDTO caseDto) {
 		}
 		return res;
 	}
+	
+	// 审核盘点计划
+	public ResponseDTO updStockTKCaseState(StockCaseDTO caseDto) {
+		
+		ResponseDTO res = new ResponseDTO();
+		
+		if (caseDto.getModifier() == null) {
+			res.code = ConstantInfo.INVALID;
+			res.message = "未指定审核人";
+			
+			return res;
+		}
+		
+		// 无caseId场合
+		if (caseDto.getCaseId() == null) {
+			res.code = ConstantInfo.INVALID;
+			res.message = "请指定一个盘点计划!";
+			return res;
+		}
+		
+		// 更新审核状态
+		caseDto.setAuditState(1);
+		
+		Timestamp now = new Timestamp(System.currentTimeMillis());
+		
+		caseDto.setModifyTime(now);
+		
+		int count = caseMapper.updStockTKCaseState(caseDto);
+		
+		if (count > 0) {
+			res.code = ConstantInfo.NORMAL;
+			res.message = "盘点计划审核成功";
+			
+			
+		}
+		return res;
+	}
+	
+	// 审核盘点计划
+		public ResponseDTO delStockTKCase(StockCaseDTO caseDto) {
+			
+			ResponseDTO res = new ResponseDTO();
+			
+			if (caseDto.getModifier() == null) {
+				res.code = ConstantInfo.INVALID;
+				res.message = "未指定审核人";
+				
+				return res;
+			}
+			
+			// 无caseId场合
+			if (caseDto.getCaseId() == null) {
+				res.code = ConstantInfo.INVALID;
+				res.message = "请指定一个盘点计划!";
+				return res;
+			}
+			
+			int count = caseMapper.delStockTKCase(caseDto.getCaseId());
+			
+			if (count > 0) {
+				res.code = ConstantInfo.NORMAL;
+				res.message = "盘点计划删除成功";
+				
+				
+			}
+			return res;
+		}
 
 
 	public ResponseDTO getStockTKDevice(StockCaseDTO caseDto) {

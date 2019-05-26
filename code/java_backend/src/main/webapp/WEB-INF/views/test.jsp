@@ -183,21 +183,48 @@ function getMtCaseList() {
     });
 }
 
-function confirmUserToRole() {
+function updDeviceAttachment() {
+	alert('updDeviceAttachment');
 	var obj = {
-			"roleId":2,
-			"creater":10001,
-			"users":[{"userId":10003},
-			       {"userId":10004},
-			       {"userId":10006},
-			       {"userId":10007}]
+			assetNo: "ztb123",
+            departmentId: 307, 
+            deviceCode: "sssss1",
+            deviceDesc: "xxxxxyyy",
+            deviceId: 100000043,
+            deviceModel: "ssssss3",
+            deviceName: "镇痛泵",
+            deviceType: 1,
+            usageState:1,
+            serialNumber:"sn1123667",
+			modifier:10001,
+			accessories:[{attachmentId: filePath:"http://localhost:8080/accessory/download?fileName=dixx.png",attachmentType:1, fileType:1},
+			       {attachmentId: filePath:"http://localhost:8080/accessory/download?fileName=medical.avi", attachmentType:2, fileType:2},
+			       {attachmentId: filePath:"http://localhost:8080/accessory/download?fileName=操作手册.pdf",attachmentType:3, fileType:1},
+			       ]
             };
 	
-	$.post("/auth/confirmUserToRole", obj, function (data) {
+	/* $.post("/equip/updDevice", obj, function (data) {
         
         alert("返回代码！:   "+data.code);
         alert("返回信息！:   "+data.message);
         alert(JSON.stringify(data.data));
+    }); */
+	
+	$.ajax({
+        type: "post",
+        url:"/equip/updDevice",
+        data:JSON.stringify(obj),
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (dat) {
+            alert("返回代码！:   "+dat.code);
+            alert("返回信息！:   "+dat.message);
+            alert(JSON.stringify(dat.data));
+        
+        },
+        error: function (e) {
+            alert(e);
+        }
     });
 }
 
@@ -498,11 +525,11 @@ $(document).ready(function(){
 
 <body>
 <%out.println("Context路径：XXXXXXXX hello spring boot -- jsp"); %>
-<form action="http://localhost:8080/accessory/uploadAccessory" method="POST" enctype="multipart/form-data">
-    文件：<input type="file" name="fileUpload" multiple/>
+<form action="http://localhost:8080/accessory/attachmentUpload?creater=10003" method="POST" enctype="multipart/form-data">
+    文件：<input type="file" name="fileUpload" />
     <input type="submit" />
-    <input type="button" value="test" onclick="getMtCaseInfos()"/>
-    <input type="button" value="testXX" onclick="getWechatSession()"/>
+    <input type="button" value="test" onclick="updDeviceAttachment()"/>
+    <input type="button" value="testXX" onclick="javascript:getWechatSession()"/>
     <br>
     <img src='http://localhost:8080/accessory/queryPic?fileName=di.png'  style="width:300px"/>
 </form>
