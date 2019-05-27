@@ -256,6 +256,18 @@
      SELECT last_value from tb_stocktaking_case_case_id_seq
   </select>
   
+  <select id="getStockTKCaseStatus" parameterType="com.jiabo.medical.entity.StockCaseDTO"  resultType="java.lang.Integer" >
+     SELECT count(1) from tb_stocktaking_case
+        where case_id = #{caseId,jdbcType=INTEGER}
+            and  device_id = #{deviceId,jdbcType=INTEGER} 
+            and (
+            operation_user_id is not null
+            or operation_time is not null
+            )
+  </select>
+  
+  
+  
   <update id="updStockTKCase" parameterType="java.lang.Integer">
     update tb_stocktaking_case 
         set

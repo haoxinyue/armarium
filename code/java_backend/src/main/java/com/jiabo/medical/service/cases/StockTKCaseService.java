@@ -312,7 +312,11 @@ public ResponseDTO completePmCase(PmCaseDTO caseDto) {
 			return res;
 		}
 		
-		
+		if (caseMapper.getStockTKCaseStatus(caseDto) > 0) {
+			res.code = ConstantInfo.INVALID;
+			res.message = "该设备已盘点!";
+			return res;
+		}
 		
 		int count = caseMapper.updStockTKDevCase(caseDto);
 		

@@ -26,6 +26,18 @@
             order by td.parent_id, td.dept_name
   </select>
   
+  <select id="getDepts" parameterType="java.lang.Integer" resultMap="deptMap">
+    select td.dept_id,td.dept_name,td.dept_owner,td.parent_id,td.hospital_id,th.hospital_name,td.dept_path, td.remark  
+        from tb_department as td
+            inner join tr_user_hospital as tuh
+                on td.hospital_id = tuh.hospital_id
+            inner join tb_hospital as th
+                on td.hospital_id = th.hospital_id
+        where  tuh.user_id = #{userId,jdbcType=INTEGER} 
+            and td.parent_id is null
+        order by td.dept_name, td.parent_id
+  </select>
+  
   <select id="getDeptInfo" parameterType="com.jiabo.medical.entity.Department" resultMap="deptMap">
         select td.dept_id,td.dept_name,td.dept_owner,td.parent_id,td.hospital_id,th.hospital_name,td.dept_path, td.remark  
         from tb_department as td
