@@ -1,6 +1,7 @@
 import {
   queryStocktakingDetail,
   queryStocktakingCaseList,
+  updStockTKCaseState,
   addStocktaking,
   compeleteStocktaking,
   queryStocktakingDeviceList,
@@ -22,6 +23,16 @@ export default {
       yield put({
         type: 'save',
         payload: response,
+      });
+    },
+    *changeState({ payload }, { call, put }) {
+      const response = yield call(updStockTKCaseState, payload);
+      yield put({
+        type: 'saveState',
+        payload: {
+          caseId: payload.caseId,
+          auditState: 1,
+        },
       });
     },
     *fetchDetail({ payload, callback }, { call, put }) {
@@ -100,6 +111,23 @@ export default {
       }
       let byIds = Object.assign({}, state.byIds);
       byIds[action.payload.caseId] = action.payload;
+
+      return {
+        ...state,
+        byIds,
+      };
+    },
+    saveState(state, action) {
+      if (!action.payload) {
+        return {
+          ...state,
+        };
+      }
+      let byIds = Object.assign({}, state.byIds);
+      byIds[action.payload.caseId] = {
+        ...byIds[action.payload.caseId],
+        auditState: action.payload.auditState,
+      };
 
       return {
         ...state,

@@ -155,25 +155,28 @@ export default class StocktakingCaseList extends PureComponent {
   };
 
   componentDidMount() {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'stocktakingCase/fetch',
-      payload: {
-        // assigneeUserId: 10003,
-        pageIndex: 0,
-        pageSize: 10,
-      },
-    });
+    // const { dispatch } = this.props;
+    // dispatch({
+    //   type: 'stocktakingCase/fetch',
+    //   payload: {
+    //     // assigneeUserId: 10003,
+    //     pageIndex: 0,
+    //     pageSize: 10,
+    //   },
+    // });
+    this.refreshTable();
   }
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const { dispatch, form } = this.props;
+    const { dispatch, form, currentUser } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
 
       const params = {
         pageIndex: pagination.current - 1,
         pageSize: pagination.pageSize,
+        userId: currentUser.userId,
+        // roleName: currentUser.roleName
       };
 
       for (let k in fieldsValue) {
@@ -206,13 +209,8 @@ export default class StocktakingCaseList extends PureComponent {
     this.setState({
       formValues: {},
     });
-    dispatch({
-      type: 'stocktakingCase/fetch',
-      payload: {
-        pageIndex: this.state.pagination.current,
-        pageSize: this.state.pagination.pageSize,
-      },
-    });
+
+    this.refreshTable();
   };
 
   handleMenuClick = e => {
@@ -238,7 +236,7 @@ export default class StocktakingCaseList extends PureComponent {
   handleSearch = e => {
     e.preventDefault();
 
-    const { dispatch, form } = this.props;
+    const { dispatch, form, currentUser } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -254,6 +252,8 @@ export default class StocktakingCaseList extends PureComponent {
       let payload = {
         pageIndex: this.state.pagination.current,
         pageSize: this.state.pagination.pageSize,
+        userId: currentUser.userId,
+        // roleName: currentUser.roleName
       };
 
       for (let k in values) {
@@ -287,17 +287,30 @@ export default class StocktakingCaseList extends PureComponent {
   };
 
   refreshTable() {
-    const { dispatch, form } = this.props;
+    const { dispatch, form, currentUser } = this.props;
     form.resetFields();
     let payload = {
       pageIndex: this.state.pagination.current,
       pageSize: this.state.pagination.pageSize,
+      userId: currentUser.userId,
+      // roleName: currentUser.roleName
     };
     dispatch({
       type: 'stocktakingCase/fetch',
       payload,
     });
   }
+
+  handleAudit = caseInfo => {
+    let payload = {
+      caseId: caseInfo.caseId,
+      modifier: this.props.currentUser.userId,
+    };
+    dispatch({
+      type: 'stocktakingCase/changeState',
+      payload,
+    });
+  };
 
   handleAdd = (fields, form) => {
     const { currentUser = {} } = this.props;
@@ -427,6 +440,15 @@ export default class StocktakingCaseList extends PureComponent {
         title: '操作',
         render: val => (
           <Fragment>
+            {val.auditState != 1 && (
+              <a
+                onClick={() => {
+                  this.handleAudit(val);
+                }}
+              >
+                审核
+              </a>
+            )}
             <Link to={'/asset/asset-case/' + val.caseId}>详情</Link>
           </Fragment>
         ),
