@@ -25,7 +25,7 @@ export default {
         payload: response,
       });
     },
-    *changeState({ payload }, { call, put }) {
+    *audit({ payload }, { call, put }) {
       const response = yield call(updStockTKCaseState, payload);
       yield put({
         type: 'saveState',

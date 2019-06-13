@@ -176,7 +176,7 @@ export default class StocktakingCaseList extends PureComponent {
         pageIndex: pagination.current - 1,
         pageSize: pagination.pageSize,
         userId: currentUser.userId,
-        // roleName: currentUser.roleName
+        // roleName: currentUser.roleNamef
       };
 
       for (let k in fieldsValue) {
@@ -302,13 +302,22 @@ export default class StocktakingCaseList extends PureComponent {
   }
 
   handleAudit = caseInfo => {
-    let payload = {
-      caseId: caseInfo.caseId,
-      modifier: this.props.currentUser.userId,
-    };
-    dispatch({
-      type: 'stocktakingCase/changeState',
-      payload,
+    Modal.confirm({
+      title: '审核',
+      content: '通过该计划？',
+      onOk: () => {
+        let payload = {
+          caseId: caseInfo.caseId,
+          modifier: this.props.currentUser.userId,
+        };
+        dispatch({
+          type: 'stocktakingCase/audit',
+          payload,
+        }).then(() => {
+          this.refreshTable();
+        });
+      },
+      onCancel() {},
     });
   };
 
