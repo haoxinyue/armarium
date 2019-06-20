@@ -7,6 +7,7 @@ export const httpDomain = IS_DEBUG ? '/MAPI' : 'http://47.100.198.255:8080';
 export const httpDomain_TEST = '/api';
 
 export const uploadUrl = `${httpDomain}/accessory/fileUpload`;
+export const uploadAttachUrl = `${httpDomain}/accessory/attachmentUpload`;
 
 export function getFormData(params) {
   // let data = new FormData();

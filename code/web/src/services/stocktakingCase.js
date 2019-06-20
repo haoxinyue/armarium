@@ -10,6 +10,15 @@ export async function queryStocktakingCaseList(params) {
     body: getFormData(params),
   });
 }
+export async function updStockTKCaseState(params) {
+  return request(`${httpDomain}/stock_tk_case/updStockTKCaseState`, {
+    method: 'POST',
+    /*
+   *     //assigneeUserId
+   * */
+    body: getFormData(params),
+  });
+}
 
 export async function compeleteStocktaking(params) {
   return request(`${httpDomain}/stock_tk_case/updStockTKCase`, {

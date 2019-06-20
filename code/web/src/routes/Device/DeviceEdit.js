@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import moment from 'moment';
 
-import { uploadUrl } from '../../services/api';
+import { uploadUrl, uploadAttachUrl } from '../../services/api';
 
 import {
   Form,
@@ -30,7 +30,8 @@ const TabPane = Tabs.TabPane;
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DepartmentSelect from '../../components/biz/DepartmentSelect';
 import { AttachmentTypes, AttachmentFileTypes } from '../../utils/constants';
-import styles from '../Forms/style.less';
+import '../Forms/style.less';
+import styles from './DeviceDetail.less';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -85,12 +86,28 @@ export default class DeviceEdit extends Component {
   handleAttachUploadFileChange = ({ fileList }) => {
     const { setFieldsValue, getFieldValue } = this.props.form;
     let accessories = getFieldValue('accessories') || [];
-    // this.setState({fileList});
-    if (fileList[0] && fileList[0].attachmentId) {
-      setFieldsValue({
-        accessories: accessories.concat(fileList),
-      });
+
+    let find = false;
+
+    fileList.forEach(att => {
+      let data = att.response && att.response.data;
+      if (data) {
+        find = true;
+        accessories.push({
+          ...data,
+          filePath: data.filePath || att.url,
+          fileName: data.fileName || att.name,
+        });
+      }
+    });
+
+    if (find) {
+      fileList.splice(0, fileList.length);
     }
+
+    setFieldsValue({
+      accessories: accessories,
+    });
   };
 
   handleSubmit = e => {
@@ -136,12 +153,13 @@ export default class DeviceEdit extends Component {
     });
   };
 
-  getFileInfo(url, name, uid) {
+  getFileInfo(url, name, uid, rest) {
     return {
       uid: uid || name,
       name: name,
       status: 'done',
       url: url,
+      rest,
     };
   }
 
@@ -228,9 +246,15 @@ export default class DeviceEdit extends Component {
   }
 
   render() {
-    const { submitting, match: { params }, hospital } = this.props;
+    const { submitting, match: { params }, hospital, currentUser } = this.props;
     const { getFieldDecorator, getFieldValue, setFieldsValue } = this.props.form;
     let accessories = getFieldValue('accessories') || [];
+    accessories = accessories.map(att => {
+      return {
+        ...att,
+        ...this.getFileInfo(att.filePath, att.attachmentName, att.attachmentId),
+      };
+    });
 
     const formItemLayout = {
       labelCol: {
@@ -502,35 +526,44 @@ export default class DeviceEdit extends Component {
             <TabPane tab="设备附件" key="4">
               <Card bordered={false}>
                 {accessories.map(att => (
-                  <div>
-                    <span>附件类型</span>
-                    <Select defaultValue={att.attachmentType + ''} style={{ width: 120 }}>
+                  <div className={styles['attach-line']}>
+                    <span className={styles['attach-label']}>附件类型</span>
+                    <Select
+                      defaultValue={att.attachmentType + ''}
+                      style={{ width: 120 }}
+                      onChange={v => {
+                        att.attachmentType = v;
+                        console.log(accessories);
+                        setFieldsValue({
+                          accessories: accessories,
+                        });
+                      }}
+                    >
                       {Object.keys(AttachmentTypes).map(type => (
-                        <Option
-                          value={type}
-                          onChange={v => {
-                            att.attachmentType = v;
-                            setFieldsValue({
-                              accessories: accessories,
-                            });
-                          }}
-                        >
-                          {AttachmentTypes[type]}
-                        </Option>
+                        <Option value={type}>{AttachmentTypes[type]}</Option>
                       ))}
                     </Select>
-                    <span>文件名称</span>
+                    <span className={styles['attach-label']}>文件名称</span>
                     <Input
                       style={{ width: 200 }}
                       value={att.attachmentName}
-                      onChange={v => {
-                        att.attachmentType = v;
+                      onChange={e => {
+                        att.attachmentName = e.target.value;
+                        console.log(accessories, 1);
                         setFieldsValue({
                           accessories: accessories,
                         });
                       }}
                     />
-                    <span>文件类型：{AttachmentFileTypes[att.fileType] || '其他'}</span>
+                    <span className={styles['attach-label']}>
+                      文件类型：{AttachmentFileTypes[att.fileType] || '其他'}
+                    </span>
+
+                    <Button style={{ marginRight: 5 }}>
+                      <a href={att.filePath} target="_blank">
+                        下载
+                      </a>
+                    </Button>
 
                     <Button
                       onClick={() => {
@@ -545,12 +578,14 @@ export default class DeviceEdit extends Component {
                 ))}
 
                 <Upload
-                  action={uploadUrl}
+                  style={{ marginTop: 8 }}
+                  action={uploadAttachUrl + '?creater=' + currentUser.userId}
                   showUploadList={false}
                   onChange={this.handleAttachUploadFileChange}
                   name={'fileUpload'}
                 >
-                  {accessories.length >= 5 ? null : uploadButton}
+                  {/*<Button type="primary" disabled={accessories.length >= 10}>添加(最多10个)</Button>*/}
+                  <Button type="primary">添加</Button>
                 </Upload>
               </Card>
             </TabPane>
