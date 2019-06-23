@@ -1709,3 +1709,44 @@ COMMENT ON COLUMN public.tr_role_func.func_id
     IS '系统功能点，tb_system_func主键';
 	
 	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+		
+CREATE TABLE public.tb_pm_device_template
+(
+    template_id serial NOT NULL,
+    device_type integer NOT NULL,
+    hospital_id integer NOT NULL,
+	template_content character varying(2000)
+
+    PRIMARY KEY (template_id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.tb_pm_device_template
+    OWNER to armarium;
+COMMENT ON TABLE public.tb_pm_device_template
+    IS '保养设备模板';
+
+COMMENT ON COLUMN public.tb_pm_device_template.device_type
+    IS '设备类型ID，见tsys_config表,device_type';
+
+COMMENT ON COLUMN public.tb_pm_device_template.hospital_id
+    IS '医院id';
+
+COMMENT ON COLUMN public.tb_pm_device_template.template_content
+    IS '模板内容';
