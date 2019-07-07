@@ -68,6 +68,14 @@ export async function addUser(params) {
     },
   });
 }
+export async function editUser(params) {
+  return request(`${httpDomain}/auth/updUser`, {
+    method: 'POST',
+    body: {
+      ...params,
+    },
+  });
+}
 
 /* =============================================================== */
 export async function queryDepartments(params) {

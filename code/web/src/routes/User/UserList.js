@@ -23,6 +23,8 @@ import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './TableList.less';
+import RoleSelect from '../../components/biz/RoleSelect';
+import DepartmentSelect from '../../components/biz/DepartmentSelect';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -32,7 +34,8 @@ const getValue = obj =>
     .join(',');
 
 const CreateForm = Form.create()(props => {
-  const { modalVisible, form, handleAdd, handleModalVisible } = props;
+  const { modalVisible, form, handleAdd, handleModalVisible, user = {} } = props;
+
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -49,28 +52,45 @@ const CreateForm = Form.create()(props => {
     >
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="登录名">
         {form.getFieldDecorator('LoginName', {
-          rules: [{ required: true, message: '请输入设备编号...' }],
+          initialValue: user.LoginName,
+          rules: [{ required: true, message: '请输入登录名...' }],
+        })(<Input placeholder="请输入" />)}
+      </FormItem>
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="显示名称">
+        {form.getFieldDecorator('DisplayName', {
+          initialValue: user.DisplayName,
+          rules: [{ required: true, message: '请输入显示名称...' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="密码">
         {form.getFieldDecorator('LoginPassword', {
+          initialValue: user.LoginPassword,
           rules: [{ required: true, message: '请输入密码...' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="手机号">
         {form.getFieldDecorator('Mobile', {
+          initialValue: user.Mobile,
           rules: [{ required: true, message: '请输入手机号...' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="电子邮箱">
         {form.getFieldDecorator('Email', {
+          initialValue: user.Email,
           rules: [{ required: true, message: '请输入电子邮箱...' }],
         })(<Input placeholder="请输入" />)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="显示名称">
-        {form.getFieldDecorator('DisplayName', {
-          rules: [{ required: true, message: '请输入显示名称...' }],
-        })(<Input placeholder="请输入" />)}
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="角色">
+        {form.getFieldDecorator('roleId', {
+          initialValue: user.roleId,
+          rules: [{ required: true, message: '请选择角色...' }],
+        })(<RoleSelect placeholder="请选择角色" />)}
+      </FormItem>
+      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="所属部门">
+        {form.getFieldDecorator('deptId', {
+          initialValue: user.deptId,
+          rules: [{ required: true, message: '请选择所属部门...' }],
+        })(<DepartmentSelect placeholder="请选择所属部门" />)}
       </FormItem>
     </Modal>
   );
@@ -83,10 +103,12 @@ const CreateForm = Form.create()(props => {
 @Form.create()
 export default class UserList extends PureComponent {
   state = {
+    modalMode: 'add',
     modalVisible: false,
     expandForm: false,
     selectedRows: [],
     formValues: {},
+    modalUser: {},
   };
 
   componentDidMount() {
@@ -194,17 +216,22 @@ export default class UserList extends PureComponent {
     });
   };
 
-  handleModalVisible = flag => {
+  handleModalVisible = (flag, user) => {
     this.setState({
+      modalMode: user ? 'edit' : 'add',
       modalVisible: !!flag,
+      modalUser: user,
     });
   };
 
   handleAdd = fields => {
+    const { modalMode, modalUser } = this.state;
+
     this.props.dispatch({
-      type: 'userlist/add',
+      type: modalMode === 'edit' ? 'userlist/edit' : 'userlist/add',
       payload: {
-        description: fields.desc,
+        ...(modalUser || {}),
+        ...fields,
       },
     });
 
@@ -246,7 +273,7 @@ export default class UserList extends PureComponent {
 
   render() {
     const { userlist: { data }, loading } = this.props;
-    const { selectedRows, modalVisible } = this.state;
+    const { selectedRows, modalVisible, modalUser } = this.state;
 
     const columns = [
       {
@@ -262,6 +289,10 @@ export default class UserList extends PureComponent {
         dataIndex: 'Mobile',
       },
       {
+        title: '角色',
+        dataIndex: 'role',
+      },
+      {
         title: '电子邮箱',
         dataIndex: 'Email',
       },
@@ -269,7 +300,13 @@ export default class UserList extends PureComponent {
         title: '操作',
         render: val => (
           <Fragment>
-            <a href="/device/detail?id=">详情</a>
+            <a
+              onClick={() => {
+                this.handleModalVisible(true, val);
+              }}
+            >
+              详情
+            </a>
           </Fragment>
         ),
       },
@@ -317,7 +354,7 @@ export default class UserList extends PureComponent {
             />
           </div>
         </Card>
-        <CreateForm {...parentMethods} modalVisible={modalVisible} />
+        <CreateForm {...parentMethods} user={modalUser} modalVisible={modalVisible} />
       </PageHeaderLayout>
     );
   }

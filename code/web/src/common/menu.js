@@ -94,7 +94,7 @@ const menuData = [
         path: 'department-tree',
       },
     ],
-  } /*,
+  },
   {
     name: '用户',
     icon: 'team',
@@ -105,7 +105,7 @@ const menuData = [
         path: 'user-list',
       },
     ],
-  } */ /*,
+  } /*,
   {
     name: '列表信息',
     icon: 'table',

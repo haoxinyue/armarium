@@ -1,4 +1,4 @@
-import {queryUsers, removeUser, addUser, queryUserDetail} from '../services/api';
+import { queryUsers, removeUser, addUser, editUser, queryUserDetail } from '../services/api';
 
 export default {
   namespace: 'userlist',
@@ -20,17 +20,25 @@ export default {
     },
     *fetchDetail({ payload }, { call, put }) {
       const response = yield call(queryUserDetail, {
-        userId:Number(payload.userId)
+        userId: Number(payload.userId),
       });
       yield put({
         type: 'saveCurrent',
         payload: {
-          ...response.data
+          ...response.data,
         },
       });
     },
     *add({ payload, callback }, { call, put }) {
       const response = yield call(addUser, payload);
+      yield put({
+        type: 'save',
+        payload: response,
+      });
+      if (callback) callback();
+    },
+    *edit({ payload, callback }, { call, put }) {
+      const response = yield call(editUser, payload);
       yield put({
         type: 'save',
         payload: response,

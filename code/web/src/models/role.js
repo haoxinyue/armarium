@@ -114,7 +114,20 @@ export default {
         },
       });
     },
-
+    *fetchSelectList({ payload }, { call, put }) {
+      const response = yield call(queryRoles, payload);
+      yield put({
+        type: 'saveSelectData',
+        payload: {
+          ...response,
+          pagination: {
+            current: payload.pageIndex == null ? 1 : payload.pageIndex + 1,
+            pageSize: payload.pageSize || 10,
+            total: response.recordCount || 0,
+          },
+        },
+      });
+    },
     *setRoleUsers({ payload }, { call, put }) {
       const response = yield call(confirmUserToRole, payload);
       if (response.code == 0) {
@@ -136,6 +149,29 @@ export default {
   },
 
   reducers: {
+    saveSelectData(state, action) {
+      let byIds = {},
+        list = [];
+      if (action.payload.data) {
+        action.payload.data.forEach(item => {
+          if (item && item.roleId != null) {
+            byIds[item.roleId] = item;
+            if (list.indexOf(item.roleId) === -1) {
+              list.push(item.roleId);
+            }
+          }
+        });
+      }
+
+      return {
+        ...state,
+        selectData: {
+          list,
+          pagination: action.payload.pagination,
+          byIds,
+        },
+      };
+    },
     saveRoleUsersAll(state, action) {
       if (action.payload.roleId != null) {
         let byIds = Object.assign({}, state.byIds);

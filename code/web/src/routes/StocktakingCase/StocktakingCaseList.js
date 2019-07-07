@@ -47,7 +47,9 @@ class CreateForm extends PureComponent {
   };
 
   render() {
-    const { modalVisible, form, handleAdd, handleModalVisible } = this.props;
+    const { modalVisible, form, handleAdd, handleModalVisible, currentUser = {} } = this.props;
+    const { roleName, deptId, deptName } = currentUser;
+    const isYunwei = roleName === '运维管理员';
 
     const okHandle = () => {
       form.validateFields((err, fieldsValue) => {
@@ -98,17 +100,42 @@ class CreateForm extends PureComponent {
           })(<HospitalSelect placeholder="请选择医院" />)}
         </FormItem>
 
-        <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="科室">
-          {form.getFieldDecorator('depts', {
-            rules: [{ required: true, message: '请选择部门...' }],
-          })(
-            <DepartmentSelect
-              hospitalId={this.state.hospitalId}
-              multiple
-              placeholder="请选择部门"
-            />
-          )}
-        </FormItem>
+        {isYunwei && (
+          <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="科室">
+            {form.getFieldDecorator('depts', {
+              rules: [{ required: true, message: '请选择部门...' }],
+            })(
+              <DepartmentSelect
+                hospitalId={this.state.hospitalId}
+                multiple
+                placeholder="请选择部门"
+              />
+            )}
+          </FormItem>
+        )}
+
+        {!isYunwei && (
+          <div>
+            <FormItem
+              style={{ display: 'none' }}
+              labelCol={{ span: 6 }}
+              wrapperCol={{ span: 15 }}
+              label="部门Id"
+            >
+              {form.getFieldDecorator('depts', {
+                initialValue: deptId,
+                rules: [],
+              })(<Input placeholder="请输入" />)}
+            </FormItem>
+
+            <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="部门">
+              {form.getFieldDecorator('deptName', {
+                initialValue: deptName,
+                rules: [],
+              })(<Input disabled={true} placeholder="部门" />)}
+            </FormItem>
+          </div>
+        )}
 
         <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="指派给">
           {form.getFieldDecorator('assigneeUserId', {
@@ -302,6 +329,7 @@ export default class StocktakingCaseList extends PureComponent {
   }
 
   handleAudit = caseInfo => {
+    const { dispatch } = this.props;
     Modal.confirm({
       title: '审核',
       content: '通过该计划？',
@@ -309,13 +337,55 @@ export default class StocktakingCaseList extends PureComponent {
         let payload = {
           caseId: caseInfo.caseId,
           modifier: this.props.currentUser.userId,
+          auditState: '1',
         };
-        dispatch({
+        let dtd = dispatch({
           type: 'stocktakingCase/audit',
           payload,
-        }).then(() => {
-          this.refreshTable();
         });
+
+        dtd.then(
+          res => {
+            console.log('audit res', res);
+            message.success('操作成功');
+            this.refreshTable();
+          },
+          err => {
+            message.error('操作失败');
+            // console.error('audit err', err)
+          }
+        );
+      },
+      onCancel() {},
+    });
+  };
+
+  deletePlan = caseInfo => {
+    const { dispatch } = this.props;
+    Modal.confirm({
+      title: '删除',
+      content: '确认删除该计划？',
+      onOk: () => {
+        let payload = {
+          caseId: caseInfo.caseId,
+          modifier: this.props.currentUser.userId,
+        };
+        let dtd = dispatch({
+          type: 'stocktakingCase/remove',
+          payload,
+        });
+
+        dtd.then(
+          res => {
+            console.log('audit res', res);
+            message.success('操作成功');
+            this.refreshTable();
+          },
+          err => {
+            message.error('操作失败');
+            // console.error('audit err', err)
+          }
+        );
       },
       onCancel() {},
     });
@@ -401,7 +471,7 @@ export default class StocktakingCaseList extends PureComponent {
   }
 
   render() {
-    const { stocktakingCase, loading } = this.props;
+    const { stocktakingCase, loading, currentUser } = this.props;
     const { selectedRows, modalVisible } = this.state;
     let list = [];
     stocktakingCase.list.forEach(id => {
@@ -448,7 +518,7 @@ export default class StocktakingCaseList extends PureComponent {
       {
         title: '操作',
         render: val => (
-          <Fragment>
+          <div>
             {val.auditState != 1 && (
               <a
                 onClick={() => {
@@ -458,8 +528,17 @@ export default class StocktakingCaseList extends PureComponent {
                 审核
               </a>
             )}
-            <Link to={'/asset/asset-case/' + val.caseId}>详情</Link>
-          </Fragment>
+            <span style={{ margin: '0 10px' }}>
+              <Link to={'/asset/asset-case/' + val.caseId}>详情</Link>
+            </span>
+            <a
+              onClick={() => {
+                this.deletePlan(val);
+              }}
+            >
+              删除
+            </a>
+          </div>
         ),
       },
     ];
@@ -508,7 +587,7 @@ export default class StocktakingCaseList extends PureComponent {
             />
           </div>
         </Card>
-        <CreateForm {...parentMethods} modalVisible={modalVisible} />
+        <CreateForm {...parentMethods} currentUser={currentUser} modalVisible={modalVisible} />
       </PageHeaderLayout>
     );
   }

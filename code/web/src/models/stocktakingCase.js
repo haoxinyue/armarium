@@ -3,6 +3,7 @@ import {
   queryStocktakingCaseList,
   updStockTKCaseState,
   addStocktaking,
+  removeStocktaking,
   compeleteStocktaking,
   queryStocktakingDeviceList,
 } from '../services/stocktakingCase.js';
@@ -26,14 +27,23 @@ export default {
       });
     },
     *audit({ payload }, { call, put }) {
-      const response = yield call(updStockTKCaseState, payload);
-      yield put({
-        type: 'saveState',
-        payload: {
-          caseId: payload.caseId,
-          auditState: 1,
-        },
+      const response = yield call(updStockTKCaseState, {
+        ...payload,
+        auditState: '1',
       });
+      let success = response && response.code == 0;
+
+      if (success) {
+        yield put({
+          type: 'saveState',
+          payload: {
+            caseId: payload.caseId,
+            auditState: '1',
+          },
+        });
+      } else {
+        return Promise.reject(success);
+      }
     },
     *fetchDetail({ payload, callback }, { call, put }) {
       const response = yield call(queryStocktakingDetail, {
@@ -68,6 +78,19 @@ export default {
       }
 
       return success;
+    },
+    *remove({ payload }, { call, put }) {
+      const response = yield call(removeStocktaking, payload) || {};
+      let success = response && response.code == 0;
+      if (success) {
+        yield put({
+          type: 'removeCurrent',
+          payload,
+        });
+        return success;
+      }
+
+      return Promise.reject(success);
     },
     *complete({ payload, callback }, { call, put }) {
       const response = yield call(compeleteStocktaking, payload) || {};
@@ -114,6 +137,20 @@ export default {
 
       return {
         ...state,
+        byIds,
+      };
+    },
+    removeCurrent(state, action) {
+      let id = action.caseId;
+      let idx = state.list.indexOf(id);
+      state.list.splice(idx, 1);
+      let list = state.list;
+      let byIds = state.byIds;
+      delete byIds[id];
+
+      return {
+        ...state,
+        list,
         byIds,
       };
     },

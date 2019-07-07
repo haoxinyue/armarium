@@ -35,6 +35,14 @@ export async function addStocktaking(params) {
     }),
   });
 }
+export async function removeStocktaking(params) {
+  return request(`${httpDomain}/stock_tk_case/delStockTKCase`, {
+    method: 'POST',
+    body: getFormData({
+      ...params,
+    }),
+  });
+}
 
 export async function queryStocktakingDetail(params) {
   return request(`${httpDomain}/stock_tk_case/getStockTKDevice`, {

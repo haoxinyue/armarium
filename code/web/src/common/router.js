@@ -103,13 +103,13 @@ export const getRouterData = app => {
     },
 
     '/users/user-list': {
-      component: dynamicWrapper(app, ['userlist'], () =>
+      component: dynamicWrapper(app, ['userlist', 'role', 'department'], () =>
         import(/* webpackChunkName: "UserList" */ '../routes/User/UserList')
       ),
     },
 
     '/users/user-detail/:userId': {
-      component: dynamicWrapper(app, ['userlist'], () =>
+      component: dynamicWrapper(app, ['userlist', 'role', 'department'], () =>
         import(/* webpackChunkName: "UserDetail" */ '../routes/User/UserDetail')
       ),
     },
