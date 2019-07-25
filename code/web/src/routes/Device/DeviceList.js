@@ -381,6 +381,10 @@ export default class DeviceList extends PureComponent {
         dataIndex: 'deviceName',
       },
       {
+        title: '所属部门',
+        dataIndex: 'department',
+      },
+      {
         title: '设备状态',
         dataIndex: 'deviceState',
         filters: Object.keys(DeviceStateNames).map(d => ({

@@ -12,7 +12,7 @@ import RadioGroup from '../../components/RadioGroup'
 import './StocktakingCaseList.less'
 import './listItem.less'
 import {addRippleEffect, runScanner} from "../../utils";
-
+const statusMap = { '10': '待盘点', '20': '已取消', '30': '盘点中', '50': '已完成', '60': '已审核' };
 
 class MeterCaseItem extends Component {
 
@@ -47,7 +47,7 @@ class MeterCaseItem extends Component {
                             </div>
                             <div>
                                 <span className="key">盘点科室</span>：
-                                <span className="value">{itemData.depts}</span>
+                                <span className="value">{itemData.deptNameArr}</span>
                             </div>
                             <div>
                                 <span className="key">计划盘点时间</span>：
@@ -55,7 +55,7 @@ class MeterCaseItem extends Component {
                             </div>
                             <div>
                                 <span className="key">盘点状态</span>：
-                                <span className="value warning">{itemData.actualTime?`已盘点 (${itemData.actualTime})`:'待盘点'}</span>
+                                <span className="value warning">{statusMap[itemData.caseState]} {itemData.actualTime&&`(${itemData.actualTime})`}</span>
                             </div>
                         </div>
 
@@ -124,10 +124,10 @@ class StocktakingCaseList extends Component {
 
 
     componentDidMount() {
-        const {dispatch} = this.props;
-        dispatch(changeHeaderRight([
-            <Button key="0" size="small" type="primary" onClick={this.createNewCase.bind(this, null)}>开始巡检</Button>
-        ]))
+        // const {dispatch} = this.props;
+        // dispatch(changeHeaderRight([
+        //     <Button key="0" size="small" type="primary" onClick={this.createNewCase.bind(this, null)}>开始盘点</Button>
+        // ]))
 
 
         this.onRefresh()
@@ -167,7 +167,8 @@ class StocktakingCaseList extends Component {
         let queryData = {
             pageIndex: nextPage,
             pageSize:this.state.pageSize,
-            assigneeUserId: userInfo.userId
+            userId: userInfo.userId,
+            roleName: userInfo.roleName
         };
         if (searchValue) {
             queryData.deviceName = searchValue

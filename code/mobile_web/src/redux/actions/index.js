@@ -227,6 +227,13 @@ export const getPmCaseDetail = createAction(PM_CASE.SAVE,
     //     ...params
     // })).then((res) => (res.data))
 )
+export const getPmCaseDetailByDevice = createAction(PM_CASE.SAVE,
+    (params) =>
+        doPostQuery(api.pmCaseGetDevice, {...params})
+    // axios.http.post(api.pmCaseGet, getFormData({
+    //     ...params
+    // })).then((res) => (res.data))
+)
 
 export const completePmCaseDetail = createAction(PM_CASE.SAVE,
     (params) =>
@@ -375,6 +382,11 @@ export const getDeviceDetail = createAction(DEVICE.SAVE,
     //     ...params
     // })).then((res) => (res.data))
 )
+
+
+
+
+
 export const addDevice = createAction(DEVICE.SAVE,
     (params) =>
         doPostQuery(api.deviceAdd, {...params})

@@ -17,7 +17,12 @@ class PmCaseItem extends Component {
 
     // 查看详情
     goDetail = (item) => {
-        this.props.history.push(`/pmCaseEdit/${item.deviceId}`)
+        this.props.history.push({
+            pathname: `/pmCaseEdit/${item.deviceId}`,
+            query: {
+                caseId: item.caseId
+            }
+        })
     }
 
 
@@ -130,7 +135,7 @@ class PmCaseList extends Component {
     componentDidMount() {
         const {dispatch} = this.props;
         dispatch(changeHeaderRight([
-            <Button key="0" size="small" type="primary" onClick={this.createNewCase.bind(this,null)}>开始保养</Button>
+            <Button key="0" size="small" type="primary" onClick={this.createNewCase.bind(this, null)}>开始保养</Button>
         ]))
 
 
@@ -179,12 +184,11 @@ class PmCaseList extends Component {
 
         dispatch(fetchPmCaseList(queryData)).then((res) => {
             // Toast.info("success");
-            if(!res.error){
+            if (!res.error) {
                 Toast.hide();
                 this.rData = clear ? [] : this.rData;
 
                 const listdata = res.payload.data || [];
-                console.log(JSON.stringify(listdata))
                 listdata.forEach((item) => {
                     this.rData.push(item)
                 });
@@ -197,7 +201,7 @@ class PmCaseList extends Component {
                     isLoading: false,
                     hasMore: listdata.length > 0
                 });
-            }else{
+            } else {
                 if (clear) {
                     let dataSource = this.state.dataSource.cloneWithRows([]);
                     this.setState({
@@ -239,7 +243,6 @@ class PmCaseList extends Component {
     };
 
     render() {
-
 
 
         const display = this.state.openFilter ? 'block' : 'none'
@@ -310,7 +313,7 @@ class PmCaseList extends Component {
                                     />
                                 )}
                                 renderFooter={() => (<div style={{padding: 30, textAlign: 'center'}}>
-                                    {this.state.isLoading ? '加载中...' : (this.state.dataSource.getRowCount()>0?'':'暂无数据')}
+                                    {this.state.isLoading ? '加载中...' : (this.state.dataSource.getRowCount() > 0 ? '' : '暂无数据')}
                                 </div>)}
                                 renderSeparator={separator}
                                 useBodyScroll={this.state.useBodyScroll}

@@ -17,45 +17,47 @@ import {addRippleEffect, runScanner} from "../../utils";
 class StocktakingDeviceItem extends Component {
 
 
-
     // 查看详情
     goDetail = (list) => {
-        // this.props.history.push(`/deviceDetail/${list.deviceId}`)
+        // this.props.history.push(`/stocktakingCaseEdit/${list.deviceId}`)
     }
 
     render() {
-        const itemData = this.props.list||{};
+        const itemData = this.props.list || {};
         const onClick = this.props.onClick || this.goDetail;
-        const emptyImage=require("../../assets/img/empty.png");
+        const emptyImage = require("../../assets/img/empty.png");
         return (
             <li className="device-list-item"
-                onTouchStart={(e)=>{
+                onTouchStart={(e) => {
                     let touch = e.touches[0]
                     addRippleEffect(e.currentTarget, touch.pageX, touch.pageY)
                 }}
                 onClick={onClick.bind(this, itemData)}>
                 <WingBlank>
-                    <div className="item-name"> <span className="icon-device"></span> <span style={{verticalAlign:"middle"}}>{itemData.caseSubject||'无主题'}</span></div>
+                    <div className="item-name">
+                        <span className="icon-device"></span>
+                        <span style={{verticalAlign: "middle"}}>{itemData.deviceName || '--'}</span></div>
 
                     <div className="item-desc">
 
                         <div className="item-desc-left">
 
                             <div>
-                                <span className="key">计划盘点人</span>：
-                                <span className="value">{itemData.assigneeUserName}</span>
+                                <span className="key">盘点人</span>：
+                                <span className="value">{itemData.operationUserName || ''}</span>
                             </div>
-                            <div>
-                                <span className="key">盘点科室</span>：
-                                <span className="value">{itemData.depts}</span>
-                            </div>
-                            <div>
-                                <span className="key">计划盘点时间</span>：
-                                <span className="value warning">{itemData.planBeginTime}</span>
-                            </div>
+                            {/*
                             <div>
                                 <span className="key">盘点状态</span>：
-                                <span className="value warning">{itemData.actualTime?`已盘点 (${itemData.actualTime})`:'待盘点'}</span>
+                                <span className="value">{itemData.operationStateName}</span>
+                            </div>*/}
+                            <div>
+                                <span className="key">盘点时间</span>：
+                                <span className="value warning">{itemData.operationTime || ''}</span>
+                            </div>
+                            <div>
+                                <span className="key">备注</span>：
+                                <span className="value warning">{itemData.remark}</span>
                             </div>
                         </div>
 
@@ -159,15 +161,15 @@ class StocktakingCaseList extends Component {
     }
 
     queryPageData(clear, tabIndex) {
-        const {dispatch, userInfo,match:{params}} = this.props
+        const {dispatch, userInfo, match: {params}} = this.props
         const {searchValue} = this.state
         const nextPage = (clear ? 0 : (this.state.pageIndex + 1))
         this.setState({refreshing: !!clear, pageIndex: nextPage, isLoading: true});
 
         let queryData = {
             pageIndex: nextPage,
-            pageSize:this.state.pageSize,
-            caseId:Number(params.caseId)
+            pageSize: this.state.pageSize,
+            caseId: Number(params.caseId)
             // assigneeUserId: userInfo.userId
         };
         if (searchValue) {
@@ -211,7 +213,7 @@ class StocktakingCaseList extends Component {
                 dataSource,
                 refreshing: false,
                 isLoading: false,
-                hasMore: res.payload.recordCount > (nextPage+1)*this.state.pageSize
+                hasMore: res.payload.recordCount > (nextPage + 1) * this.state.pageSize
             });
 
         })
@@ -302,14 +304,15 @@ class StocktakingCaseList extends Component {
 
                                 renderRow={(rowData, sectionID, rowID) => (
                                     <StocktakingDeviceItem key={sectionID + '_' + rowID}
-                                                              history={this.props.history}
-                                                              onClick={this.props.onDeviceClick}
-                                                              list={rowData}
+                                                           history={this.props.history}
+                                                           onClick={this.props.onDeviceClick}
+                                                           list={rowData}
                                     />
                                 )}
-                                renderFooter={() => (this.state.isLoading &&<div style={{padding: 30, textAlign: 'center'}}>
-                                    {this.state.isLoading ? '加载中...' : ''}
-                                </div>)}
+                                renderFooter={() => (this.state.isLoading &&
+                                    <div style={{padding: 30, textAlign: 'center'}}>
+                                        {this.state.isLoading ? '加载中...' : ''}
+                                    </div>)}
                                 renderSeparator={separator}
                                 useBodyScroll={this.state.useBodyScroll}
                                 style={this.state.useBodyScroll ? {} : {

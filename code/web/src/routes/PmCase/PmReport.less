@@ -1,0 +1,47 @@
+.pmReport {
+  .pmReportBlock {
+    //margin-bottom: 5px;
+    border: 1px solid #ddd;
+    border-bottom: 0 solid #ddd;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    &:last-child {
+      border-bottom: 1px solid #ddd;
+    }
+    .blockTitle {
+      height: 100%;
+      width: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      //border-right: 1px solid #ddd;
+      padding: 8px;
+    }
+
+    .blockItems {
+      border-left: 1px solid #ddd;
+      flex: 1;
+      .blockItem {
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        flex-direction: row;
+
+        &:last-child {
+          border-bottom: 0 solid #ddd;
+        }
+      }
+      .itemName {
+        border-right: 1px solid #ddd;
+        width: 150px;
+        padding: 8px;
+      }
+      .itemValue {
+        flex: 1;
+        padding: 8px;
+      }
+    }
+  }
+}

@@ -136,7 +136,7 @@ class RepairDetail extends Component {
 
             statusStr += timeStr;
 
-            return <Step key={index} description={statusStr} />
+            return <Step key={index} status={'process'} description={statusStr} />
         }
 
 
@@ -204,7 +204,7 @@ class RepairDetail extends Component {
 
                                     <div className="block-content">
 
-                                        <Steps size={"small"}>
+                                        <Steps size={"small"} status={'finish'} current={caseInfo &&  caseInfo.timeShaft&&caseInfo.timeShaft.length-1}>
                                             {
                                                 caseInfo &&  caseInfo.timeShaft&&  caseInfo.timeShaft.map((item,index)=>getTimeLineItem(item,index))
                                             }

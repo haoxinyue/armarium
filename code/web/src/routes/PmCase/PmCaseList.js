@@ -26,6 +26,7 @@ import DepartmentSelect from '../../components/biz/DepartmentSelect';
 import HospitalSelect from '../../components/biz/HospitalSelect';
 
 import styles from './TableList.less';
+import reportStyle from './PmReport.less';
 import EngineerSelect from '../../components/biz/EngineerSelect';
 
 const FormItem = Form.Item;
@@ -287,10 +288,10 @@ export default class PmCaseList extends PureComponent {
             form.resetFields();
             this.props.dispatch({
               type: 'pmCase/fetch',
-              payload:{
+              payload: {
                 pageIndex: 0,
                 pageSize: 10,
-              }
+              },
             });
           } else {
             message.error('操作失败，请稍后再试');
@@ -339,9 +340,27 @@ export default class PmCaseList extends PureComponent {
     return this.renderSimpleForm();
   }
 
+  showReport(caseInfo) {
+    this.setState({
+      showReport: true,
+      currentReport: caseInfo.caseId,
+    });
+
+    this.props.dispatch({
+      type: 'pmCase/fetchDetail',
+      payload: {
+        caseId: caseInfo.caseId,
+      },
+    });
+  }
+
   render() {
     const { pmCase, loading } = this.props;
-    const { selectedRows, modalVisible } = this.state;
+    const { selectedRows, modalVisible, showReport, currentReport } = this.state;
+    const caseInfo = pmCase.byIds[currentReport];
+    const subjects = (caseInfo && JSON.parse(caseInfo.pmTemplate || '{}').subjects) || [];
+    const values = (caseInfo && JSON.parse(caseInfo.pmResult || '{}')) || {};
+
     let list = [];
     pmCase.list.forEach(id => {
       list.push(pmCase.byIds[id]);
@@ -389,16 +408,17 @@ export default class PmCaseList extends PureComponent {
       //   sorter: true,
       //   render: val => <span>{moment(val).format('YYYY-MM-DD HH:mm:ss')}</span>,
       // },
-      // {
-      //   title: '操作',
-      //   render: val => (
-      //     <Fragment>
-      //       <Link to={'/install-case/case-edit/' + val.caseId}>详情</Link>
-      //       {/*&nbsp;
-      //       <a onClick={this.closeCase.bind(this, val)}>关闭</a>*/}
-      //     </Fragment>
-      //   ),
-      // },
+      {
+        title: '操作',
+        render: val => (
+          <Fragment>
+            {/*<Link to={'/install-case/case-edit/' + val.caseId}>详情</Link>*/}
+
+            {/*{val.caseState == 50 && <a onClick={this.showReport.bind(this, val)}>查看报告</a>}*/}
+            <a onClick={this.showReport.bind(this, val)}>查看报告</a>
+          </Fragment>
+        ),
+      },
     ];
 
     const menu = (
@@ -445,6 +465,48 @@ export default class PmCaseList extends PureComponent {
           </div>
         </Card>
         <CreateForm {...parentMethods} modalVisible={modalVisible} />
+        <Modal
+          title="保养报告"
+          visible={showReport}
+          closable={false}
+          width={700}
+          onOk={() => {
+            this.setState({
+              showReport: false,
+            });
+          }}
+          onCancel={() => {
+            this.setState({
+              showReport: false,
+            });
+          }}
+        >
+          <div className={reportStyle.pmReport}>
+            {(subjects || []).map(subject => (
+              <div className={reportStyle.pmReportBlock}>
+                <div className={reportStyle.blockTitle}>{subject.subject_name}</div>
+                <div className={reportStyle.blockItems}>
+                  {(subject.items || []).map(item => (
+                    <div className={reportStyle.blockItem}>
+                      <div className={reportStyle.itemName}>{item.item_name}</div>
+                      {item.control_type !== 'checkbox' && (
+                        <div className={reportStyle.itemValue}>{values[item.item_key] || ''}</div>
+                      )}
+                      {item.control_type === 'checkbox' && (
+                        <div className={reportStyle.itemValue}>
+                          {values[item.item_key] ? '已处理' : ''}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {(subjects || []).length === 0 && (
+              <p style={{ textAlign: 'center', lineHeight: 2 }}>暂无报告信息</p>
+            )}
+          </div>
+        </Modal>
       </PageHeaderLayout>
     );
   }

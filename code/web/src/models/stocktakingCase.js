@@ -54,9 +54,17 @@ export default {
         caseId: Number(payload.caseId),
       });
 
+      const StateNames = {
+        1: '正常',
+        2: '异常',
+      };
+
       const data = {
         ...response.data,
-        devices: response2.data || [],
+        devices: (response2.data || []).map(d => ({
+          ...d,
+          operationStateName: StateNames[d.operationState],
+        })),
       };
 
       yield put({
@@ -66,6 +74,26 @@ export default {
         },
       });
       if (callback) callback(response.data);
+    },
+    *fetchDetailDevice({ payload, callback }, { call, put }) {
+      const response2 = yield call(queryStocktakingDeviceList, {
+        caseId: Number(payload.caseId),
+        pageSize: payload.pageSize,
+        pageIndex: payload.pageIndex,
+      });
+
+      const StateNames = {
+        1: '正常',
+        2: '异常',
+      };
+
+      return Promise.resolve({
+        total: response2.recordCount,
+        list: (response2.data || []).map(d => ({
+          ...d,
+          operationStateName: StateNames[d.operationState],
+        })),
+      });
     },
     *add({ payload }, { call, put }) {
       const response = yield call(addStocktaking, payload) || {};

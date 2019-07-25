@@ -184,6 +184,11 @@ export const getRouterData = app => {
         import(/* webpackChunkName: "PmCaseList" */ '../routes/PmCase/PmCaseList')
       ),
     },
+    '/work-order/device-care/:caseId': {
+      component: dynamicWrapper(app, ['repair', 'engineer', 'device', 'pmCase'], () =>
+        import(/* webpackChunkName: "PmCaseList" */ '../routes/PmCase/PmCaseEdit')
+      ),
+    },
     '/work-order/device-check': {
       component: dynamicWrapper(app, ['repair', 'engineer', 'inspectionCase'], () =>
         import(/* webpackChunkName: "InspectionCaseList" */ '../routes/InspectionCase/InspectionCaseList')

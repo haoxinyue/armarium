@@ -21,6 +21,7 @@ export default {
 
     pmCaseComplete: 'pm_case/completePmCase',
     pmCaseGet: 'pm_case/getPmCaseInfo',
+    pmCaseGetDevice: 'pm_case/getPmCaseInfoWithDev',
     pmCaseListGet: 'pm_case/getPmCaseList',
 
     inspectionCaseComplete: 'insp_case/completeInspCase',

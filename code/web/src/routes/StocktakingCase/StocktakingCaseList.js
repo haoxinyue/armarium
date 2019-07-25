@@ -38,7 +38,13 @@ const getValue = obj =>
     .map(key => obj[key])
     .join(',');
 
-const statusMap = { '10': '待盘点', '20': '已取消', '30': '盘点中', '50': '已完成' };
+const statusMap = {
+  '10': '待盘点',
+  '20': '已取消',
+  '30': '盘点中',
+  '50': '已完成',
+  '60': '已审核',
+};
 
 @Form.create()
 class CreateForm extends PureComponent {
@@ -89,7 +95,7 @@ class CreateForm extends PureComponent {
           })(<Input placeholder="请输入" />)}
         </FormItem>
 
-        <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="医院">
+        {/* <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="医院">
           {form.getFieldDecorator('hospitalId', {
             rules: [{ required: true, message: '请选择医院...' }],
             onChange: val => {
@@ -98,7 +104,7 @@ class CreateForm extends PureComponent {
               });
             },
           })(<HospitalSelect placeholder="请选择医院" />)}
-        </FormItem>
+        </FormItem>*/}
 
         {isYunwei && (
           <FormItem labelCol={{ span: 6 }} wrapperCol={{ span: 15 }} label="科室">
@@ -123,7 +129,7 @@ class CreateForm extends PureComponent {
               label="部门Id"
             >
               {form.getFieldDecorator('depts', {
-                initialValue: deptId,
+                initialValue: [deptId],
                 rules: [],
               })(<Input placeholder="请输入" />)}
             </FormItem>
@@ -519,15 +525,16 @@ export default class StocktakingCaseList extends PureComponent {
         title: '操作',
         render: val => (
           <div>
-            {val.auditState != 1 && (
-              <a
-                onClick={() => {
-                  this.handleAudit(val);
-                }}
-              >
-                审核
-              </a>
-            )}
+            {val.auditState != 1 &&
+              val.caseState == 50 && (
+                <a
+                  onClick={() => {
+                    this.handleAudit(val);
+                  }}
+                >
+                  审核
+                </a>
+              )}
             <span style={{ margin: '0 10px' }}>
               <Link to={'/asset/asset-case/' + val.caseId}>详情</Link>
             </span>

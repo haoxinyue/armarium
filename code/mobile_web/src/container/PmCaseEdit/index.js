@@ -8,6 +8,7 @@ import {
     Button,
     InputItem,
     Toast,
+    Checkbox,
     WingBlank,
     TextareaItem,
     WhiteSpace,
@@ -17,7 +18,13 @@ import {
     Switch,
     Progress
 } from 'antd-mobile';
-import {changeHeaderRight, completePmCaseDetail, getDeviceDetail, getPmCaseDetail} from '../../redux/actions'
+import {
+    changeHeaderRight,
+    completePmCaseDetail,
+    getDeviceDetail,
+    getPmCaseDetail,
+    getPmCaseDetailByDevice
+} from '../../redux/actions'
 
 import Upload from 'rc-upload';
 import moment from 'moment'
@@ -28,7 +35,7 @@ const fields = [
     {key: "deviceId", name: "设备ID", desc: "请输入设备ID", type: "text"},
     {key: "deviceName", name: "设备名称", desc: "", required: false, type: "text", editable: false},
     // {key: "accessoryInfo", name: "保养文件描述", desc: "请输入保养文件描述", type: "text"},
-    {key: "remark", name: "备注", desc: "请输入备注", required: true, type: "textarea"},
+    // {key: "remark", name: "备注", desc: "请输入备注", required: true, type: "textarea"},
 ];
 
 class PmCaseEdit extends Component {
@@ -36,6 +43,9 @@ class PmCaseEdit extends Component {
     state = {
         hasError: {},
         fileProgress: -1,
+
+        jsonSubjects: [],
+        jsonValues: {},
 
         formValue: {
             deviceId: '',//设备ID
@@ -53,6 +63,17 @@ class PmCaseEdit extends Component {
 
     onErrorClick = (field) => {
         Toast.info('请输入正确的[' + field.name + ']');
+    }
+
+    onJsonFieldChange = (field, e) => {
+        let jsonValues = this.state.jsonValues
+        if (field.control_type === 'checkbox') {
+            jsonValues[field.item_key] = e.target.checked
+        } else {
+            jsonValues[field.item_key] = e
+        }
+
+
     }
 
     onChange = (field, value) => {
@@ -94,6 +115,8 @@ class PmCaseEdit extends Component {
             modifier: userInfo.userId,
             actualUserId: userInfo.userId,
             actualTime: moment().format("YYYY-MM-DD HH:mm:ss"),
+            // pmTemplate: JSON.stringify(this.state.jsonSubjects || []),
+            pmResult: JSON.stringify(this.state.jsonValues || {})
         }
 
         return formData
@@ -105,13 +128,16 @@ class PmCaseEdit extends Component {
             deviceId: Number(deviceId)
         })).then((res) => {
             if (!res.error) {
+                const {payload = {}} = res
+                const {data = {}} = payload
+
                 this.setState({
                     formValue: {
                         ...this.state.formValue,
-                        deviceName: res.payload.data.deviceName
-                    }
+                        deviceName: payload.data.deviceName
+                    },
                 });
-            }else{
+            } else {
                 this.setState({
                     formValue: {
                         ...this.state.formValue,
@@ -119,7 +145,7 @@ class PmCaseEdit extends Component {
                     }
                 });
             }
-        },()=>{
+        }, () => {
             this.setState({
                 formValue: {
                     ...this.state.formValue,
@@ -144,29 +170,40 @@ class PmCaseEdit extends Component {
             .then(res => {
                 if (!res.error) {
                     Toast.hide();
-                    Toast.success("保存成功", 0.5);
-                    history.push(`/pmCaseList`);
+                    Toast.success("保存成功", 1.2);
+                    setTimeout(() => {
+                        history.push(`/pmCaseList`);
+                    }, 1200)
+
                 } else {
+
+                    let errorMessage = res.payload && res.payload.data && res.payload.data.message
                     Toast.hide();
-                    Toast.fail("保存失败，请稍后再试", 0.5);
+                    Toast.fail(errorMessage || "保存失败，请稍后再试", 1.5);
                 }
             })
             .catch(err => {
                 Toast.hide();
-                Toast.fail("保存失败，请稍后再试:" + JSON.stringify(err), 0.5);
+                Toast.fail("保存失败，请稍后再试:" + JSON.stringify(err), 1.5);
             })
 
     }
 
 
     componentWillReceiveProps(nextProps, nextState) {
-        const { match: {params: {deviceId}}} = this.props;
-            this.setState({
-                formValue:{
-                    ...this.state.formValue,
-                    deviceId
-                }
-            })
+        const {match: {params: {deviceId}}, location: {query: {caseId}}} = this.props;
+        const {pmCase: {byIds}} = nextProps;
+        const {pmTemplate, pmResult} = byIds[caseId];
+        const jsonSubjects = pmTemplate ? (JSON.parse(pmTemplate || '{}').subjects || []) : []
+        this.setState({
+            formValue: {
+                ...this.state.formValue,
+                caseId,
+                deviceId
+            },
+            jsonSubjects,
+            jsonValues: JSON.parse(pmResult || '{}'),
+        })
         return true
     }
 
@@ -178,19 +215,28 @@ class PmCaseEdit extends Component {
 
         this.updateDeviceById = this.updateDeviceById.bind(this);
 
-        const {dispatch, match: {params: {deviceId}}, caseId, userInfo} = this.props;
+        const {
+            dispatch, location: {
+                query: {
+                    caseId
+                }
+            }, match: {params: {deviceId}}, userInfo
+        } = this.props;
         dispatch(changeHeaderRight([
             <Button key="0" size="small" type="primary" onClick={this.save.bind(this)}>保存</Button>
         ]))
 
         if (caseId) {
-            console.log("mount----")
             dispatch(getPmCaseDetail({
                 caseId: Number(caseId)
             }))
         }
 
+
         if (deviceId) {
+            !caseId && dispatch(getPmCaseDetailByDevice({
+                deviceId: Number(deviceId)
+            }))
             this.setState({
                 formValue: {
                     ...this.state.formValue,
@@ -271,6 +317,55 @@ class PmCaseEdit extends Component {
             >{field.name}</InputItem>
         }
 
+        function getJsonFieldEle(field) {
+
+
+            if (field.control_type === "checkbox") {
+
+                return <Checkbox
+                    onChange={this.onJsonFieldChange.bind(this, field)}
+                    defaultChecked={this.state.jsonValues[field.item_key]}
+                >
+                    <span style={{marginLeft: 8, lineHeight: 1.2, verticalAlign: 'middle'}}>{field.item_name}</span>
+                </Checkbox>;
+            } else if (field.control_type === "textarea") {
+
+                return <TextareaItem
+                    className="field-item"
+                    placeholder={field.item_name}
+                    rows={5}
+                    autoHeight
+                    onChange={this.onJsonFieldChange.bind(this, field)}
+                    value={this.state.jsonValues[field.item_key]}
+                />;
+            }
+
+
+            return <InputItem
+                className="field-item"
+                onChange={this.onJsonFieldChange.bind(this, field)}
+                defaultValue={this.state.jsonValues[field.item_key]}
+            >{field.item_name}</InputItem>
+        }
+
+        function getFieldSubject({
+                                     subject_name,
+                                     items = []
+                                 }) {
+
+            return <List className="field-list" renderHeader={() => subject_name}>
+                <WingBlank size="lg" style={{padding: '20px 30x'}}>
+                    {
+                        items.map((item, i) => <div style={{padding: '20px 0'}} key={i}>
+                            {getJsonFieldEle.bind(this)(item)}
+                        </div>)
+                    }
+
+                </WingBlank>
+            </List>
+
+        }
+
         let uploaderProps = {
             action: api.baseUrl() + api.fileUpload,
             name: 'fileUpload',
@@ -299,13 +394,17 @@ class PmCaseEdit extends Component {
                 })
                 // console.log('onProgress', Math.round(step.percent), file.name);
             },
-            onError:(err)=> {
+            onError: (err) => {
                 this.setState({
                     fileProgress: -1,
                 })
                 // console.log('onError', err);
             },
         }
+
+
+        const subjects = this.state.jsonSubjects;
+
 
         return (
             <div className="device-edit">
@@ -316,9 +415,9 @@ class PmCaseEdit extends Component {
                             {fields.map((field, i) => <div key={i}>{getFieldEle.bind(this)(field)}</div>)}
                             <WhiteSpace size="large"/>
                         </WingBlank>
-
                     </List>
-                    <List className="field-list" renderHeader={() => '附件上传'}>
+                    {subjects.map((field, i) => <div key={i}>{getFieldSubject.bind(this)(field)}</div>)}
+                    {/* <List className="field-list" renderHeader={() => '附件上传'}>
                         <div className="block-content">
                             <WingBlank size="sm" style={{paddingTop: 30}}>
 
@@ -337,7 +436,9 @@ class PmCaseEdit extends Component {
                                                     display: this.state.formValue.pmFile ? 'none' : 'inline-block',
                                                 }}
                                             >
-                                                <Button style={{marginLeft: 40,color:'white'}} type="primary" size="small"  inline>{this.state.fileProgress==-2?'上传失败，重新上传':'上传'}</Button>
+                                                <Button style={{marginLeft: 40, color: 'white'}} type="primary"
+                                                        size="small"
+                                                        inline>{this.state.fileProgress == -2 ? '上传失败，重新上传' : '上传'}</Button>
                                             </Upload>
                                         </div>
 
@@ -348,14 +449,16 @@ class PmCaseEdit extends Component {
                                 {this.state.fileProgress >= 0 &&
                                 <div className="am-list-item am-input-item am-list-item-middle field-item">
                                     <div className="am-list-line">
-                                        <div className="am-input-label am-input-label-5">上传中({this.state.fileProgress}%)</div>
-                                        <div className="am-input-control"><Progress percent={this.state.fileProgress} position="normal" unfilled={false} appearTransition></Progress>
+                                        <div
+                                            className="am-input-label am-input-label-5">上传中({this.state.fileProgress}%)
+                                        </div>
+                                        <div className="am-input-control"><Progress percent={this.state.fileProgress}
+                                                                                    position="normal" unfilled={false}
+                                                                                    appearTransition></Progress>
                                         </div>
                                     </div>
                                 </div>
                                 }
-
-
 
 
                                 {getFieldEle.bind(this)({
@@ -366,7 +469,7 @@ class PmCaseEdit extends Component {
                                 })}
                             </WingBlank>
                         </div>
-                    </List>
+                    </List>*/}
                 </div>
 
 

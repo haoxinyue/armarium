@@ -27,6 +27,16 @@ import api from "../../api";
 const fields = [
     {key: "deviceId", name: "设备ID", desc: "请输入设备ID", type: "text"},
     {key: "deviceName", name: "设备名称", desc: "", required: false, type: "text", editable: false},
+    {key: "operationState", name: "盘点状态", desc: "", required: false, options:[
+            [{
+                label: '正常',
+                value: 1,
+            },
+                {
+                    label: '异常',
+                    value: 2,
+                }]
+        ]},
     // {key: "accessoryInfo", name: "保养文件描述", desc: "请输入保养文件描述", type: "text"},
     {key: "remark", name: "备注", desc: "请输入备注", required: true, type: "textarea"},
 ];
@@ -91,6 +101,7 @@ class StocktakingCaseEdit extends Component {
             creater: userInfo.userId,
             modifier: userInfo.userId,
             operationUserId: userInfo.userId,
+            operationState:this.state.formValue.operationState[0],
             operationTime: moment().format("YYYY-MM-DD HH:mm:ss"),
         }
 
@@ -112,30 +123,33 @@ class StocktakingCaseEdit extends Component {
             .then(res => {
                 if (!res.error) {
                     Toast.hide();
-                    Toast.success("保存成功", 0.5);
-                    history.replace(`/stocktakingCase`);
+                    Toast.success("保存成功", 1.2);
+                    setTimeout(() => {
+                        history.replace(`/stocktakingCase`);
+                    }, 1200)
                 } else {
+                    let errorMessage = res.payload && res.payload.data && res.payload.data.message
                     Toast.hide();
-                    Toast.fail("保存失败，请稍后再试", 0.5);
+                    Toast.fail(errorMessage || "保存失败，请稍后再试", 1.5);
                 }
             })
             .catch(err => {
                 Toast.hide();
-                Toast.fail("保存失败，请稍后再试:" + JSON.stringify(err), 0.5);
+                Toast.fail("保存失败，请稍后再试:" + JSON.stringify(err), 1.5);
             })
 
     }
 
 
     componentWillReceiveProps(nextProps, nextState) {
-        const { match: {params: {deviceId}}} = this.props;
+        const {match: {params: {deviceId}}} = this.props;
 
-            this.setState({
-                formValue:{
-                    ...this.state.formValue,
-                    deviceId
-                }
-            })
+        this.setState({
+            formValue: {
+                ...this.state.formValue,
+                deviceId
+            }
+        })
 
 
         return true
@@ -157,7 +171,7 @@ class StocktakingCaseEdit extends Component {
                         deviceName: res.payload.data.deviceName
                     }
                 });
-            }else{
+            } else {
                 this.setState({
                     formValue: {
                         ...this.state.formValue,
@@ -165,7 +179,7 @@ class StocktakingCaseEdit extends Component {
                     }
                 });
             }
-        },()=>{
+        }, () => {
             this.setState({
                 formValue: {
                     ...this.state.formValue,
@@ -297,7 +311,7 @@ class StocktakingCaseEdit extends Component {
                 })
                 // console.log('onProgress', Math.round(step.percent), file.name);
             },
-            onError:(err)=> {
+            onError: (err) => {
                 this.setState({
                     fileProgress: -1,
                 })

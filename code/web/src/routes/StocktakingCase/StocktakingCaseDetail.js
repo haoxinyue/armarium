@@ -21,6 +21,13 @@ export default class StocktakingCaseDetail extends Component {
     this.state = {
       imageVisible: false,
       imageSrc: null,
+
+      deviceList: [],
+      pagination: {
+        pageSize: 10,
+        current: 0,
+        total: 0,
+      },
     };
   }
 
@@ -32,6 +39,7 @@ export default class StocktakingCaseDetail extends Component {
         caseId: match.params.caseId,
       },
     });
+    this.loadDevice(match.params.caseId);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -42,17 +50,60 @@ export default class StocktakingCaseDetail extends Component {
         type: 'stocktakingCase/fetchDetail',
         payload: { caseId: NextCaseId },
       });
+      this.loadDevice(NextCaseId);
       return true;
     }
     return true;
   }
 
+  handleTableChange(pagination, filters, sorter) {
+    const { match } = this.props;
+
+    const pager = { ...this.state.pagination };
+    pager.current = pagination.current;
+    this.setState({
+      pagination: pager,
+    });
+
+    this.loadDevice(match.params.caseId, pager.current);
+  }
+
+  loadDevice(caseId, pageIndex = 1) {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'stocktakingCase/fetchDetailDevice',
+      payload: {
+        caseId,
+        pageSize: this.state.pagination.pageSize,
+        pageIndex: pageIndex - 1,
+      },
+    }).then(res => {
+      console.log('devices', res);
+      let pagination = {
+        ...this.state.pagination,
+        current: pageIndex,
+        total: res.total,
+      };
+      this.setState({
+        deviceList: res.list || [],
+        pagination,
+      });
+    });
+  }
+
   render() {
     const { stocktakingCase, loading, match } = this.props;
     const { caseId } = match.params;
+    const { deviceList, pagination } = this.state;
 
     let currentDetail = stocktakingCase.byIds[caseId] || {};
-    const statusMap = { '10': '待盘点', '20': '已取消', '30': '盘点中', '50': '已完成' };
+    const statusMap = {
+      '10': '待盘点',
+      '20': '已取消',
+      '30': '盘点中',
+      '50': '已完成',
+      '60': '已审核',
+    };
 
     const columns = [
       {
@@ -66,9 +117,24 @@ export default class StocktakingCaseDetail extends Component {
         key: 'deviceName',
       },
       {
+        title: '盘点人',
+        dataIndex: 'operationUserName',
+        key: 'operationUserName',
+      },
+      {
+        title: '盘点状态',
+        dataIndex: 'operationStateName',
+        key: 'operationStateName',
+      },
+      {
+        title: '备注',
+        dataIndex: 'remark',
+        key: 'remark',
+      },
+      {
         title: '盘点时间',
-        dataIndex: 'actualTime',
-        key: 'actualTime',
+        dataIndex: 'operationTime',
+        key: 'operationTime',
       },
     ];
 
@@ -93,7 +159,14 @@ export default class StocktakingCaseDetail extends Component {
             </Card>
           </TabPane>
           <TabPane tab="设备列表" key="2">
-            <Table style={{backgroundColor:'white'}} dataSource={currentDetail.devices} columns={columns} />
+            <Table
+              style={{ backgroundColor: 'white' }}
+              rowKey={record => record.deviceId}
+              onChange={this.handleTableChange.bind(this)}
+              pagination={pagination}
+              dataSource={deviceList}
+              columns={columns}
+            />
           </TabPane>
         </Tabs>
       </PageHeaderLayout>
