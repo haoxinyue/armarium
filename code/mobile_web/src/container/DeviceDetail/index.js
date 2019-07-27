@@ -138,6 +138,8 @@ class DeviceDetail extends Component {
                 case '99':
 
                 default:
+                    fileViewer = <a
+                        href={att.filePath}>{att.attachmentName || "未命名"}</a>
                     break;
             }
 
