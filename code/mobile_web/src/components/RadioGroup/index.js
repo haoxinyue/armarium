@@ -33,8 +33,8 @@ class RadioGroup extends Component {
 			<div className="radio-group">
 				{data.map((item, index) => (
 					<label className="radio-label" key={index}>
-						<input type="radio" name={name} value={item} defaultChecked={item === defaultValue} onClick={this.handleRadioChange}/>
-						<span>{item}</span>
+						<input type="radio" name={name} value={item.value} defaultChecked={item.value === defaultValue} onClick={this.handleRadioChange}/>
+						<span>{item.label}</span>
 					</label>
 				))}
 			</div>

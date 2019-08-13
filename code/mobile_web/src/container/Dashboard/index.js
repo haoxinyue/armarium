@@ -108,7 +108,8 @@ class Dashboard extends Component {
     }
 
     render() {
-        const { notice} = this.props;
+        const { notice,userInfo={}} = this.props;
+        const {roleId} = userInfo;
 
         const blocks = [
             {
@@ -125,7 +126,7 @@ class Dashboard extends Component {
                         desc: "设备维修",
                         // link:"/deviceAdd",
                         func(item) {
-                            Modal.operation([
+                            let ops =[
                                 {
                                     text: '填写工单', onPress: () => {
                                         this.props.history.push({pathname: "/repairAdd", query: {}})
@@ -152,7 +153,28 @@ class Dashboard extends Component {
                                         this.props.history.push({pathname: "/repairs", query: {}})
                                     }
                                 },
-                            ])
+                            ]
+
+                            switch (roleId+''){
+                                case '1':
+                                case '2':
+                                    ops = ops.concat([
+                                        {
+                                            text: '我的维修', onPress: () => {
+                                                this.props.history.push({pathname: "/repairsMy", query: {}})
+                                            }
+                                        },
+                                        {
+                                            text: '我的报修', onPress: () => {
+                                                this.props.history.push({pathname: "/repairsMyReport", query: {}})
+                                            }
+                                        },
+                                    ])
+                                    break
+                            }
+
+
+                            Modal.operation(ops)
                             // runScanner().then((result) => {
                             //         // alert("We got a barcode\n" +
                             //         //     "Result: " + result.text + "\n" +

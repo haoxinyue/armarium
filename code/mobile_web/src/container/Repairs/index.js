@@ -7,10 +7,10 @@ import {
     changeHeaderRight,
     getRepairList
 } from '../../redux/actions'
-import {PullToRefresh, ListView, SearchBar, Drawer, Toast} from 'antd-mobile'
+import {PullToRefresh, ListView, SearchBar, Drawer, Toast, Picker, List} from 'antd-mobile'
 import RadioGroup from '../../components/RadioGroup'
 import RepairListItem from '../../components/RepairListItem'
-import './deviceList.less'
+import style from './deviceList.less'
 
 
 class Devices extends Component {
@@ -32,7 +32,12 @@ class Devices extends Component {
             openFilter: false,
             searchValue: '',
             pageIndex: 0,
-            hasMore: false
+            hasMore: false,
+
+            query: {
+                state: null,
+                priority: null
+            }
         }
 
         this.queryPageData = this.queryPageData.bind(this)
@@ -41,12 +46,12 @@ class Devices extends Component {
 
     componentDidMount() {
         const {dispatch} = this.props;
-        // dispatch(changeHeaderRight([
-        //     <div key="0" className="filter-btn" onClick={this.onOpenChange}>
-        //         <i className="filter-bg"></i>
-        //         <span>筛选</span>
-        //     </div>
-        // ]))
+        dispatch(changeHeaderRight([
+            <div key="0" className="filter-btn" onClick={this.onOpenChange}>
+                <i className="filter-bg"></i>
+                <span>筛选</span>
+            </div>
+        ]))
 
         this.onRefresh()
     }
@@ -77,55 +82,79 @@ class Devices extends Component {
     }
 
     queryPageData(clear) {
-        const {dispatch, userInfo} = this.props
+        const {dispatch, userInfo, route} = this.props
+        const {query} = this.state
+        const {state, priority} = query
         const nextPage = (clear ? 0 : (this.state.pageIndex + 1))
         this.setState({refreshing: !!clear, pageIndex: nextPage, isLoading: true});
 
-        dispatch(getRepairList({
+        let params = {
             pageIndex: nextPage,
-            deviceName:this.state.searchValue
-            //todo 暂时不传
+            deviceName: this.state.searchValue,
             // assigneeUserId: userInfo.userId
-        })).then((res) => {
-            // Toast.info("success")
-            if (!res.error) {
-                Toast.hide()
-                this.rData = clear ? [] : this.rData;
-                const listdata = res.payload.data || [];
-                listdata.forEach((item) => {
-                    this.rData.push(item)
-                });
+        }
+        if (route.path === '/repairsMy') {
+            params.assigneeUserId = userInfo.userId
+        } else if (route.path === '/repairsMyReport') {
+            params.reporterUserId = userInfo.userId
+        }
 
-                let dataSource = this.state.dataSource.cloneWithRows(this.rData);
+        if (state) {
+            params.caseState = state;
+        }
 
-                this.setState({
-                    dataSource,
-                    refreshing: false,
-                    isLoading: false,
-                    hasMore: listdata.length > 0
-                });
-            } else {
-                if (clear) {
-                    let dataSource = this.state.dataSource.cloneWithRows([]);
+        if (priority) {
+            params.priority = priority
+        }
+
+        try {
+
+
+            dispatch(getRepairList(params)).then((res) => {
+                // Toast.info("success")
+
+                if (!res.error) {
+                    Toast.hide()
+                    this.rData = clear ? [] : this.rData;
+                    const listdata = res.payload.data || [];
+                    listdata.forEach((item) => {
+                        this.rData.push(item)
+                    });
+
+                    let dataSource = this.state.dataSource.cloneWithRows(this.rData);
+
                     this.setState({
                         dataSource,
                         refreshing: false,
                         isLoading: false,
-                        hasMore: false
+                        hasMore: listdata.length > 0
                     });
                 } else {
-                    this.setState({
-                        refreshing: false,
-                        isLoading: false,
-                        hasMore: false
-                    });
+
+                    if (clear) {
+                        let dataSource = this.state.dataSource.cloneWithRows([]);
+                        this.setState({
+                            dataSource,
+                            refreshing: false,
+                            isLoading: false,
+                            hasMore: false
+                        });
+                    } else {
+                        this.setState({
+                            refreshing: false,
+                            isLoading: false,
+                            hasMore: false
+                        });
+                    }
+
+                    Toast.hide()
                 }
 
-                Toast.hide()
-            }
 
-
-        })
+            })
+        } catch (e) {
+            // alert(JSON.stringify(e))
+        }
     }
 
 
@@ -146,18 +175,90 @@ class Devices extends Component {
 
     };
 
+    hideFilter() {
+        this.setState({
+            openFilter: false
+        })
+    }
+
     render() {
+        const {route} = this.props
         const display = this.state.openFilter ? 'block' : 'none'
         // 参会状态props
         const partProps = {
-            name: 'part',
-            defaultValue: '所有',
-            data: ['所有', '正常', '故障'],
-            onChange: () => {
+            name: 'priority',
+            defaultValue: -1,
+            data: [
+                {
+                    label: '全部',
+                    value: -1,
+                },
+                {
+                    label: '一般',
+                    value: 1,
+                },
+                {
+                    label: '重要',
+                    value: 2,
+                },
+                {
+                    label: '紧急',
+                    value: 3,
+                }],
+            onChange: (v) => {
                 this.setState({
-                    openFilter: false
+                    query: {
+                        ...this.state.query,
+                        priority: v == -1 ? undefined : Number(v)
+                    }
+                }, () => {
+                    this.onRefresh()
+                    this.hideFilter()
                 })
-                this.onRefresh()
+
+            }
+        }
+
+        const stateProps = {
+            name: 'state',
+            defaultValue: -1,
+            data: [
+                {
+                    label: '全部',
+                    value: -1,
+                },
+                {
+                    label: '报修中',
+                    value: 10,
+                },
+                {
+                    label: '已取消',
+                    value: 20,
+                },
+                {
+                    label: '维修中',
+                    value: 30,
+                },
+                {
+                    label: '已完成',
+                    value: 40,
+                },
+                {
+                    label: '已关闭',
+                    value: 50,
+                }
+            ],
+            onChange: (v) => {
+                this.setState({
+                    query: {
+                        ...this.state.query,
+                        state: v == -1 ? undefined : Number(v)
+                    }
+                }, () => {
+                    this.onRefresh()
+                    this.hideFilter()
+                })
+
             }
         }
 
@@ -177,12 +278,18 @@ class Devices extends Component {
         const sidebar =
             <div className="side-content">
                 <ul className="filter-list">
+
                     <li className="filter-list-item">
-                        <h6 className="filter-list-item-title">设备状态</h6>
+                        <h6 className="filter-list-item-title">报修状态</h6>
+                        <RadioGroup {...stateProps} />
+                    </li>
+                    <li className="filter-list-item">
+                        <h6 className="filter-list-item-title">重要性</h6>
                         <RadioGroup {...partProps} />
                     </li>
                 </ul>
             </div>;
+
 
         return (
             <Drawer
@@ -207,13 +314,15 @@ class Devices extends Component {
                                 dataSource={this.state.dataSource}
 
                                 renderRow={(rowData, sectionID, rowID) => (
-                                    <RepairListItem key={sectionID + '_' + rowID}
-                                                    history={this.props.history}
-                                                    list={rowData}
+                                    <RepairListItem
+                                        route={route}
+                                        key={sectionID + '_' + rowID}
+                                        history={this.props.history}
+                                        list={rowData}
                                     />
                                 )}
                                 renderFooter={() => (<div style={{padding: 30, textAlign: 'center'}}>
-                                    {this.state.isLoading ? '加载中...' : ''}
+                                    {this.state.isLoading ? '加载中...' : (this.state.dataSource.length?'':'暂无数据')}
                                 </div>)}
                                 renderSeparator={separator}
                                 useBodyScroll={this.state.useBodyScroll}

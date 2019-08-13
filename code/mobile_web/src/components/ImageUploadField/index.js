@@ -2,7 +2,7 @@
  * Created by Administrator on 2017/8/10.
  */
 import React, {Component} from 'react'
-import {List, Button, ImagePicker, Progress, Modal,Toast} from 'antd-mobile'
+import {List, Button, ImagePicker, Progress, Modal, Toast} from 'antd-mobile'
 import {connect} from 'react-redux'
 import $ from 'jquery';
 
@@ -40,9 +40,12 @@ class ImageUploadField extends Component {
 
     chooseImage(fromCamera) {
         if (navigator && navigator.camera) {
-            const {onChange=()=>{}} = this.props;
+            const {
+                onChange = () => {
+                }
+            } = this.props;
             navigator.camera.getPicture(
-                 (file) =>{
+                (file) => {
                     // console.log('Image URI: ' + file);
                     //  this.setState({
                     //      files: [
@@ -52,36 +55,36 @@ class ImageUploadField extends Component {
                     //          }
                     //      ]
                     //  });
-                     this.setState({
-                         isLoading: true,
-                         progress:0
-                     })
-                     axios.http.uploadFile(api.baseUrl() + api.fileUpload,file).then((res)=>{
-                         console.log("file path:"+res.data);
-                         console.log(JSON.stringify(res))
-                         this.setState({
-                             isLoading:false,
-                             files: [
-                                 ...this.state.files,
-                                 {
-                                     url:res.data.data
-                                 }
-                             ],
-                             fileValue:res.data.data
-                         });
-                         onChange(res.data.data)
-                     },()=>{
-                         Toast.fail('上传失败，请重试！', 1)
-                         this.setState({
-                             isLoading: false,
-                             progress:0
-                         })
-                     }).onNotify((res)=>{
-                         this.setState({
-                             isLoading: true,
-                             progress:Math.floor(res.percent*100)
-                         })
-                     });
+                    this.setState({
+                        isLoading: true,
+                        progress: 0
+                    })
+                    axios.http.uploadFile(api.baseUrl() + api.fileUpload, file).then((res) => {
+                        console.log("file path:" + res.data);
+                        console.log(JSON.stringify(res))
+                        this.setState({
+                            isLoading: false,
+                            files: [
+                                ...this.state.files,
+                                {
+                                    url: res.data.data
+                                }
+                            ],
+                            fileValue: res.data.data
+                        });
+                        onChange(res.data.data)
+                    }, () => {
+                        Toast.fail('上传失败，请重试！', 1)
+                        this.setState({
+                            isLoading: false,
+                            progress: 0
+                        })
+                    }).onNotify((res) => {
+                        this.setState({
+                            isLoading: true,
+                            progress: Math.floor(res.percent * 100)
+                        })
+                    });
 
 
                 }, function (error) {
@@ -120,6 +123,7 @@ class ImageUploadField extends Component {
 
 
     render() {
+        const {editable = true} = this.props;
         const defaultBtn = <Button ref="uploadEl" type="primary" size="small" inline>上传</Button>;
         const {mode = "image", fieldName, uploadButton = defaultBtn, fileLimit = 1} = this.props;
 
@@ -179,12 +183,12 @@ class ImageUploadField extends Component {
 
                 <ImagePicker
                     style={{
-                        "pointer-events":this.state.isLoading?"none":""
+                        "pointer-events": this.state.isLoading ? "none" : ""
                     }}
                     files={this.state.files}
                     onChange={this.onImageFileChange}
                     onImageClick={(index, fs) => console.log(index, fs)}
-                    selectable={this.state.files.length < fileLimit}
+                    selectable={editable && this.state.files.length < fileLimit}
                     onAddImageClick={(e) => {
                         e.preventDefault();
 

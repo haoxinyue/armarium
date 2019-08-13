@@ -7,7 +7,6 @@
 const cordovaHTTP = window.cordovaHTTP;
 
 
-
 const baseUrl = "http://47.100.198.255:8080/";
 
 function parseUrl(url) {
@@ -24,13 +23,14 @@ function interceptorHttpRequest(request) {
 
 function interceptorHttpResponse(response, resolve, reject) {
     try {
-        response.data = JSON.parse(response.data);
+        response.data = JSON.parse(response.data||'{}');
         if (response.data.code === 0) {
             resolve(response);
         } else {
             reject(response)
         }
     } catch (e) {
+        alert('interceptorHttpResponse error')
         reject(response);
     }
 }
@@ -60,7 +60,7 @@ const http = {
                 parseUrl(url),
                 data,
                 Object.assign({
-                    'Content-Type':'application/json'
+                    'Content-Type': 'application/json'
                 }, config || {}),
                 function (response) {
                     return interceptorHttpResponse(response, resolve, reject)
@@ -101,8 +101,8 @@ const http = {
                 filePath,
                 url,
                 (response) => {
-                    console.log(JSON.stringify(response),null,4);
-                    return interceptorHttpResponse({data:(response.response)}, resolve, reject)
+                    console.log(JSON.stringify(response), null, 4);
+                    return interceptorHttpResponse({data: (response.response)}, resolve, reject)
                 },
                 (response) => {
                     reject(response);
@@ -110,7 +110,7 @@ const http = {
                 fileUploadOptions);
         });
 
-        dtd.onNotify=(cb)=>{
+        dtd.onNotify = (cb) => {
             notify = cb;
         };
 

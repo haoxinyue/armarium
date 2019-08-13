@@ -186,8 +186,6 @@ export default class DeviceDetail extends Component {
               </DescriptionList>
               <Divider style={{ marginBottom: 32 }} />
             </Card>
-          </TabPane>
-          <TabPane tab="资产信息" key="2">
             <Card bordered={false} style={{ padding: 0 }}>
               <DescriptionList size="large" title="条码信息" style={{ marginBottom: 32 }}>
                 <Description term="设备编号">{currentDetail.deviceCode}</Description>
@@ -251,6 +249,9 @@ export default class DeviceDetail extends Component {
               </DescriptionList>
             </Card>
           </TabPane>
+         {/* <TabPane tab="资产信息" key="2">
+
+          </TabPane>*/}
           <TabPane tab="图片信息" key="3">
             <Card bordered={false} style={{ padding: 0 }}>
               <DescriptionList size="large" title="图片" style={{ marginBottom: 32 }}>

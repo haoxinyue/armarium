@@ -191,9 +191,10 @@ class PmCaseEdit extends Component {
 
 
     componentWillReceiveProps(nextProps, nextState) {
-        const {match: {params: {deviceId}}, location: {query: {caseId}}} = this.props;
+        const {match: {params: {deviceId}}, location: {query = {}}} = this.props;
+        const {caseId} = query;
         const {pmCase: {byIds}} = nextProps;
-        const {pmTemplate, pmResult} = byIds[caseId];
+        const {pmTemplate, pmResult} = byIds[caseId]||{};
         const jsonSubjects = pmTemplate ? (JSON.parse(pmTemplate || '{}').subjects || []) : []
         this.setState({
             formValue: {
@@ -217,11 +218,10 @@ class PmCaseEdit extends Component {
 
         const {
             dispatch, location: {
-                query: {
-                    caseId
-                }
+                query = {}
             }, match: {params: {deviceId}}, userInfo
         } = this.props;
+        const {caseId} = query;
         dispatch(changeHeaderRight([
             <Button key="0" size="small" type="primary" onClick={this.save.bind(this)}>保存</Button>
         ]))
@@ -417,7 +417,7 @@ class PmCaseEdit extends Component {
                         </WingBlank>
                     </List>
                     {subjects.map((field, i) => <div key={i}>{getFieldSubject.bind(this)(field)}</div>)}
-                    {/* <List className="field-list" renderHeader={() => '附件上传'}>
+                    <List className="field-list" renderHeader={() => '附件上传'}>
                         <div className="block-content">
                             <WingBlank size="sm" style={{paddingTop: 30}}>
 
@@ -469,7 +469,7 @@ class PmCaseEdit extends Component {
                                 })}
                             </WingBlank>
                         </div>
-                    </List>*/}
+                    </List>
                 </div>
 
 

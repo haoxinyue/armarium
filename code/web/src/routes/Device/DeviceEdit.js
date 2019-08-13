@@ -467,31 +467,6 @@ export default class DeviceEdit extends Component {
                 {getInputFieldNode('picture5', '', false, { hidden: true })}
               </Card>
               {/* ================================== */}
-            </TabPane>
-
-            <TabPane tab="图片信息" key="2">
-              <Card bordered={false}>
-                <FormItem {...formItemLayout} label="图片">
-                  <div className="clearfix">
-                    <Upload
-                      action={uploadUrl}
-                      listType="picture-card"
-                      fileList={fileList}
-                      onPreview={this.handlePreview}
-                      onChange={this.handleChange}
-                      name={'fileUpload'}
-                    >
-                      {fileList.length >= 5 ? null : uploadButton}
-                    </Upload>
-                    <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-                      <img alt="device-preview" style={{ width: '100%' }} src={previewImage} />
-                    </Modal>
-                  </div>
-                </FormItem>
-              </Card>
-            </TabPane>
-
-            <TabPane tab="资产信息" key="3">
               <Card bordered={false}>
                 {getInputFieldNode('assetNo', '设备资产编号', false)}
                 {getInputFieldNode('deviceModel', '设备型号', false)}
@@ -522,6 +497,32 @@ export default class DeviceEdit extends Component {
                 {getTextFieldNode('acceptFile', '验收清单', false)}
               </Card>
             </TabPane>
+
+            <TabPane tab="图片信息" key="2">
+              <Card bordered={false}>
+                <FormItem {...formItemLayout} label="图片">
+                  <div className="clearfix">
+                    <Upload
+                      action={uploadUrl}
+                      listType="picture-card"
+                      fileList={fileList}
+                      onPreview={this.handlePreview}
+                      onChange={this.handleChange}
+                      name={'fileUpload'}
+                    >
+                      {fileList.length >= 5 ? null : uploadButton}
+                    </Upload>
+                    <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+                      <img alt="device-preview" style={{ width: '100%' }} src={previewImage} />
+                    </Modal>
+                  </div>
+                </FormItem>
+              </Card>
+            </TabPane>
+
+           {/* <TabPane tab="资产信息" key="3">
+
+            </TabPane>*/}
 
             <TabPane tab="设备附件" key="4">
               <Card bordered={false}>

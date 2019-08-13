@@ -3,7 +3,21 @@
 .device-list{
   position: relative;
   height: 100%;
+  .filters{
+    display: flex;
+    flex-direction: row;
+    .filter-ip{
+      flex: 1;
+    }
+  }
+
   .dataList{
+
+    .listEmpty{
+      text-align: center;
+      color: #999999;
+    }
+
     &-wrap{
       position: absolute;
       z-index: 2;

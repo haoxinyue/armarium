@@ -73,8 +73,8 @@ function doPostQuery(url, data, resolveMapFunc) {
 
             } else {
                 reject({
-                    error: 'code error',
-                    data: res.data
+                    error: 'server error',
+                    ...res.data || {}
                 })
             }
         }, (err) => {
@@ -285,7 +285,7 @@ function getUserNoticeFetch(userId) {
                 code: 0,
                 data: []
             };
-            const typeList = ["install", "inspection", "pm", "repair","stocktaking"];
+            const typeList = ["install", "inspection", "pm", "repair", "stocktaking"];
             const typeNameList = ["安装工单", "巡检工单", "保养工单", "保修工单", "盘点工单"];
             resList.forEach((r, i) => {
                 let rData = r.data;
@@ -384,9 +384,6 @@ export const getDeviceDetail = createAction(DEVICE.SAVE,
 )
 
 
-
-
-
 export const addDevice = createAction(DEVICE.SAVE,
     (params) =>
         doPostQuery(api.deviceAdd, {...params})
@@ -440,11 +437,11 @@ export const getRepairDetail = createAction(REPAIR.SAVE,
 
         new Promise((resolve, reject) => {
             Promise.all([
-                doPostQuery(api.repairGet,{ ...params}),
-                doPostQuery(api.repairTimeShaftGet,{ ...params}),
+                doPostQuery(api.repairGet, {...params}),
+                doPostQuery(api.repairTimeShaftGet, {...params}),
             ]).then((reslist) => {
                 console.log(reslist)
-                if (reslist[0].data){
+                if (reslist[0].data) {
                     let info = {
                         ...reslist[0].data,
                         timeShaft: reslist[1].data
@@ -452,16 +449,16 @@ export const getRepairDetail = createAction(REPAIR.SAVE,
                     resolve({
                         data: info
                     });
-                }else{
+                } else {
                     reject({
-                        error:'code error',
-                        data:reslist[0].data
+                        error: 'code error',
+                        data: reslist[0].data
                     })
                 }
             }, (err) => {
                 reject({
-                    error:'exception',
-                    data:err
+                    error: 'exception',
+                    data: err
                 })
             })
         })

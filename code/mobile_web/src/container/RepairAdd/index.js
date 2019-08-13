@@ -27,10 +27,29 @@ const fields = [
     // {key: "deviceId", name: "设备ID", desc: "请输入设备ID", type: "text"},
     {key: "deviceId", name: "设备", desc: "请输入设备ID", required: true, type: "text", props: {}},
     {key: "deviceName", name: "设备名称", desc: "", required: false, type: "text", editable: false},
-    {key: "reporterName", name: "报修人", desc: "请输入报修人姓名", required: true, type: "text"},
-    {key: "reporterCompany", name: "报修单位", desc: "请输入报修单位名称", required: true, type: "text"},
-    {key: "reporterMobile", name: "报修手机", desc: "请输入报修手机", required: true, type: "text"},
-    {key: "caseRemark", name: "备注", desc: "请输入备注信息", required: false, type: "textArea"},
+    {key: "department", name: "所属部门", desc: "", required: false, type: "text", editable: false},
+    // {key: "reporterUserName", name: "报修人", desc: "请输入报修人姓名", required: true, type: "text"},
+    // {key: "reporterCompany", name: "报修单位", desc: "请输入报修单位名称", required: true, type: "text"},
+    // {key: "reporterMobile", name: "报修手机", desc: "请输入报修手机", required: true, type: "text"},
+    {
+        key: "priority", name: "重要程度", desc: "请选择", required: true, type: "text", options:
+            [[
+                {
+                    label: '一般',
+                    value: 1,
+                },
+                {
+                    label: '重要',
+                    value: 2,
+                },
+                {
+                    label: '紧急',
+                    value: 3,
+                }
+            ]
+            ]
+    },
+    {key: "reportProblem", name: "问题原因", desc: "请输入问题原因", required: false, type: "textArea"},
 
 ];
 
@@ -44,8 +63,9 @@ class RepairAdd extends Component {
 
         formValue: {
             deviceId: '',//设备ID
-            caseRemark: '',
+            reportProblem: '',
             caseFilePath: '',
+            priority: [1],
             creater: 0,
             modifier: 0,
         }
@@ -80,6 +100,8 @@ class RepairAdd extends Component {
         });
     }
 
+
+
     getSubmitFormValue() {
         const {userInfo} = this.props;
         let currentUserId = userInfo.userId
@@ -87,6 +109,8 @@ class RepairAdd extends Component {
             ...this.state.formValue,
             reporterMobile: this.state.formValue.reporterMobile,//.replace(/\s/g,""),
             reporterUserId: currentUserId,
+            priority:this.state.formValue.priority[0],
+            reportUserId: currentUserId,
             creater: currentUserId,
             modifier: currentUserId
         }
@@ -152,22 +176,25 @@ class RepairAdd extends Component {
                 this.setState({
                     formValue: {
                         ...this.state.formValue,
-                        deviceName: res.payload.data.deviceName
+                        deviceName: res.payload.data.deviceName,
+                        department: res.payload.data.department
                     }
                 });
-            }else{
+            } else {
                 this.setState({
                     formValue: {
                         ...this.state.formValue,
-                        deviceName: ''
+                        deviceName: '',
+                        department: ''
                     }
                 });
             }
-        },()=>{
+        }, () => {
             this.setState({
                 formValue: {
                     ...this.state.formValue,
-                    deviceName: ''
+                    deviceName: '',
+                    department: ''
                 }
             });
         })

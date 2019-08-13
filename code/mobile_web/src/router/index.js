@@ -197,11 +197,35 @@ export const routes = [
             left: "back"
         }
     }, {
+        path: '/repairsMy',
+        exact: true,
+        component: loadComponent('Repairs'),
+        header: {
+            title: '我的维修单',
+            left: "back"
+        }
+    }, {
+        path: '/repairsMyReport',
+        exact: true,
+        component: loadComponent('Repairs'),
+        header: {
+            title: '我的报修单',
+            left: "back"
+        }
+    }, {
         path: '/repairAdd',
         exact: true,
         component: loadComponent('RepairAdd'),
         header: {
             title: '新增报修',
+            left: "back"
+        }
+    },{
+        path: '/repairEdit/:caseId',
+        exact: true,
+        component: loadComponent('RepairEdit'),
+        header: {
+            title: '编辑报修',
             left: "back"
         }
     }, {

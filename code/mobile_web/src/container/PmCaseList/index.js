@@ -30,19 +30,16 @@ class PmCaseItem extends Component {
         const itemData = this.props.list || {};
         const emptyImage = require("../../assets/img/empty.png");
 
-        function getStateName(state) {
-            switch (state) {
-                case 10:
-                    return "待巡检";
-                case 20:
-                    return "已取消";
-                case 30:
-                    return "巡检中";
-                case 50:
-                    return "已关闭";
-                default:
-                    return "无";
-            }
+        function getCaseStateName(state) {
+            const Names = {
+                10: "待保养",
+                20: "已取消",
+                30: "保养中",
+                40: "已完成",
+                50: "已关闭"
+            };
+
+            return Names[state] || "未知"
 
         }
 
@@ -60,12 +57,23 @@ class PmCaseItem extends Component {
 
                         <div className="item-desc-left">
                             <div>
-                                <span className="key">所属医院</span>：
-                                <span className="value">{itemData.hospital}</span>
-                            </div>
-                            <div>
                                 <span className="key">所属部门</span>：
                                 <span className="value">{itemData.deptName}</span>
+                            </div>
+
+                            <div>
+                                <span className="key">状态</span>：
+                                <span className="value">{getCaseStateName(itemData.caseState)}</span>
+                            </div>
+
+                            <div>
+                                <span className="key">计划负责人</span>：
+                                <span className="value">{itemData.assigneeUserName}</span>
+                            </div>
+
+                            <div>
+                                <span className="key">实际保养时间</span>：
+                                <span className="value">{itemData.actualTime}</span>
                             </div>
                         </div>
 
@@ -130,6 +138,8 @@ class PmCaseList extends Component {
 
 
     }
+
+
 
 
     componentDidMount() {
