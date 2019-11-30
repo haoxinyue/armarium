@@ -47,7 +47,7 @@ const fields = [
         key: "caseState", name: "工单状态", desc: "请选择", required: true, type: "text", options:
             [[
                 {
-                    label: '报修中',
+                    label: '待处理',
                     value: 10,
                 },
                 {
@@ -55,18 +55,22 @@ const fields = [
                     value: 20,
                 },
                 {
-                    label: '维修中',
+                    label: '处理中',
                     value: 30,
                 },
                 {
                     label: '已完成',
                     value: 40,
-                }
+                },
+                // {
+                //     label: '已关闭',
+                //     value: 50,
+                // }
             ]
             ]
     },
 
-    {key: "cost", name: "工单成本", desc: "请输入工单成本（元）", required: true, type: "text"},
+    {key: "cost", name: "工单成本", desc: "请输入工单成本（元）", required: false, type: "text"},
 
     {key: "caseRemark", name: "工单描述", desc: "请输入处理备注", required: false, type: "textArea"},
 
@@ -180,6 +184,7 @@ class RepairEdit extends Component {
                     caseState: caseInfo.caseState ? [caseInfo.caseState] : [],
                     cost: caseInfo.cost,
                     priority: caseInfo.priority ? [caseInfo.priority] : [],
+                    caseFilePath:caseInfo.caseFilePath
                 }
                 this.setState({
                     formValue

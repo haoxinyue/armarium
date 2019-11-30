@@ -227,6 +227,15 @@ export const getPmCaseDetail = createAction(PM_CASE.SAVE,
     //     ...params
     // })).then((res) => (res.data))
 )
+
+export const getPmCaseIdByDeviceId = createAction(PM_CASE.SAVE,
+    (params) =>
+        doPostQuery(api.pmCaseIdListByDeviceIdGet, {...params})
+    // axios.http.post(api.pmCaseGet, getFormData({
+    //     ...params
+    // })).then((res) => (res.data))
+)
+
 export const getPmCaseDetailByDevice = createAction(PM_CASE.SAVE,
     (params) =>
         doPostQuery(api.pmCaseGetDevice, {...params})
@@ -420,6 +429,13 @@ export const addRepair = createAction(REPAIR.SAVE,
 export const updateRepair = createAction(REPAIR.SAVE,
     (params) =>
         doPostQuery(api.repairUpdate, {...params})
+    // axios.http.post(api.repairUpdate, getFormData({
+    //     ...params
+    // })).then((res) => (res.data))
+);
+export const closeRepair = createAction(REPAIR.CLOSE,
+    (params) =>
+        doPostQuery(api.repairClose, {...params})
     // axios.http.post(api.repairUpdate, getFormData({
     //     ...params
     // })).then((res) => (res.data))

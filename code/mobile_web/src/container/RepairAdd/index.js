@@ -32,7 +32,7 @@ const fields = [
     // {key: "reporterCompany", name: "报修单位", desc: "请输入报修单位名称", required: true, type: "text"},
     // {key: "reporterMobile", name: "报修手机", desc: "请输入报修手机", required: true, type: "text"},
     {
-        key: "priority", name: "重要程度", desc: "请选择", required: true, type: "text", options:
+        key: "priority", name: "重要程度", desc: "请选择重要程度", required: true, type: "text", options:
             [[
                 {
                     label: '一般',

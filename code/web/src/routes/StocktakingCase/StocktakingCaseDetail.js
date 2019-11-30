@@ -98,11 +98,11 @@ export default class StocktakingCaseDetail extends Component {
 
     let currentDetail = stocktakingCase.byIds[caseId] || {};
     const statusMap = {
-      '10': '待盘点',
+      '10': '待处理',
       '20': '已取消',
-      '30': '盘点中',
-      '50': '已完成',
-      '60': '已审核',
+      '30': '处理中',
+      '40': '已完成',
+      '50': '已关闭',
     };
 
     const columns = [

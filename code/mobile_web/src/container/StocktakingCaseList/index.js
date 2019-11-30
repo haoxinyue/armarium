@@ -12,7 +12,13 @@ import RadioGroup from '../../components/RadioGroup'
 import './StocktakingCaseList.less'
 import './listItem.less'
 import {addRippleEffect, runScanner} from "../../utils";
-const statusMap = { '10': '待盘点', '20': '已取消', '30': '盘点中', '50': '已完成', '60': '已审核' };
+const statusMap = {
+    '10': '待处理',
+    '20': '已取消',
+    '30': '处理中',
+    '40': '已完成',
+    '50': '已关闭',
+};
 
 class MeterCaseItem extends Component {
 

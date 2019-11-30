@@ -16,7 +16,9 @@ import {
     ImagePicker,
     Picker,
     Switch,
-    Progress
+    Progress,
+    Card,
+    Icon
 } from 'antd-mobile';
 import {
     changeHeaderRight,
@@ -76,26 +78,36 @@ class PmCaseEdit extends Component {
 
     }
 
+    removeImage = (img) => {
+        const {formValue} = this.state;
+        let newFormValues = {
+            ...formValue
+        }
+        // const {picture1,picture2,picture3} = formValue;
+
+        if (newFormValues.picture1 === img) {
+            newFormValues.picture1 = undefined
+        } else if (newFormValues.picture2 === img) {
+            newFormValues.picture2 = undefined
+        } else if (newFormValues.picture3 === img) {
+            newFormValues.picture3 = undefined
+        }
+
+        this.setState({
+            formValue: newFormValues
+        })
+
+    }
+
     onChange = (field, value) => {
-        // if (value.replace(/\s/g, '').length < 11) {
-        //     this.setState({
-        //         hasError: true,
-        //     });
-        // } else {
-        //     this.setState({
-        //         hasError: false,
-        //     });
-        // }
 
         let formValue = this.state.formValue
 
         formValue[field.key] = value
 
-
         this.setState({
             formValue
         });
-
 
         if (field.key === "deviceId" && value) {
             clearTimeout(this._lastDeviceUpdate);
@@ -194,16 +206,27 @@ class PmCaseEdit extends Component {
         const {match: {params: {deviceId}}, location: {query = {}}} = this.props;
         const {caseId} = query;
         const {pmCase: {byIds}} = nextProps;
-        const {pmTemplate, pmResult} = byIds[caseId]||{};
+        const {pmTemplate, pmResult, picture1, picture2, picture3} = byIds[caseId] || {};
         const jsonSubjects = pmTemplate ? (JSON.parse(pmTemplate || '{}').subjects || []) : []
+        let jsonValues = {}
+        try {
+            jsonValues = JSON.parse(pmResult || '{}')
+        } catch (e) {
+
+        }
         this.setState({
             formValue: {
                 ...this.state.formValue,
+                ...{
+                    picture1,
+                    picture2,
+                    picture3,
+                },
                 caseId,
                 deviceId
             },
             jsonSubjects,
-            jsonValues: JSON.parse(pmResult || '{}'),
+            jsonValues
         })
         return true
     }
@@ -366,19 +389,28 @@ class PmCaseEdit extends Component {
 
         }
 
+
         let uploaderProps = {
             action: api.baseUrl() + api.fileUpload,
             name: 'fileUpload',
             multiple: false,
+            accept: 'image/*',
             onSuccess: (res, file) => {
                 // console.log('onSuccess', res);
+                let formValue = {
+                    ...this.state.formValue,
+                }
+                if (!this.state.formValue.picture1) {
+                    formValue.picture1 = res.data
+                } else if (!this.state.formValue.picture2) {
+                    formValue.picture2 = res.data
+                } else if (!this.state.formValue.picture3) {
+                    formValue.picture3 = res.data
+                }
+
                 this.setState({
                     fileProgress: -1,
-                    formValue: {
-                        ...this.state.formValue,
-                        pmFile: res.data,
-                        pmFileName: file.name
-                    }
+                    formValue
                 })
 
             },
@@ -405,6 +437,20 @@ class PmCaseEdit extends Component {
 
         const subjects = this.state.jsonSubjects;
 
+        const imageList = [];
+
+        const {formValue} = this.state;
+        const {picture1, picture2, picture3} = formValue;
+        if (picture1) {
+            imageList.push(picture1)
+        }
+        if (picture2) {
+            imageList.push(picture2)
+        }
+        if (picture3) {
+            imageList.push(picture3)
+        }
+
 
         return (
             <div className="device-edit">
@@ -417,6 +463,7 @@ class PmCaseEdit extends Component {
                         </WingBlank>
                     </List>
                     {subjects.map((field, i) => <div key={i}>{getFieldSubject.bind(this)(field)}</div>)}
+
                     <List className="field-list" renderHeader={() => '附件上传'}>
                         <div className="block-content">
                             <WingBlank size="sm" style={{paddingTop: 30}}>
@@ -425,15 +472,13 @@ class PmCaseEdit extends Component {
                                     <div className="am-list-line">
                                         <div className="am-input-label am-input-label-5">附件</div>
                                         <div className="am-input-control">
-                                            {this.state.formValue.pmFile && <span className="am-input-extra">
-                                            <a href={this.state.formValue.pmFile}>{this.state.formValue.pmFileName || '点击下载'}</a></span>
-                                            }
+
                                             <Upload
                                                 {...uploaderProps}
                                                 className={"am-flexbox am-flexbox-align-center"}
                                                 component="div"
                                                 style={{
-                                                    display: this.state.formValue.pmFile ? 'none' : 'inline-block',
+                                                    display: imageList.length >= 3 ? 'none' : 'inline-block',
                                                 }}
                                             >
                                                 <Button style={{marginLeft: 40, color: 'white'}} type="primary"
@@ -444,6 +489,8 @@ class PmCaseEdit extends Component {
 
 
                                     </div>
+
+
                                 </div>
 
                                 {this.state.fileProgress >= 0 &&
@@ -452,24 +499,30 @@ class PmCaseEdit extends Component {
                                         <div
                                             className="am-input-label am-input-label-5">上传中({this.state.fileProgress}%)
                                         </div>
-                                        <div className="am-input-control"><Progress percent={this.state.fileProgress}
-                                                                                    position="normal" unfilled={false}
-                                                                                    appearTransition></Progress>
+                                        <div className="am-input-control">
+                                            <Progress percent={this.state.fileProgress}
+                                                      position="normal" unfilled={false}
+                                                      appearTransition/>
                                         </div>
                                     </div>
                                 </div>
                                 }
 
-
-                                {getFieldEle.bind(this)({
-                                    key: "accessoryInfo",
-                                    name: "保养文件描述",
-                                    desc: "请输入保养文件描述",
-                                    type: "textarea"
-                                })}
                             </WingBlank>
                         </div>
+                        <WhiteSpace size="large"/>
+                        {
+                            imageList.map((img, idx) => (
+                                <div className={'image-item'} key={idx} style={{backgroundImage: `url('${img}')`}}>
+                                    <Icon className={'close'} onClick={() => {
+                                        this.removeImage(img)
+                                    }} type="cross-circle-o"/>
+                                </div>
+                            ))
+                        }
                     </List>
+
+
                 </div>
 
 

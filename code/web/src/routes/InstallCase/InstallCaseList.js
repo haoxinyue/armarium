@@ -34,7 +34,7 @@ const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
-const statusMap = { '10': '安装中', '20': '已取消', '50': '已关闭' };
+const statusMap = { '10': '待处理', '20': '已取消', '50': '已关闭' };
 
 const caseStatus = ['安装中', '已取消', '已关闭'];
 
@@ -147,10 +147,10 @@ export default class InstallCaseList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'installCase/fetch',
-      payload:{
+      payload: {
         pageIndex: 0,
         pageSize: 10,
-      }
+      },
     });
   }
 
@@ -344,10 +344,10 @@ export default class InstallCaseList extends PureComponent {
             form.resetFields();
             this.props.dispatch({
               type: 'installCase/fetch',
-              payload:{
+              payload: {
                 pageIndex: 0,
                 pageSize: 10,
-              }
+              },
             });
           } else {
             message.error('操作失败，请稍后再试');

@@ -5,7 +5,7 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import './deviceDetail.less'
 import {Tabs, ImagePicker, Button, Steps, Modal, Toast} from 'antd-mobile'
-import {changeHeaderRight, getRepairDetail, updateRepair} from '../../redux/actions'
+import {changeHeaderRight, getRepairDetail, closeRepair} from '../../redux/actions'
 
 import moment from 'moment'
 
@@ -17,10 +17,6 @@ class RepairDetail extends Component {
     }
 
     componentDidMount() {
-        const {dispatch, userInfo} = this.props;
-        // dispatch(changeHeaderRight([
-        //     <Button key="1" size="small" type="primary"  onClick={this.onGotoEditPage.bind(this)}>编辑</Button>
-        // ]))
 
     }
 
@@ -45,7 +41,11 @@ class RepairDetail extends Component {
                 dispatch(changeHeaderRight([
                     <Button key="1" size="small" type="primary" onClick={this.onGotoEditPage.bind(this)}>编辑</Button>
                 ]))
-            } else if (caseInfo.caseState && caseInfo.caseState == 40 && ['科室负责人'].includes(userInfo.roleName)) {
+            } else if (
+                caseInfo.caseState
+                && caseInfo.caseState == 40
+                && ['科室负责人','科室人员'].includes(userInfo.roleName)
+                && caseInfo.reporterUserId==userInfo.userId ) {
                 dispatch(changeHeaderRight([
                     <Button key="1" size="small" type="primary"
                             onClick={this.onCloseCase.bind(this, caseInfo)}>关闭工单</Button>
@@ -80,10 +80,9 @@ class RepairDetail extends Component {
 
         Modal.operation([
             {
-                text: '确认关闭', onPress: () => {
-                    dispatch(updateRepair({
-                        ...caseInfo,
-                        caseState: 50,
+                text: '确认关闭?', onPress: () => {
+                    dispatch(closeRepair({
+                        caseId:caseInfo.caseId,
                         modifier: currentUserId
                     }))
                         .then(res => {

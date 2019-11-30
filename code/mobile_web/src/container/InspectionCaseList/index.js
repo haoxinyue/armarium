@@ -30,11 +30,11 @@ class InspectionCaseItem extends Component {
         function getStateName(state) {
             switch (state) {
                 case 10:
-                    return "待巡检";
+                    return "待处理";
                 case 20:
                     return "已取消";
                 case 30:
-                    return "巡检中";
+                    return "处理中";
                 case 50:
                     return "已关闭";
                 default:

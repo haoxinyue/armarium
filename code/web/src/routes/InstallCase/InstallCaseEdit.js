@@ -61,6 +61,8 @@ export default class InstallCaseEdit extends Component {
       if (!err) {
         let fData = {
           ...values,
+          needInspection: values.needInspection ? 1 : 0,
+          needMetering: values.needMetering ? 1 : 0,
           expectedTime: values.expectedTime && moment(values.expectedTime).format('YYYY/MM/DD'),
           setupTime: values.setupTime && moment(values.setupTime).format('YYYY/MM/DD'),
           creater: currentUser.userId,
@@ -74,8 +76,9 @@ export default class InstallCaseEdit extends Component {
         dispatch({
           type: isEditMode ? 'installCase/complete' : 'installCase/add',
           payload: fData,
-          callback(v) {
-            if (v.success) {
+        }).then(
+          success => {
+            if (success) {
               message.success('保存成功');
               dispatch({
                 type: 'installCase/fetchDetail',
@@ -88,7 +91,10 @@ export default class InstallCaseEdit extends Component {
               message.error('保存失败');
             }
           },
-        });
+          res2 => {
+            console.log('res2', res2);
+          }
+        );
       }
     });
   };
@@ -123,6 +129,8 @@ export default class InstallCaseEdit extends Component {
 
         if (k === 'expectedTime' || k === 'setupTime') {
           data[k] = moment(data[k]);
+        } else if (k === 'needMetering' || k === 'needInspection') {
+          data[k] = data[k] == 1;
         }
       }
       setFieldsValue(data);
@@ -311,7 +319,7 @@ export default class InstallCaseEdit extends Component {
             </FormItem>
 
             <FormItem {...formItemLayout} label="*所属部门">
-              {getFieldDecorator('departmentId', {
+              {getFieldDecorator('deptId', {
                 rules: [
                   {
                     required: true,

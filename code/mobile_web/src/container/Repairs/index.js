@@ -228,7 +228,7 @@ class Devices extends Component {
                     value: -1,
                 },
                 {
-                    label: '报修中',
+                    label: '待处理',
                     value: 10,
                 },
                 {
@@ -236,7 +236,7 @@ class Devices extends Component {
                     value: 20,
                 },
                 {
-                    label: '维修中',
+                    label: '处理中',
                     value: 30,
                 },
                 {

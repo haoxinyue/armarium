@@ -23,6 +23,7 @@ export default {
     pmCaseGet: 'pm_case/getPmCaseInfo',
     pmCaseGetDevice: 'pm_case/getPmCaseInfoWithDev',
     pmCaseListGet: 'pm_case/getPmCaseList',
+    pmCaseIdListByDeviceIdGet: 'pm_case/getLatestMainCaseIdByDeviceId',
 
     inspectionCaseComplete: 'insp_case/completeInspCase',
     inspectionCaseGet: 'insp_case/getInspCaseInfo',
@@ -54,6 +55,7 @@ export default {
     repairListGet: 'case/getMtCaseList',
     repairGet: 'case/getMtCaseInfo',
     repairUpdate: 'case/updMtCase',
+    repairClose: 'case/closeMtCase',
     repairTimeShaftGet: 'case/getCaseTimeShaft',
 
     noticeRepairCaseGet: 'case/rotateMtCase',

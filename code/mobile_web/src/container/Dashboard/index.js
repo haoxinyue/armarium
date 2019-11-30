@@ -148,11 +148,12 @@ class Dashboard extends Component {
                                         )
                                     }
                                 },
-                                {
+
+                                /*{
                                     text: '报修历史', onPress: () => {
                                         this.props.history.push({pathname: "/repairs", query: {}})
                                     }
-                                },
+                                },*/
                             ]
 
                             switch (roleId+''){
@@ -164,13 +165,21 @@ class Dashboard extends Component {
                                                 this.props.history.push({pathname: "/repairsMy", query: {}})
                                             }
                                         },
+
+                                    ])
+                                    break;
+
+                                case '3':
+                                case '4':
+                                    ops = ops.concat([
                                         {
                                             text: '我的报修', onPress: () => {
                                                 this.props.history.push({pathname: "/repairsMyReport", query: {}})
                                             }
                                         },
+
                                     ])
-                                    break
+                                    break;
                             }
 
 

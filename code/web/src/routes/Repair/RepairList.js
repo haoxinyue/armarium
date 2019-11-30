@@ -28,7 +28,13 @@ import styles from './TableList.less';
 import DeviceSelect from '../../components/biz/DeviceSelect';
 import EngineerSelect from '../../components/biz/EngineerSelect';
 
-const statusMap = { '10': '新报修', '20': '已取消', '30': '维修中', '40': '已完成','50':'已关闭' };
+const statusMap = {
+  '10': '待处理',
+  '20': '已取消',
+  '30': '处理中',
+  '40': '已完成',
+  '50': '已关闭',
+};
 
 const { TextArea } = Input;
 
@@ -242,13 +248,13 @@ export default class RepairList extends PureComponent {
   handleSearch = e => {
     e.preventDefault();
 
-    const { dispatch, form, user ,repair} = this.props;
+    const { dispatch, form, user, repair } = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      repair.pagination.current =1;
+      repair.pagination.current = 1;
 
-      console.log(repair.pagination)
+      console.log(repair.pagination);
 
       const values = {
         ...fieldsValue,
@@ -379,11 +385,11 @@ export default class RepairList extends PureComponent {
 
   getCaseStateName(state) {
     const Names = {
-      10: '新报修',
-      20: '已取消',
-      30: '维修中',
-      40: '已完成',
-      50: '已关闭',
+      '10': '待处理',
+      '20': '已取消',
+      '30': '处理中',
+      '40': '已完成',
+      '50': '已关闭',
     };
 
     return Names[state] || '未知';

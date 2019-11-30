@@ -35,7 +35,13 @@ const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
-const statusMap = { '10': '待巡检', '20': '已取消', '30': '巡检中', '50': '已关闭' };
+const statusMap = {
+  '10': '待处理',
+  '20': '已取消',
+  '30': '处理中',
+  '40': '已完成',
+  '50': '已关闭',
+};
 
 const CreateForm = Form.create()(props => {
   const { modalVisible, form, handleAdd, handleModalVisible } = props;
@@ -146,10 +152,10 @@ export default class InspectionCaseList extends PureComponent {
     const { dispatch } = this.props;
     dispatch({
       type: 'inspectionCase/fetch',
-      payload:{
+      payload: {
         pageIndex: 0,
         pageSize: 10,
-      }
+      },
     });
   }
 
@@ -341,10 +347,10 @@ export default class InspectionCaseList extends PureComponent {
             form.resetFields();
             this.props.dispatch({
               type: 'inspectionCase/fetch',
-              payload:{
+              payload: {
                 pageIndex: 0,
                 pageSize: 10,
-              }
+              },
             });
           } else {
             message.error('操作失败，请稍后再试');

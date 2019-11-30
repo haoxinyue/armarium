@@ -5,7 +5,8 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {
     changeHeaderRight,
-    fetchPmCaseList
+    fetchPmCaseList,
+    getPmCaseIdByDeviceId
 } from '../../redux/actions'
 import {PullToRefresh, ListView, SearchBar, Drawer, Tabs, Toast, WingBlank, Button} from 'antd-mobile'
 import RadioGroup from '../../components/RadioGroup'
@@ -17,12 +18,9 @@ class PmCaseItem extends Component {
 
     // 查看详情
     goDetail = (item) => {
-        this.props.history.push({
-            pathname: `/pmCaseEdit/${item.deviceId}`,
-            query: {
-                caseId: item.caseId
-            }
-        })
+
+        const {goDetail} = this.props;
+        goDetail(item)
     }
 
 
@@ -32,11 +30,11 @@ class PmCaseItem extends Component {
 
         function getCaseStateName(state) {
             const Names = {
-                10: "待保养",
-                20: "已取消",
-                30: "保养中",
-                40: "已完成",
-                50: "已关闭"
+                '10': '待处理',
+                '20': '已取消',
+                '30': '处理中',
+                '40': '已完成',
+                '50': '已关闭',
             };
 
             return Names[state] || "未知"
@@ -118,6 +116,7 @@ class PmCaseList extends Component {
     }
 
     createNewCase(deviceId) {
+        const {dispatch, userInfo} = this.props;
         // this.props.history.push({pathname: "/inspectionCaseEdit/123"})
         if (deviceId) {
             this.props.history.push({pathname: `/pmCaseEdit/${deviceId}`})
@@ -126,7 +125,26 @@ class PmCaseList extends Component {
                     let deviceId = /\[(\S+)\]/.exec(result.text)
                     deviceId = deviceId && deviceId[1]
                     if (deviceId) {
-                        this.props.history.push({pathname: `/pmCaseEdit/${deviceId}`})
+                        dispatch(getPmCaseIdByDeviceId({
+                            deviceId,
+                            assigneeUserId: userInfo.userId
+                        }))
+                            .then((res) => {
+                                if(res && res.data){
+                                    const caseId = res.data
+                                    this.props.history.push({pathname: `/pmCaseEdit/${deviceId}`,
+                                        query: {
+                                            caseId
+                                        }
+                                    })
+                                }else{
+                                    Toast.info('此设备没有您负责保养工单');
+                                }
+
+                            }, () => {
+                                Toast.info('查询失败，请稍后再试');
+                            })
+
                     } else {
                         // alert('无效的二维码')
                     }
@@ -138,8 +156,6 @@ class PmCaseList extends Component {
 
 
     }
-
-
 
 
     componentDidMount() {
@@ -168,6 +184,42 @@ class PmCaseList extends Component {
 
     onOpenChange = (...args) => {
         this.setState({openFilter: !this.state.openFilter});
+    }
+
+    goDetail = (item) => {
+
+        this.props.history.push({
+            pathname: `/pmCaseEdit/${item.deviceId}`,
+            query: {
+                caseId: item.caseId
+            }
+        })
+
+       /* const {dispatch, userInfo} = this.props;
+        dispatch(getPmCaseIdByDeviceId({
+            deviceId: item.deviceId,
+            assigneeUserId: userInfo.userId
+        }))
+            .then((res) => {
+                // console.log(res)
+                // this.props.history.push({pathname: `/pmCaseEdit/${deviceId}`})
+                if(res && res.data){
+                    this.props.history.push({
+                        pathname: `/pmCaseEdit/${item.deviceId}`,
+                        query: {
+                            caseId: res.data
+                        }
+                    })
+                }else{
+                    Toast.info('此设备没有您负责保养工单');
+                }
+
+
+            }, (err) => {
+                console.error(err)
+            })*/
+
+
     }
 
     /**
@@ -255,6 +307,7 @@ class PmCaseList extends Component {
     render() {
 
 
+
         const display = this.state.openFilter ? 'block' : 'none'
         // 参会状态props
         const partProps = {
@@ -317,7 +370,9 @@ class PmCaseList extends Component {
                                 dataSource={this.state.dataSource}
 
                                 renderRow={(rowData, sectionID, rowID) => (
-                                    <PmCaseItem key={sectionID + '_' + rowID}
+                                    <PmCaseItem
+                                        goDetail={this.goDetail}
+                                        key={sectionID + '_' + rowID}
                                                 history={this.props.history}
                                                 list={rowData}
                                     />

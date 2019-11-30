@@ -38,6 +38,20 @@ class ImageUploadField extends Component {
         this.chooseImage = this.chooseImage.bind(this);
     }
 
+    componentWillReceiveProps(nextProps, nextState) {
+        const {value = ''} = this.props;
+        const {value: nextValue = ''} = nextProps;
+        if (value !== nextValue) {
+            this.setState({
+                files: nextValue ? nextValue.split(',').map((v) => {
+                    return {url: v}
+                }) : [],
+                fileValue: nextValue
+            });
+        }
+
+    }
+
     chooseImage(fromCamera) {
         if (navigator && navigator.camera) {
             const {
@@ -127,52 +141,6 @@ class ImageUploadField extends Component {
         const defaultBtn = <Button ref="uploadEl" type="primary" size="small" inline>上传</Button>;
         const {mode = "image", fieldName, uploadButton = defaultBtn, fileLimit = 1} = this.props;
 
-        let uploaderProps = {
-            action: api.baseUrl() + api.fileUpload,
-            // data: { a: 1, b: 2 },
-            // headers: {
-            //     Authorization: 'xxxxxxx',
-            // },
-            name: 'fileUpload',
-            // headers:{
-            //     'Content-type':'multipart/form-data'
-            // },
-            multiple: false,
-            beforeUpload: (file) => {
-                // console.log('beforeUpload', file.name);
-            },
-            onStart: (file) => {
-                // console.log('onStart', file.name);
-                // this.refs.inner.abort(file);
-            },
-            onSuccess: (res) => {
-
-                this.setState({
-                    loading: false,
-                    files: [
-                        ...this.state.files,
-                        {
-                            url: res.data
-                        }
-                    ]
-                })
-            },
-            onProgress: (step, file) => {
-                console.log('onProgress', Math.round(step.percent), file.name);
-                this.setState({
-                    loading: true,
-                    progress: step.progress
-                })
-            },
-            onError: (err) => {
-                // console.log('onError', err);
-                this.setState({
-                    loading: false,
-                    progress: 0
-                })
-            },
-        };
-
 
         return (
             <div className={"yl-field-upload"}>
@@ -208,19 +176,6 @@ class ImageUploadField extends Component {
                     }}
                     accept="image/gif,image/jpeg,image/jpg,image/png"
                 />
-
-
-                {/* <Upload
-                    ref={(el)=>{this.refs.uploadEl=el;}}
-                    {...uploaderProps}
-                    className={"am-flexbox am-flexbox-align-center"}
-                    component="div"
-                    style={{
-                        display: this.state.files.length < fileLimit ? 'inline-block' : 'none'
-                    }}
-                >
-                    {uploadButton}
-                </Upload>*/}
 
 
                 <ListItem style={{display: this.state.isLoading ? 'block' : 'none'}}>

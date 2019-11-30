@@ -6,6 +6,7 @@ export const ACTION_TYPES = {
     UPDATE_LIST: "repair/UPDATE_LIST",
     UPDATE_FILTER: "repair/UPDATE_FILTER",
     SAVE: "repair/SAVE",
+    CLOSE: "repair/CLOSE",
     DELETE: "repair/DELETE"
 };
 
