@@ -149,7 +149,25 @@ export default class RepairDetail extends Component {
     });
   }
 
+  closeCase(userId) {
+    const { dispatch, match: { params: { caseId } } } = this.props;
+    dispatch({
+      type: 'repair/close',
+      payload: {
+        caseId: caseId,
+        modifier: userId,
+      },
+    }).then(() => {
+      dispatch({
+        type: 'repair/fetchDetail',
+        payload: { caseId: caseId },
+      });
+    });
+  }
+
   getOperation(caseInfo, role) {
+    const { user } = this.props;
+    const userId = user.currentUser.userId;
     let ops = [];
     if (caseInfo && role && caseInfo.caseState) {
       switch (caseInfo.caseState) {
@@ -179,7 +197,7 @@ export default class RepairDetail extends Component {
         case 20:
           break;
         case 30:
-          if (role === '驻场工程师') {
+          if (role === '运维工程师') {
             ops.push(
               <Button
                 type="primary"
@@ -202,16 +220,15 @@ export default class RepairDetail extends Component {
           }
           break;
         case 40:
-          if (role === '主管') {
-            ops.push(
-              <Button
-                type="primary"
-                onClick={this.changeCaseState.bind(this, caseInfo, 50)}
-                title="关闭工单"
-              >
-                关闭工单
-              </Button>
-            );
+          if (role === '科室负责人' || role === '科室人员') {
+            //自己上报的自己关闭
+            if (caseInfo.reporterUserId === userId) {
+              ops.push(
+                <Button type="primary" onClick={this.closeCase.bind(this, userId)} title="关闭工单">
+                  关闭工单
+                </Button>
+              );
+            }
           }
           break;
         case 50:

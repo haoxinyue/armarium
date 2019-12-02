@@ -34,14 +34,14 @@ export default {
       const response = yield call(queryMtCaseList, payload);
       yield put({
         type: 'save',
-        payload:{
+        payload: {
           ...response,
           pagination: {
             current: payload.pageIndex == null ? 1 : payload.pageIndex + 1,
             pageSize: payload.pageSize || 10,
             total: response.recordCount || 0,
           },
-        }
+        },
       });
     },
     *fetchDetail({ payload, callback }, { call, put }) {
@@ -81,9 +81,19 @@ export default {
       });
       if (callback) callback(response);
     },
+    *close({ payload, callback }, { call, put }) {
+      const response = yield call(closeMtCase, payload);
+      yield put({
+        type: 'removeCurrent',
+        payload: {
+          caseId: payload.caseId,
+        },
+      });
+      if (callback) callback(response);
+    },
     *changeState({ payload, callback }, { call, put }) {
       let response;
-      if (payload.caseState === 50||payload.caseState === 40) {
+      if (payload.caseState === 50 || payload.caseState === 40) {
         response = yield call(closeMtCase, {
           ...payload,
         }) || {};
