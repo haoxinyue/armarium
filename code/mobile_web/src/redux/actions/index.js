@@ -356,20 +356,11 @@ export const getInstallCaseDetail = createAction(INSTALL_CASE.SAVE,
 export const compeleteInstallCaseDetail = createAction(INSTALL_CASE.SAVE,
     (params) =>
         doPostQuery(api.installCaseComplete, {...params})
-    // new Promise((resolve, reject) => {
-    // axios.http.post(api.installCaseComplete, getFormData({
-    //     ...params
-    // })).then((res) => {
-    //     let success = res.data && res.data.code === 0;
-    //     if (success) {
-    //         resolve(res.data)
-    //     } else {
-    //         reject(res)
-    //     }
-    // }, (err) => {
-    //     reject(err)
-    // })
-    // })
+)
+
+export const updateInstallCase = createAction(INSTALL_CASE.SAVE,
+    (params) =>
+        doPostQuery(api.installCaseUpdate, {...params})
 )
 
 /* ******************************************************** */

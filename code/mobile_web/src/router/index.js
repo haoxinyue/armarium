@@ -65,6 +65,15 @@ export const routes = [
             left: "back"
         }
     }, {
+        path: '/installCaseDetail/:caseId',
+        component: loadComponent('InstallCaseDetail'),
+        exact: true,
+        header: {
+            title: '安装工单详情',
+            visible: true,
+            left: "back"
+        }
+    }, {
         path: '/installCaseEdit/:caseId',
         component: loadComponent('InstallCaseEdit'),
         exact: true,

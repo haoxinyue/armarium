@@ -16,6 +16,7 @@ export default {
     deviceListGet: 'equip/getDeviceList',
 
     installCaseComplete: 'install_case/completeInsCase',
+    installCaseUpdate: 'install_case/updInsCase',
     installCaseGet: 'install_case/getInsCaseInfo',
     installCaseListGet: 'install_case/getInsCaseList',
 

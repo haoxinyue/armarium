@@ -17,7 +17,7 @@ class InstallListItem extends Component {
 
     // 查看详情
     goDetail = (item) => {
-        this.props.history.push(`/installCaseEdit/${item.caseId}`)
+        this.props.history.push(`/installCaseDetail/${item.caseId}`)
     }
 
 
@@ -61,7 +61,8 @@ class InstallListItem extends Component {
                             <div>
                                 <span className="key">工单号</span>：
                                 <span className="value">{itemData.caseId}</span>
-                            </div><div>
+                            </div>
+                            <div>
                                 <span className="key">科室</span>：
                                 <span className="value">{itemData.deptName}</span>
                             </div>
@@ -149,22 +150,28 @@ class InstallCaseList extends Component {
     }
 
     queryPageData(clear) {
-        const {dispatch} = this.props
+        const {dispatch, userInfo} = this.props
         const {searchValue} = this.state
         const nextPage = (clear ? 0 : (this.state.pageIndex + 1))
         this.setState({refreshing: !!clear, pageIndex: nextPage, isLoading: true});
 
         let queryData = {
             pageIndex: nextPage,
-            caseState:10
+            caseState: 10,
+
         };
-        if (searchValue){
+
+        if (userInfo.roleName === '运维工程师') {
+            queryData.assigneeUserId = userInfo.userId
+        }
+
+        if (searchValue) {
             queryData.deviceName = searchValue
         }
 
         dispatch(fetchInstallCaseList(queryData)).then((res) => {
 
-            if(res.error){
+            if (res.error) {
                 if (clear) {
                     let dataSource = this.state.dataSource.cloneWithRows([]);
                     this.setState({
@@ -319,8 +326,10 @@ class InstallCaseList extends Component {
 
 const mapStateToProps = (state) => {
     const {filter} = state.installCase
+    const {userInfo} = state.auth;
     return {
-        searchWord: filter.searchWord
+        searchWord: filter.searchWord,
+        userInfo
     }
 }
 
