@@ -27,12 +27,12 @@ export async function removeMtCase(params) {
     body: getFormData(params),
   });
 }
-export async function closeMtCase(params) {
-  return request(`${httpDomain}/case/closeMtCase`, {
-    method: 'POST',
-    body: getFormData(params),
-  });
-}
+// export async function closeMtCase(params) {
+//   return request(`${httpDomain}/case/closeMtCase`, {
+//     method: 'POST',
+//     body: getFormData(params),
+//   });
+// }
 
 export async function addMtCase(params) {
   return request(`${httpDomain}/case/addMtCase`, {

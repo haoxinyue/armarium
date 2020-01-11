@@ -295,15 +295,16 @@ function getUserNoticeFetch(userId) {
                 data: []
             };
             const typeList = ["install", "inspection", "pm", "repair", "stocktaking"];
-            const typeNameList = ["安装工单", "巡检工单", "保养工单", "保修工单", "盘点工单"];
+            const typeNameList = ["安装工单", "巡检工单", "保养工单", "报修工单", "盘点工单"];
             resList.forEach((r, i) => {
-                let rData = r.data;
-                if (rData) {
-
+                let rData = r;
+                // console.log(rData)
+                if (rData && rData.recordCount) {
                     // if (rData.code === 0 && rData.recordCount) {
                     res.data.push({
                         noticeId: i,
                         type: typeList[i],
+                        name:`${typeNameList[i]}消息`,
                         message: `您有${rData.recordCount || 0}条${typeNameList[i]}需要处理`
                     })
                     // }

@@ -82,7 +82,7 @@ export const getRouterData = app => {
     },
 
     '/device/device-list': {
-      component: dynamicWrapper(app, ['device'], () =>
+      component: dynamicWrapper(app, ['device', 'hospital', 'department'], () =>
         import(/* webpackChunkName: "DeviceList" */ '../routes/Device/DeviceList')
       ),
     },
@@ -137,7 +137,7 @@ export const getRouterData = app => {
 
     /* ============================================================================================ */
 
-    '/asset/asset-add': {
+    '/asset/device-list': {
       component: dynamicWrapper(app, ['device', 'hospital', 'department'], () =>
         import(/* webpackChunkName: "DeviceEdit" */ '../routes/Device/DeviceList')
       ),

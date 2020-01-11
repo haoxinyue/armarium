@@ -78,14 +78,15 @@ class Devices extends Component {
     }
 
     queryPageData(clear, resetSearch) {
-        const {dispatch} = this.props
+        const {dispatch ,userInfo} = this.props
         const nextPage = (clear ? 0 : (this.state.pageIndex + 1))
         this.setState({refreshing: !!clear, pageIndex: nextPage, isLoading: true});
 
         dispatch(fetchDeviceList({
             pageIndex: nextPage,
             deviceName: resetSearch ? '' : this.state.searchValue,
-            deviceState: this.state.stateFilter
+            deviceState: this.state.stateFilter,
+            userId:userInfo.userId
         })).then((res) => {
             if (!res.error) {
                 Toast.info("success")
@@ -155,17 +156,29 @@ class Devices extends Component {
         // 参会状态props
         const partProps = {
             name: 'part',
-            defaultValue: '所有',
-            data: ['所有', '正常', '故障'],
+            defaultValue: 0,
+            data: [
+                {
+                    label: '全部',
+                    value: 0,
+                },
+                {
+                    label: '正常',
+                    value: 1,
+                },
+                {
+                    label: '故障',
+                    value: 2,
+                }],
             onChange: (v) => {
                 const map = {
                     '正常': '1',
                     '故障': '2'
                 }
-                console.log( map[v])
+                // console.log( map[v])
                 this.setState({
                     openFilter: false,
-                    stateFilter: map[v]
+                    stateFilter: v||undefined
                 },()=>{
                     this.onRefresh()
                 });
@@ -261,8 +274,11 @@ class Devices extends Component {
 
 const mapStateToProps = (state) => {
     const {filter} = state.device
+    const {userInfo} = state.auth;
+
     return {
-        searchWord: filter.searchWord
+        searchWord: filter.searchWord,
+        userInfo
     }
 }
 

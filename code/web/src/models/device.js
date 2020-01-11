@@ -1,5 +1,6 @@
 import {
   queryDevices,
+  queryDeviceTypes,
   queryDeviceDetail,
   removeDevice,
   addDevice,
@@ -18,6 +19,14 @@ export default {
     },
     byIds: {},
     selectData: {
+      list: [],
+      byIds: {},
+      pagination: {
+        current: 1,
+        pageSize: 10,
+      },
+    },
+    typeData: {
       list: [],
       byIds: {},
       pagination: {
@@ -152,6 +161,22 @@ export default {
         },
       });
     },
+
+
+    *fetchTypeList({ payload }, { call, put }) {
+      const response = yield call(queryDeviceTypes, payload);
+      yield put({
+        type: 'saveTypesData',
+        payload: {
+          ...response,
+          // pagination: {
+          //   current: payload.pageIndex == null ? 1 : payload.pageIndex + 1,
+          //   pageSize: payload.pageSize || 10,
+          //   total: response.recordCount || 0,
+          // },
+        },
+      });
+    },
   },
 
   reducers: {
@@ -172,6 +197,30 @@ export default {
       return {
         ...state,
         selectData: {
+          list,
+          pagination: action.payload.pagination,
+          byIds,
+        },
+      };
+    },
+    saveTypesData(state, action) {
+      console.log('saveTypesData!!!')
+      let byIds = {},
+        list = [];
+      if (action.payload.data) {
+        action.payload.data.forEach(item => {
+          if (item && item.deviceTypeId != null) {
+            byIds[item.deviceTypeId] = item;
+            if (list.indexOf(item.deviceTypeId) === -1) {
+              list.push(item.deviceTypeId);
+            }
+          }
+        });
+      }
+
+      return {
+        ...state,
+        typeData: {
           list,
           pagination: action.payload.pagination,
           byIds,

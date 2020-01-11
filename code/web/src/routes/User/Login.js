@@ -59,18 +59,18 @@ export default class LoginPage extends Component {
             <Password name="password" placeholder="888888/123456" />
           </Tab>*/}
           {login.status === 'error' &&
-          login.type === 'account' &&
-          !login.submitting &&
-          this.renderMessage('账户或密码错误（tangwei/111）')}
-          <UserName name="loginName" placeholder="tangwei/zhangsan/lisi" />
-          <Password name="password" placeholder="111" />
+            login.type === 'account' &&
+            !login.submitting &&
+            this.renderMessage('账户或密码错误')}
+          <UserName name="loginName" placeholder="用户名" />
+          <Password name="password" placeholder="密码" />
           {/*<Tab key="mobile" tab="手机号登录">*/}
-            {/*{login.status === 'error' &&*/}
-              {/*login.type === 'mobile' &&*/}
-              {/*!login.submitting &&*/}
-              {/*this.renderMessage('验证码错误')}*/}
-            {/*<Mobile name="mobile" />*/}
-            {/*<Captcha name="captcha" />*/}
+          {/*{login.status === 'error' &&*/}
+          {/*login.type === 'mobile' &&*/}
+          {/*!login.submitting &&*/}
+          {/*this.renderMessage('验证码错误')}*/}
+          {/*<Mobile name="mobile" />*/}
+          {/*<Captcha name="captcha" />*/}
           {/*</Tab>*/}
           <div>
             <Checkbox checked={this.state.autoLogin} onChange={this.changeAutoLogin}>

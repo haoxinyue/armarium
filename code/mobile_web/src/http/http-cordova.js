@@ -8,6 +8,7 @@ const cordovaHTTP = window.cordovaHTTP;
 
 
 const baseUrl = "http://47.100.198.255:8080/";
+// const baseUrl = "http://192.168.101.9:8080/";
 
 function parseUrl(url) {
     if (url.startsWith("http")) {

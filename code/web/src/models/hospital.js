@@ -1,5 +1,6 @@
 import { queryHospitals,queryHospitalDetail, removeHospital, addHospital,updateHospital } from '../services/hospital';
 
+
 export default {
   namespace: 'hospital',
 

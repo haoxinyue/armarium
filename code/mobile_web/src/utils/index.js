@@ -97,6 +97,11 @@ export const format = (value) => {
 
 export const runScanner = () => {
     return new Promise((resolve, reject) => {
+        if(!window.cordova ||!window.cordova.plugins||!window.cordova.plugins.barcodeScanner){
+            resolve()
+            return
+        }
+
         window.cordova.plugins.barcodeScanner.scan(
             function (result) {
                 resolve(result)

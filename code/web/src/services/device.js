@@ -1,6 +1,14 @@
 import { httpDomain, getFormData } from './api';
 import request from '../utils/request';
 
+export async function queryDeviceTypes(params) {
+  // return request(`${httpDomain_TEST}/device?${stringify(params)}`);
+
+  return request(`${httpDomain}/common/getDeviceTypeList`, {
+    method: 'POST',
+    body: getFormData(params),
+  });
+}
 export async function queryDevices(params) {
   // return request(`${httpDomain_TEST}/device?${stringify(params)}`);
 

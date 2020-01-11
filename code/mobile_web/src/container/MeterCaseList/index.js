@@ -161,7 +161,7 @@ class MeterCaseList extends Component {
         let queryData = {
             pageIndex: nextPage,
             pageSize:this.state.pageSize,
-            // assigneeUserId: userInfo.userId
+            assigneeUserId: userInfo.userId
         };
         if (searchValue) {
             queryData.deviceName = searchValue

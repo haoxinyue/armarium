@@ -24,6 +24,7 @@ import StandardTable from 'components/StandardTable';
 import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 import DepartmentSelect from '../../components/biz/DepartmentSelect';
 import HospitalSelect from '../../components/biz/HospitalSelect';
+import DeviceTypeSelect from '../../components/biz/DeviceTypeSelect';
 
 import styles from './TableList.less';
 import EngineerSelect from '../../components/biz/EngineerSelect';
@@ -99,13 +100,7 @@ const CreateForm = Form.create()(props => {
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备类型">
         {form.getFieldDecorator('deviceType', {
           rules: [{ required: true, message: '请设置设备类型...' }],
-        })(
-          <Select placeholder="请选择" initialValue="1" style={{ width: '100%' }}>
-            <Option value="1">B超</Option>
-            <Option value="2">眼检仪</Option>
-            <Option value="0">其他</Option>
-          </Select>
-        )}
+        })(<DeviceTypeSelect placeholder="请选择" />)}
       </FormItem>
 
       <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="期望安装时间">

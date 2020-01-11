@@ -24,7 +24,7 @@ axios.interceptors.request.use(config => {
 	// if(config.method === "post" &&  config.data){
      //    config.data = getFormData(config.data);
 	// }
-	Toast.loading('加载中。。。', 0)
+	// Toast.loading('加载中...', 0)
 	return config
 }, err => {
 	return Promise.reject(err)

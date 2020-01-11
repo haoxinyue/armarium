@@ -26,6 +26,7 @@ import DepartmentSelect from '../../components/biz/DepartmentSelect';
 import styles from '../Forms/style.less';
 import HospitalSelect from '../../components/biz/HospitalSelect';
 import EngineerSelect from '../../components/biz/EngineerSelect';
+import DeviceTypeSelect from '../../components/biz/DeviceTypeSelect';
 
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -309,6 +310,7 @@ export default class InstallCaseEdit extends Component {
 
             <FormItem {...formItemLayout} label="*所属医院">
               {getFieldDecorator('hospitalId', {
+                initialValue: 1000005,
                 rules: [
                   {
                     required: true,
@@ -326,7 +328,12 @@ export default class InstallCaseEdit extends Component {
                     message: '请选择所属部门',
                   },
                 ],
-              })(<DepartmentSelect placeholder="请选择所属部门" />)}
+              })(
+                <DepartmentSelect
+                  hospitalId={getFieldValue('hospitalId')}
+                  placeholder="请选择所属部门"
+                />
+              )}
             </FormItem>
 
             {getInputFieldNode('deviceModel', '设备型号', true)}
@@ -337,7 +344,18 @@ export default class InstallCaseEdit extends Component {
 
             {getTextFieldNode('caseRemark', '工单描述', true)}
 
-            {getSelectFieldNode('deviceType', '设备类型', true, [
+            <FormItem {...formItemLayout} label="设备类型1">
+              {getFieldDecorator('deviceType', {
+                rules: [
+                  {
+                    required: false,
+                    message: '请选择设备类型',
+                  },
+                ],
+              })(<DeviceTypeSelect placeholder="请选择设备类型" />)}
+            </FormItem>
+
+            {/*{getSelectFieldNode('deviceType', '设备类型', true, [
               {
                 value: 1,
                 text: 'B超',
@@ -350,7 +368,7 @@ export default class InstallCaseEdit extends Component {
                 value: 0,
                 text: '其他',
               },
-            ])}
+            ])}*/}
 
             {getInputFieldNode('deviceId', '设备编号', false, { hidden: true })}
 

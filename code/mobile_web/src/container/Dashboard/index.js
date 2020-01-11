@@ -24,16 +24,16 @@ class Dashboard extends Component {
         this.clearBackListen = this.initBack()
 
 
-        this.updateNotice.bind(this)();
+        this.updateNotice.bind(this)(true);
 
     }
 
-    updateNotice() {
+    updateNotice(force) {
         const {notice, dispatch, userInfo} = this.props;
         let now = new Date().getTime();
         let last = notice.lastFetchTime;
         //3个小时获取一次通知信息
-        if (!last || now - last > 1000 * 60 * 60 * 3) {
+        if (force || !last || now - last > 1000 * 60 * 60 * 3) {
             dispatch(fetchNoticeList({
                 userId: userInfo.userId
             }))
@@ -418,9 +418,14 @@ class Dashboard extends Component {
             }*/
         ]
 
+        if(roleId == 3 || roleId == 4){
+            //
+            blocks[0].items =  blocks[0].items.filter(d=>!["设备保养","设备巡检","设备计量"].includes(d.desc))
+        }
+
         const getItem = (info) => {
 
-            let hasNotice = info.noticeTag && notice.byTypes[info.noticeTag];
+            let hasNotice =  info.noticeTag && notice.byTypes[info.noticeTag];
 
             return <li key={info.desc} className="item am-list-item" onTouchStart={(e) => {
                 // addRippleEffect(e.currentTarget, e.pageX, e.pageY)

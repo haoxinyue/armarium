@@ -300,8 +300,8 @@ class InspectionCaseList extends Component {
     render() {
 
         const tabs = [
-            {title: '巡检历史', sub: '1'},
-            {title: '待巡检', sub: '2'}
+            {title: '待巡检', sub: '2'},
+            {title: '巡检历史', sub: '1'}
         ];
 
         const display = this.state.openFilter ? 'block' : 'none'
@@ -373,17 +373,21 @@ class InspectionCaseList extends Component {
                         }}
                         renderTab={tab => <span>{tab.title}</span>}
                     >
-                        <div className="dataList-container2" id="J_Scroll">
+
+                        <div className="dataList-container" id="J_Scroll2">
                             <div className="scroll-hook">
                                 <ListView
                                     className="dataList-list"
                                     key={'0'}
                                     ref={el => this.lv = el}
-                                    dataSource={this.state.dataSource}
+                                    dataSource={this.state.dataSourceDeviceList}
 
                                     renderRow={(rowData, sectionID, rowID) => (
-                                        <InspectionCaseItem key={sectionID + '_' + rowID}
+                                        <DeviceListItem key={sectionID + '_' + rowID}
                                                             history={this.props.history}
+                                                            onClick={(item)=>{
+                                                                this.createNewCase(item.deviceId)
+                                                            }}
                                                             list={rowData}
                                         />
                                     )}
@@ -407,21 +411,17 @@ class InspectionCaseList extends Component {
 
                             </div>
                         </div>
-
-                        <div className="dataList-container" id="J_Scroll2">
+                        <div className="dataList-container2" id="J_Scroll">
                             <div className="scroll-hook">
                                 <ListView
                                     className="dataList-list"
                                     key={'0'}
                                     ref={el => this.lv = el}
-                                    dataSource={this.state.dataSourceDeviceList}
+                                    dataSource={this.state.dataSource}
 
                                     renderRow={(rowData, sectionID, rowID) => (
-                                        <DeviceListItem key={sectionID + '_' + rowID}
+                                        <InspectionCaseItem key={sectionID + '_' + rowID}
                                                             history={this.props.history}
-                                                            onClick={(item)=>{
-                                                                this.createNewCase(item.deviceId)
-                                                            }}
                                                             list={rowData}
                                         />
                                     )}

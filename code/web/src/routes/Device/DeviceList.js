@@ -1,7 +1,7 @@
-import React, { PureComponent, Fragment } from 'react';
-import { connect } from 'dva';
-import { Link } from 'dva/router';
-import { routerRedux } from 'dva/router';
+import React, {PureComponent, Fragment} from 'react';
+import {connect} from 'dva';
+import {Link} from 'dva/router';
+import {routerRedux} from 'dva/router';
 import {
   Row,
   Col,
@@ -24,17 +24,19 @@ import PageHeaderLayout from '../../layouts/PageHeaderLayout';
 
 import styles from './TableList.less';
 
-import { UsageStateNames, DeviceStateNames } from '../../utils/constants';
+import {UsageStateNames, DeviceStateNames} from '../../utils/constants';
+import DeviceTypeSelect from '../../components/biz/DeviceTypeSelect';
+
 
 const FormItem = Form.Item;
-const { Option } = Select;
+const {Option} = Select;
 const getValue = obj =>
   Object.keys(obj)
     .map(key => obj[key])
     .join(',');
 
 const CreateForm = Form.create()(props => {
-  const { modalVisible, form, handleAdd, handleModalVisible } = props;
+  const {modalVisible, form, handleAdd, handleModalVisible} = props;
   const okHandle = () => {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -49,54 +51,54 @@ const CreateForm = Form.create()(props => {
       onOk={okHandle}
       onCancel={() => handleModalVisible()}
     >
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备编号">
+      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="设备编号">
         {form.getFieldDecorator('deviceCode', {
-          rules: [{ required: true, message: '请输入设备编号...' }],
-        })(<Input placeholder="请输入" />)}
+          rules: [{required: true, message: '请输入设备编号...'}],
+        })(<Input placeholder="请输入"/>)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="名称">
+      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="名称">
         {form.getFieldDecorator('deviceName', {
-          rules: [{ required: true, message: '请输入设备名称...' }],
-        })(<Input placeholder="请输入" />)}
+          rules: [{required: true, message: '请输入设备名称...'}],
+        })(<Input placeholder="请输入"/>)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="编号">
+      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="编号">
         {form.getFieldDecorator('AssetNo', {
-          rules: [{ required: true, message: '请输入资产编号...' }],
-        })(<Input placeholder="请输入" />)}
+          rules: [{required: true, message: '请输入资产编号...'}],
+        })(<Input placeholder="请输入"/>)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="型号">
+      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="型号">
         {form.getFieldDecorator('deviceModel', {
-          rules: [{ required: true, message: '请输入设备型号...' }],
-        })(<Input placeholder="请输入" />)}
+          rules: [{required: true, message: '请输入设备型号...'}],
+        })(<Input placeholder="请输入"/>)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="描述">
+      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="描述">
         {form.getFieldDecorator('deviceDesc', {
-          rules: [{ required: true, message: '请输入设备描述...' }],
-        })(<Input placeholder="请输入" />)}
+          rules: [{required: true, message: '请输入设备描述...'}],
+        })(<Input placeholder="请输入"/>)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="序列号">
+      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="序列号">
         {form.getFieldDecorator('SerialNumber', {
-          rules: [{ required: true, message: '请输入设备序列号...' }],
-        })(<Input placeholder="请输入" />)}
+          rules: [{required: true, message: '请输入设备序列号...'}],
+        })(<Input placeholder="请输入"/>)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="二维码号">
+      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="二维码号">
         {form.getFieldDecorator('QRCode', {
-          rules: [{ required: true, message: '请输入设备二维码号...' }],
-        })(<Input placeholder="请输入" />)}
+          rules: [{required: true, message: '请输入设备二维码号...'}],
+        })(<Input placeholder="请输入"/>)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="厂商">
+      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="厂商">
         {form.getFieldDecorator('Manufacturer', {
-          rules: [{ required: true, message: '请输入设备厂商...' }],
-        })(<Input placeholder="请输入" />)}
+          rules: [{required: true, message: '请输入设备厂商...'}],
+        })(<Input placeholder="请输入"/>)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="产地">
+      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="产地">
         {form.getFieldDecorator('ProducingPlace', {
-          rules: [{ required: true, message: '请输入设备产地...' }],
-        })(<Input placeholder="请输入" />)}
+          rules: [{required: true, message: '请输入设备产地...'}],
+        })(<Input placeholder="请输入"/>)}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备状态">
+      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="设备状态">
         {form.getFieldDecorator('deviceState', {
-          rules: [{ required: true, message: '请输入设置状态...' }],
+          rules: [{required: true, message: '请输入设置状态...'}],
         })(
           <Select placeholder="请选择" initialValue="1">
             <Option value="1">正常</Option>
@@ -104,9 +106,9 @@ const CreateForm = Form.create()(props => {
           </Select>
         )}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="使用状态">
+      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="使用状态">
         {form.getFieldDecorator('usageState', {
-          rules: [{ required: true, message: '请输入设置状态...' }],
+          rules: [{required: true, message: '请输入设置状态...'}],
         })(
           <Select placeholder="请选择" initialValue="1">
             <Option value="1">使用</Option>
@@ -114,22 +116,18 @@ const CreateForm = Form.create()(props => {
           </Select>
         )}
       </FormItem>
-      <FormItem labelCol={{ span: 5 }} wrapperCol={{ span: 15 }} label="设备类型">
+      <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="设备类型">
         {form.getFieldDecorator('deviceType', {
-          rules: [{ required: true, message: '请输入设置状态...' }],
+          rules: [{required: true, message: '请选择设备类型...'}],
         })(
-          <Select placeholder="请选择" initialValue="1">
-            <Option value="1">B超</Option>
-            <Option value="2">眼检仪</Option>
-            <Option value="0">其他</Option>
-          </Select>
+          <DeviceTypeSelect placeholder="请选择"></DeviceTypeSelect>
         )}
       </FormItem>
     </Modal>
   );
 });
 
-@connect(({ device, loading }) => ({
+@connect(({device, loading}) => ({
   device,
   loading: loading.models.device,
 }))
@@ -143,7 +141,7 @@ export default class DeviceList extends PureComponent {
   };
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    const {dispatch} = this.props;
     dispatch({
       type: 'device/fetch',
       payload: {
@@ -154,11 +152,11 @@ export default class DeviceList extends PureComponent {
   }
 
   handleStandardTableChange = (pagination, filtersArg, sorter) => {
-    const { dispatch } = this.props;
-    const { formValues } = this.state;
+    const {dispatch} = this.props;
+    const {formValues} = this.state;
 
     const filters = Object.keys(filtersArg).reduce((obj, key) => {
-      const newObj = { ...obj };
+      const newObj = {...obj};
       newObj[key] = getValue(filtersArg[key]);
       return newObj;
     }, {});
@@ -180,7 +178,7 @@ export default class DeviceList extends PureComponent {
   };
 
   handleFormReset = () => {
-    const { form, dispatch } = this.props;
+    const {form, dispatch} = this.props;
     form.resetFields();
     this.setState({
       formValues: {},
@@ -201,7 +199,7 @@ export default class DeviceList extends PureComponent {
   };
 
   deleteDevice(device) {
-    const { dispatch, device: deviceState } = this.props;
+    const {dispatch, device: deviceState} = this.props;
     Modal.confirm({
       title: `确认`,
       content: `确认删除 【${device.deviceName}(${device.deviceId})】?`,
@@ -220,13 +218,14 @@ export default class DeviceList extends PureComponent {
           }
         });
       },
-      onCancel: () => {},
+      onCancel: () => {
+      },
     });
   }
 
   handleMenuClick = e => {
-    const { dispatch } = this.props;
-    const { selectedRows } = this.state;
+    const {dispatch} = this.props;
+    const {selectedRows} = this.state;
 
     if (!selectedRows) return;
 
@@ -260,12 +259,12 @@ export default class DeviceList extends PureComponent {
     });
   };
 
-  handleSearch = e => {
-    if (e && e.preventDefault) {
-      e.preventDefault();
-    }
+  handleSearch = isClear => {
+    // if (e && e.preventDefault) {
+    //   e.preventDefault();
+    // }
 
-    const { dispatch, form, device } = this.props;
+    const {dispatch, form, device} = this.props;
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
@@ -279,7 +278,7 @@ export default class DeviceList extends PureComponent {
       });
 
       let payload = {
-        pageIndex: device.pagination.current - 1,
+        pageIndex: isClear ? 0 : device.pagination.current - 1,
         pageSize: device.pagination.pageSize,
       };
 
@@ -297,7 +296,7 @@ export default class DeviceList extends PureComponent {
   };
 
   handleModalVisible = flag => {
-    const { dispatch } = this.props;
+    const {dispatch} = this.props;
     dispatch(routerRedux.push('/device/device-add'));
     // this.setState({
     //   modalVisible: !!flag,
@@ -319,18 +318,18 @@ export default class DeviceList extends PureComponent {
   };
 
   renderSimpleForm() {
-    const { getFieldDecorator } = this.props.form;
+    const {getFieldDecorator} = this.props.form;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
-        <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
+        <Row gutter={{md: 8, lg: 24, xl: 48}}>
           <Col md={8} sm={24}>
             <FormItem label="设备编号">
-              {getFieldDecorator('deviceCode')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('deviceCode')(<Input placeholder="请输入"/>)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="设备名称">
-              {getFieldDecorator('deviceName')(<Input placeholder="请输入" />)}
+              {getFieldDecorator('deviceName')(<Input placeholder="请输入"/>)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -338,7 +337,7 @@ export default class DeviceList extends PureComponent {
               <Button type="primary" htmlType="submit">
                 查询
               </Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>
+              <Button style={{marginLeft: 8}} onClick={this.handleFormReset}>
                 重置
               </Button>
               {/*<a style={{ marginLeft: 8 }} onClick={this.toggleForm}>
@@ -356,8 +355,8 @@ export default class DeviceList extends PureComponent {
   }
 
   render() {
-    const { device, loading } = this.props;
-    const { selectedRows, modalVisible } = this.state;
+    const {device, loading} = this.props;
+    const {selectedRows, modalVisible} = this.state;
     let list = [];
     device.list.forEach(id => {
       list.push(device.byIds[id]);
@@ -452,7 +451,7 @@ export default class DeviceList extends PureComponent {
                   <Button>批量操作</Button>
                   <Dropdown overlay={menu}>
                     <Button>
-                      更多操作 <Icon type="down" />
+                      更多操作 <Icon type="down"/>
                     </Button>
                   </Dropdown>
                 </span>
@@ -469,7 +468,7 @@ export default class DeviceList extends PureComponent {
             />
           </div>
         </Card>
-        <CreateForm {...parentMethods} modalVisible={modalVisible} />
+        <CreateForm {...parentMethods} modalVisible={modalVisible}/>
       </PageHeaderLayout>
     );
   }

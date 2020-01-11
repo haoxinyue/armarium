@@ -1,12 +1,13 @@
-import {httpDomain,httpDomain_TEST,getFormData} from "./api";
-import request from "../utils/request";
+import { httpDomain, httpDomain_TEST, getFormData } from './api';
+import request from '../utils/request';
 
-export async function queryHospitals(params) {
+export async function queryHospitals(params = {}) {
   // return request(`${httpDomain_TEST}/device?${stringify(params)}`);
 
-  return request(`${httpDomain_TEST}/hospital/getHospitalList`,{
-    method:'POST',
-    body:getFormData(params)
+  // return request(`${httpDomain_TEST}/hospital/getHospitalList`,{
+  return request(`${httpDomain}/common/getHosptList`, {
+    method: 'POST',
+    body: getFormData(params),
   });
   // return request(`${httpDomain_TEST}/equip/getHospitalList`,{
   //   method:'POST',
@@ -28,24 +29,22 @@ export async function addHospital(params) {
   return request(`${httpDomain}/equip/addHospital`, {
     method: 'POST',
     body: getFormData({
-      ...params
-    })
+      ...params,
+    }),
   });
 }
 export async function updateHospital(params) {
-
   return request(`${httpDomain}/equip/updHospital`, {
     method: 'POST',
     body: getFormData({
-      ...params
+      ...params,
     }),
   });
 }
 
 export async function queryHospitalDetail(params) {
-  return request(`${httpDomain}/equip/getHospital`,{
-    method:"POST",
-    body:getFormData(params)
+  return request(`${httpDomain}/equip/getHospital`, {
+    method: 'POST',
+    body: getFormData(params),
   });
-
 }

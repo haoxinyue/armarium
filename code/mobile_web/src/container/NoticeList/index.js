@@ -31,7 +31,7 @@ class NoticeItem extends Component {
                 onClick={this.props.onClick}>
                 <WingBlank>
                     <div className="item-name"><span className="icon-device"></span> <span
-                        style={{verticalAlign: "middle"}}>消息</span></div>
+                        style={{verticalAlign: "middle"}}>{itemData.name}</span></div>
                     <div className="item-desc">
 
                         <div className="item-desc-left">

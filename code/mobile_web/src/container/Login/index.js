@@ -14,8 +14,8 @@ class Login extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            username: 'tangwei',
-            password: '111'
+            username: '',
+            password: ''
         }
     }
 
@@ -62,7 +62,7 @@ class Login extends Component {
                     history.push('/');
                 }else{
                     Toast.hide();
-                    Toast.fail("登陆失败，请稍后再试:" +res.payload.code,1);
+                    Toast.fail("登陆失败，请稍后再试",1);
                 }
 
             }, err => {

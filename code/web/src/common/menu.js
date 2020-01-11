@@ -19,7 +19,7 @@ const menuData = [
     children: [
       {
         name: '设备管理',
-        path: 'asset-add',
+        path: 'device-list',
       },
       {
         name: '资产盘点',

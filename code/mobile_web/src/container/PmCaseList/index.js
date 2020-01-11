@@ -124,14 +124,16 @@ class PmCaseList extends Component {
             runScanner().then((result) => {
                     let deviceId = /\[(\S+)\]/.exec(result.text)
                     deviceId = deviceId && deviceId[1]
+                // deviceId = '100005861';
                     if (deviceId) {
                         dispatch(getPmCaseIdByDeviceId({
                             deviceId,
                             assigneeUserId: userInfo.userId
                         }))
                             .then((res) => {
-                                if(res && res.data){
-                                    const caseId = res.data
+                                if(res&&res.payload&&res&&res.payload.data){
+                                    const caseId = res&&res.payload.data
+                                    // console.log('caseId',caseId)
                                     this.props.history.push({pathname: `/pmCaseEdit/${deviceId}`,
                                         query: {
                                             caseId

@@ -57,6 +57,7 @@ export default {
   proxy: {
     '/MAPI': {
       target: 'http://47.100.198.255:8080/',
+      target1: 'http://192.168.101.9:8080/',
       changeOrigin: true,
       pathRewrite: { '^/MAPI': '' },
     },

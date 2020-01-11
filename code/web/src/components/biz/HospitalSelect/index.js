@@ -59,10 +59,14 @@ class HospitalSelect extends Component {
       loading,
     } = this.props;
 
+    let only1Hospital = list.length === 1;
+
+    let val = only1Hospital ? value || list[0] : value;
+
     return (
       <Select
         mode="combobox"
-        value={value}
+        value={val}
         optionLabelProp={'title'}
         placeholder={placeholder || '请选择'}
         notFoundContent={loading ? <Spin size="small" /> : null}

@@ -59,7 +59,7 @@ const fields = [
                 },
                 {
                     label: '其他',
-                    value: 3,
+                    value: 0,
                 }
             ]
         ]

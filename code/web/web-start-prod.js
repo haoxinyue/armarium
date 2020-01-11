@@ -250,6 +250,10 @@ app.post('/api/hospital/getHospitalList', function(req, res) {
         hospitalId: 1000002,
         hospitalName: '第二人民医院',
       },
+      {
+        hospitalId: 1000005,
+        hospitalName: '第四人民医院',
+      },
     ],
   });
 });
