@@ -12,7 +12,9 @@ import {PullToRefresh, ListView, SearchBar, Drawer, Tabs, Toast, WingBlank, Butt
 import RadioGroup from '../../components/RadioGroup'
 import './InspectionCaseList.less'
 import './listItem.less'
-import {addRippleEffect, runScanner} from "../../utils";
+import {addRippleEffect} from "../../utils";
+import {scanDeviceQr} from "../../utils/tools";
+
 
 class PmCaseItem extends Component {
 
@@ -121,37 +123,29 @@ class PmCaseList extends Component {
         if (deviceId) {
             this.props.history.push({pathname: `/pmCaseEdit/${deviceId}`})
         } else {
-            runScanner().then((result) => {
-                    let deviceId = /\[(\S+)\]/.exec(result.text)
-                    deviceId = deviceId && deviceId[1]
-                // deviceId = '100005861';
-                    if (deviceId) {
-                        dispatch(getPmCaseIdByDeviceId({
-                            deviceId,
-                            assigneeUserId: userInfo.userId
-                        }))
-                            .then((res) => {
-                                if(res&&res.payload&&res&&res.payload.data){
-                                    const caseId = res&&res.payload.data
-                                    // console.log('caseId',caseId)
-                                    this.props.history.push({pathname: `/pmCaseEdit/${deviceId}`,
-                                        query: {
-                                            caseId
-                                        }
-                                    })
-                                }else{
-                                    Toast.info('此设备没有您负责保养工单');
+            scanDeviceQr().then((deviceId) => {
+                dispatch(getPmCaseIdByDeviceId({
+                    deviceId,
+                    assigneeUserId: userInfo.userId
+                }))
+                    .then((res) => {
+                        if(res&&res.payload&&res&&res.payload.data){
+                            const caseId = res&&res.payload.data
+                            // console.log('caseId',caseId)
+                            this.props.history.push({pathname: `/pmCaseEdit/${deviceId}`,
+                                query: {
+                                    caseId
                                 }
-
-                            }, () => {
-                                Toast.info('查询失败，请稍后再试');
                             })
+                        }else{
+                            Toast.info('此设备没有您负责保养工单');
+                        }
 
-                    } else {
-                        // alert('无效的二维码')
-                    }
+                    }, () => {
+                        Toast.info('查询失败，请稍后再试');
+                    })
                 }, (error) => {
-                    alert("请重新扫描");
+                Toast.info(error||"请重新扫描");
                 }
             )
         }

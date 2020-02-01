@@ -12,6 +12,7 @@ export default {
     deviceDel: 'equip/delDevice',
     deviceUpdate: 'equip/updDevice',
     deviceGet: 'equip/getDevice',
+    deviceGetByQr: 'equip/getDeviceByQrCode',
     deviceListGet: 'equip/getDeviceList',
 
     installCaseComplete: 'install_case/completeInsCase',

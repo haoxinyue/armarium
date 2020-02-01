@@ -60,7 +60,7 @@ export const changeFooterSide = (side) => ({
 
 /**********************************************************/
 
-function doPostQuery(url, data, resolveMapFunc) {
+export function doPostQuery(url, data, resolveMapFunc) {
     return new Promise((resolve, reject) => {
         axios.http.post(url, getFormData(data)).then((res) => {
             let success = res.data && res.data.code === 0;
@@ -382,6 +382,11 @@ export const getDeviceDetail = createAction(DEVICE.SAVE,
     // axios.http.post(api.deviceGet, getFormData({
     //     ...params
     // })).then((res) => (res.data))
+)
+
+export const getDeviceDetailByQr = createAction(DEVICE.SAVE,
+    (params) =>
+        doPostQuery(api.deviceGetByQr, {...params})
 )
 
 

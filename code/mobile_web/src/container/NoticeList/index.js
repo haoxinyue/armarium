@@ -112,15 +112,15 @@ class NoticeList extends Component {
     }
 
     componentWillUnmount() {
-
+        fetchNoticeList
     }
 
 
     queryPageData(clear) {
         const {dispatch, userInfo} = this.props
-        // dispatch(fetchNoticeList({
-        //     userId: userInfo.userId
-        // }))
+        dispatch(fetchNoticeList({
+            userId: userInfo.userId
+        }))
 
     }
 

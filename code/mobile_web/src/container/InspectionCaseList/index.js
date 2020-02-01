@@ -12,7 +12,9 @@ import {PullToRefresh, ListView, SearchBar, Drawer,Tabs, Toast, WingBlank, Butto
 import RadioGroup from '../../components/RadioGroup'
 import './InspectionCaseList.less'
 import './listItem.less'
-import {addRippleEffect, runScanner} from "../../utils";
+import {addRippleEffect} from "../../utils";
+import {scanDeviceQr} from "../../utils/tools";
+
 import DeviceListItem from "../../components/DeviceListItem";
 
 class InspectionCaseItem extends Component {
@@ -126,16 +128,10 @@ class InspectionCaseList extends Component {
         if (deviceId){
             this.props.history.push({pathname: `/inspectionCaseEdit/${deviceId}`})
         }else{
-            runScanner().then((result) => {
-                    let deviceId = /\[(\S+)\]/.exec(result.text)
-                    deviceId = deviceId && deviceId[1]
-                    if (deviceId) {
-                        this.props.history.push({pathname: `/inspectionCaseEdit/${deviceId}`})
-                    } else {
-                        // alert('无效的二维码')
-                    }
+            scanDeviceQr().then((deviceId) => {
+                this.props.history.push({pathname: `/inspectionCaseEdit/${deviceId}`})
                 }, (error) => {
-                    alert("请重新扫描");
+                Toast.info(error||"请重新扫描");
                 }
             )
         }

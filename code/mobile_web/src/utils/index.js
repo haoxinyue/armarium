@@ -98,7 +98,9 @@ export const format = (value) => {
 export const runScanner = () => {
     return new Promise((resolve, reject) => {
         if(!window.cordova ||!window.cordova.plugins||!window.cordova.plugins.barcodeScanner){
-            resolve()
+            resolve({
+                text:'http://weixin.qq.com/r/nCnx6dbEDItzrZKK93yO?1808205338844301'
+            })
             return
         }
 
@@ -113,6 +115,7 @@ export const runScanner = () => {
 
     })
 }
+
 
 export const getLocalPicture = (fromCamera,options) => {
     return new Promise((resolve, reject) => {

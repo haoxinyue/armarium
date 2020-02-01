@@ -11,8 +11,8 @@ import {PullToRefresh, ListView, SearchBar, Drawer, Tabs, Toast, WingBlank, Butt
 import RadioGroup from '../../components/RadioGroup'
 import './StocktakingCaseList.less'
 import './listItem.less'
-import {addRippleEffect, runScanner} from "../../utils";
-
+import {addRippleEffect} from "../../utils";
+import {scanDeviceQr} from "../../utils/tools";
 
 class MeterCaseItem extends Component {
 
@@ -99,16 +99,10 @@ class MeterCaseList extends Component {
         if (deviceId) {
             this.props.history.push({pathname: `/meterCaseEdit/${deviceId}`})
         } else {
-            runScanner().then((result) => {
-                    let deviceId = /\[(\S+)\]/.exec(result.text)
-                    deviceId = deviceId && deviceId[1]
-                    if (deviceId) {
-                        this.props.history.push({pathname: `/meterCaseEdit/${deviceId}`})
-                    } else {
-                        // alert('无效的二维码')
-                    }
+            scanDeviceQr().then((deviceId) => {
+                    this.props.history.push({pathname: `/meterCaseEdit/${deviceId}`})
                 }, (error) => {
-                    alert("请重新扫描");
+                Toast.info(error||"请重新扫描");
                 }
             )
         }

@@ -4,7 +4,9 @@ import {Modal, Toast, Badge, Button} from 'antd-mobile'
 
 import './dashboard.less'
 
-import {addRippleEffect, runScanner, getLocalPicture} from '../../utils'
+import {addRippleEffect, getLocalPicture} from '../../utils'
+import {scanDeviceQr} from "../../utils/tools";
+
 
 import {logout, changeFooterSide, fetchNoticeList, changeHeaderRight} from '../../redux/actions'
 
@@ -84,16 +86,10 @@ class Dashboard extends Component {
     }
 
     scanDevice() {
-        runScanner().then((result) => {
-                let deviceId = /\[(\S+)\]/.exec(result.text)
-                deviceId = deviceId && deviceId[1]
-                if (deviceId) {
-                    this.props.history.push({pathname: "/deviceDetail/" + deviceId})
-                } else {
-                    // alert('无效的二维码')
-                }
+        scanDeviceQr().then((deviceId) => {
+            this.props.history.push({pathname: "/deviceDetail/" + deviceId})
             }, (error) => {
-                alert("请重新扫描");
+            Toast.info(error||"请重新扫描");
             }
         )
     }
@@ -134,16 +130,10 @@ class Dashboard extends Component {
                                 },
                                 {
                                     text: '扫描设备', onPress: () => {
-                                        runScanner().then((result) => {
-                                                let deviceId = /\[(\S+)\]/.exec(result.text)
-                                                deviceId = deviceId && deviceId[1]
-                                                if (deviceId) {
-                                                    this.props.history.push({pathname: "/repairAdd", query: {deviceId}})
-                                                } else {
-                                                    // alert('无效的二维码')
-                                                }
+                                        scanDeviceQr().then((deviceId) => {
+                                            this.props.history.push({pathname: "/repairAdd", query: {deviceId}})
                                             }, (error) => {
-                                                alert("请重新扫描");
+                                            Toast.info(error||"请重新扫描");
                                             }
                                         )
                                     }
@@ -184,24 +174,6 @@ class Dashboard extends Component {
 
 
                             Modal.operation(ops)
-                            // runScanner().then((result) => {
-                            //         // alert("We got a barcode\n" +
-                            //         //     "Result: " + result.text + "\n" +
-                            //         //     "Format: " + result.format + "\n" +
-                            //         //     "Cancelled: " + result.cancelled);
-                            //         let  deviceId = /\[(\S+)\]/.exec(result.text)
-                            //             deviceId = deviceId && deviceId[1]
-                            //         if(deviceId){
-                            //             alert('即将进入设备【'+deviceId+'】')
-                            //         }else{
-                            //             alert('无效的二维码')
-                            //         }
-                            //
-                            //
-                            //     }, (error) => {
-                            //         alert("扫描失败: " + error);
-                            //     }
-                            // )
                         }
                     },
                     {
